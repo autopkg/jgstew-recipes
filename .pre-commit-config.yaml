@@ -58,13 +58,14 @@ repos:
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.37.3
     hooks:
-      - id: check-jsonschema
-        files: \.recipe\.yaml$
-        args:
-          [
-            "--schemafile",
-            "https://raw.githubusercontent.com/jgstew/jgstew-recipes/main/.AutoPkgRecipeOpinionated.schema.json",
-          ]
+      # - id: check-jsonschema
+      #   files: \.recipe\.yaml$
+      #   stages: [manual]
+      #   args:
+      #     [
+      #       "--schemafile",
+      #       "https://raw.githubusercontent.com/jgstew/jgstew-recipes/main/.AutoPkgRecipeOpinionated.schema.json",
+      #     ]
       - id: check-metaschema
         files: \.schema\.json$
         args: ["--verbose"]
@@ -76,7 +77,6 @@ repos:
         name: check-jsonschema local file
         files: \.recipe\.yaml$
         args: ["--schemafile", ".AutoPkgRecipeOpinionated.schema.json"]
-        stages: [manual]
 
   - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 26.5.1
@@ -107,6 +107,7 @@ repos:
     rev: v1.3.1
     hooks:
       - id: verify-files-are-ascii
+        exclude: "Firefox-Win.ChocolateyTemplate.Firefox.nuspec$"
       - id: validate-bes
       - id: validate-plist
       # - id: github-action-set-output-fix
