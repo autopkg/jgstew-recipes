@@ -3,10 +3,19 @@
 BigFixActioner.py
 """
 
+import os
+import sys
+
 import chevron
 from autopkglib import Processor, ProcessorError
 from besapi import besapi
-from BESImport import BESImport
+
+# Add this processor's own directory to sys.path so the sibling SharedProcessors
+# module below can be imported without requiring SharedUtilityMethods to run
+# first in the recipe.
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from BESImport import BESImport  # noqa: E402  isort:skip
 
 __all__ = ["BigFixActioner"]
 
@@ -109,7 +118,7 @@ class BigFixActioner(BESImport):
     __doc__ = description
 
     def main(self):
-        """BigFixActioner Main Method"""
+        """Execution starts here."""
         template_dict = {}
         template_dict["bes_id"] = self.env.get("bes_id", 0)
         bes_action_type = str(self.env.get("bes_action_type", "Offer"))

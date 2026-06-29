@@ -3,9 +3,18 @@
 BigFixSessionRelevance.py
 """
 
+import os
+import sys
+
 from autopkglib import Processor, ProcessorError
 from besapi import besapi
-from SharedUtilityMethods import SharedUtilityMethods
+
+# Add this processor's own directory to sys.path so the sibling SharedProcessors
+# module below can be imported without requiring SharedUtilityMethods to run
+# first in the recipe.
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from SharedUtilityMethods import SharedUtilityMethods  # noqa: E402  isort:skip
 
 __all__ = ["BigFixSessionRelevance"]
 
@@ -26,7 +35,7 @@ class BigFixSessionRelevance(SharedUtilityMethods):
     __doc__ = description
 
     def main(self):
-        """BigFixSessionRelevance Main Method"""
+        """Execution starts here."""
         session_relevance = self.env.get("session_relevance")
 
         self.output(f"\nQ: {session_relevance}")

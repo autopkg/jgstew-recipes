@@ -3,9 +3,18 @@
 BigFixFileUploader.py
 """
 
+import os
+import sys
+
 from autopkglib import Processor, ProcessorError
 from besapi import besapi
-from SharedUtilityMethods import SharedUtilityMethods
+
+# Add this processor's own directory to sys.path so the sibling SharedProcessors
+# module below can be imported without requiring SharedUtilityMethods to run
+# first in the recipe.
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from SharedUtilityMethods import SharedUtilityMethods  # noqa: E402  isort:skip
 
 __all__ = ["BigFixFileUploader"]
 
@@ -36,7 +45,7 @@ class BigFixFileUploader(SharedUtilityMethods):
     __doc__ = description
 
     def main(self):
-        """BigFixFileUploader Main Method"""
+        """Execution starts here."""
         file_path = self.env.get("file_path", self.env.get("pathname"))
         file_sha1 = self.env.get("file_sha1", "")
         file_name_override = self.env.get("file_name_override", "")

@@ -1,0 +1,83 @@
+---
+name: Test Processor Loading
+
+on:
+  push:
+    paths:
+      - "SharedProcessors/**"
+      - "test_processors_load.sh"
+      - "requirements.txt"
+      - ".github/workflows/Processors_Test_Loading.yaml"
+  pull_request:
+    paths:
+      - "SharedProcessors/**"
+      - "test_processors_load.sh"
+      - "requirements.txt"
+      - ".github/workflows/Processors_Test_Loading.yaml"
+
+jobs:
+  test-processor-loading:
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        os: [macOS-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+
+      # # this does not seem to save time:
+      # - name: Cache Homebrew packages
+      #   if: runner.os == 'macOS'
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/Library/Caches/Homebrew
+      #       /opt/homebrew/Cellar/libmagic
+      #       /opt/homebrew/Cellar/cairo
+      #       /opt/homebrew/Cellar/libffi
+      #       /opt/homebrew/Cellar/pkg-config
+      #     key: brew-${{ runner.os }}-libmagic-cairo-libffi-pkg-config
+
+      - name: Install prereq macOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install libmagic cairo libffi pkg-config
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix)/lib" >> "${GITHUB_ENV}"
+
+      # # this does not seem to save time:
+      # - name: Cache MSYS2 packages
+      #   if: runner.os == 'Windows'
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: C:\msys64\var\cache\pacman\pkg
+      #     key: msys2-${{ runner.os }}-cairo-file
+
+      - name: Install prereq Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & "C:\msys64\usr\bin\pacman.exe" -S --noconfirm --needed mingw-w64-x86_64-cairo mingw-w64-x86_64-file
+          Add-Content $env:GITHUB_PATH "C:\msys64\mingw64\bin"
+
+      - name: Read Python version
+        id: pyver
+        shell: bash
+        run: echo "version=$(cat .python-version)" >> $GITHUB_OUTPUT
+
+      - name: setup-autopkg
+        uses: ./.github/actions/setup-autopkg
+        with:
+          use-python-version: ${{ steps.pyver.outputs.version }}
+
+      - name: Install requirements
+        run: pip install --requirement requirements.txt
+
+      - name: Install linux python prereq
+        if: runner.os == 'Linux'
+        run: |
+          pip uninstall oscrypto -y
+          pip install git+https://github.com/wbond/oscrypto.git@d5f3437
+
+      - name: Run processor loading tests
+        run: bash test_processors_load.sh
+        shell: bash

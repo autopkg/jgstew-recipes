@@ -1,0 +1,39 @@
+---
+# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/EnvironmentDump.py
+Description: Test EnvironmentDump Processor
+Identifier: com.github.jgstew.test.EnvironmentDump
+Input:
+  NAME: EnvironmentDumpTest
+MinimumVersion: "2.4.1"
+Process:
+  # CASE 1: dump the entire environment to the log (no filter):
+  - Processor: com.github.jgstew.SharedProcessors/EnvironmentDump
+
+  # the unfiltered dump should contain core AutoPkg keys like RECIPE_CACHE_DIR:
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%environment_dump%"
+      assert_string: "RECIPE_CACHE_DIR"
+
+  # CASE 2: dump only keys containing "name" (case-insensitive) and write to a file:
+  - Processor: com.github.jgstew.SharedProcessors/EnvironmentDump
+    Arguments:
+      key_filter: "name"
+      output_file_path: "%RECIPE_CACHE_DIR%/environment_dump.json"
+
+  # the filtered dump should contain the NAME input value:
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%environment_dump%"
+      assert_string: "EnvironmentDumpTest"
+
+  # CASE 3: confirm the written file is valid JSON with the expected NAME value
+  # (this proves both output_file_path writing and that the dump is valid JSON):
+  - Processor: com.github.jgstew.SharedProcessors/JsonPath
+    Arguments:
+      json_input: "%RECIPE_CACHE_DIR%/environment_dump.json"
+      json_path: "$.NAME"
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%json_path_result%"
+      assert_string: "EnvironmentDumpTest"
