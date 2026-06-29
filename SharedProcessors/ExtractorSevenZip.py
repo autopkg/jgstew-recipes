@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/autopkg/python
 """Extracts the file using the 7z utility."""
 
 import os

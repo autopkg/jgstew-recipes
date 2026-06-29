@@ -110,4 +110,16 @@ repos:
         exclude: "Firefox-Win.ChocolateyTemplate.Firefox.nuspec$"
       - id: validate-bes
       - id: validate-plist
+      - id: add-missing-docstrings
       # - id: github-action-set-output-fix
+
+  - repo: local
+    hooks:
+      - id: check-processor-conventions
+        name: Check AutoPkg processor conventions
+        description: Picky, opinionated checks for AutoPkg processor boilerplate and conventions.
+        language: script
+        entry: ./autopkg_processor_check_conventions.py
+        # auto-fixes fixable issues (currently E001 shebang); use --auto-fix=no to only report
+        args: ["--auto-fix=yes"]
+        files: ^Shared(Dangerous)?Processors/.*\.py$

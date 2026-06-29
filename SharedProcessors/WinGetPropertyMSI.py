@@ -32,9 +32,11 @@ DEPRECATION_MESSAGE = (
 
 
 class WinGetPropertyMSI(Processor):  # pylint: disable=too-few-public-methods
-    f"""DEPRECATED: Reads a property from an MSI file using Windows only msilib.
+    """DEPRECATED: Reads a property from an MSI file using Windows only msilib.
 
-    {DEPRECATION_MESSAGE}
+    WinGetPropertyMSI is deprecated and will be removed in a future release. Use
+    the cross-platform FileMsiGetProperty processor instead, which works on
+    Windows, macOS, and Linux.
     """
 
     description = __doc__

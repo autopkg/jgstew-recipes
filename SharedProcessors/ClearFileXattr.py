@@ -40,7 +40,7 @@ class ClearFileXattr(SharedUtilityMethods):  # pylint: disable=invalid-name
             "description": "xattr to clear",
         },
     }
-    output_variables = {"None": {}}
+    output_variables = {}
 
     __doc__ = description
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/autopkg/python
 """Extracts the file using shutil unpack_archive.
 
 For more advanced extraction with 7zip, see:
@@ -50,7 +50,7 @@ DEFAULT_7ZIP_FORMATS = [
 class ExtractorShutilUnpack(Processor):
     """Extracts an archive using Python's shutil, with optional 7z subprocess fallback for unsupported formats."""
 
-    description = "Extracts the archive using 7z."
+    description = __doc__
     input_variables = {
         "file_path": {
             "required": False,

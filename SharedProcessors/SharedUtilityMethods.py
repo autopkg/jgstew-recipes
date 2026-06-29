@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# pre-commit-skip: processor-conventions  (base/utility, not a standard runnable processor)
 """
 Created by James Stewart
 

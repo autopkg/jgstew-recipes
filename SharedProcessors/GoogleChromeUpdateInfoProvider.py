@@ -12,6 +12,8 @@
 # - https://github.com/SukkaW/CheckChrome
 # - https://source.chromium.org/chromium/chromium/src/+/main:docs/updater/protocol_3_1.md
 #
+"""See docstring for GoogleChromeUpdateInfoProvider class"""
+
 import uuid
 import xml.etree.ElementTree
 
@@ -24,9 +26,7 @@ __all__ = ["GoogleChromeUpdateInfoProvider"]
 class GoogleChromeUpdateInfoProvider(Processor):
     """Queries Google's Omaha update service to find the latest Chrome download URL, SHA256 hash, and file size for a given channel and platform."""
 
-    description = (
-        "Provides download information for the latest version of Google Chrome."
-    )
+    description = __doc__
     input_variables = {
         "chrome_channel": {
             "required": False,

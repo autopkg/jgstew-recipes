@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+# pre-commit-skip: processor-conventions  (base/utility, not a standard runnable processor)
 #
 # James Stewart @JGStew - 2026
 #
