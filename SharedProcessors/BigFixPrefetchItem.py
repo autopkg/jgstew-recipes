@@ -69,7 +69,6 @@ class BigFixPrefetchItem(Processor):  # pylint: disable=invalid-name
             )
         }
     }
-    __doc__ = description
 
     def get_prefetch(self, prefetch_dictionary):
         """

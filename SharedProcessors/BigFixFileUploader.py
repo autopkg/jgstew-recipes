@@ -42,7 +42,6 @@ class BigFixFileUploader(SharedUtilityMethods):
     output_variables = {
         "file_upload_prefetch": {"description": "The prefetch for the uploaded file."},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

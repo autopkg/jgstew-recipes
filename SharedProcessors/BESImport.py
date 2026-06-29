@@ -55,7 +55,6 @@ class BESImport(Processor):
             "description": "Description of BigFix import results."
         },
     }
-    __doc__ = description
 
     def get_config(self, conf_file=None):
         """load config info from file"""

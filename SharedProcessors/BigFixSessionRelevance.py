@@ -32,7 +32,6 @@ class BigFixSessionRelevance(SharedUtilityMethods):
     output_variables = {
         "ses_rel_results": {"description": "The results of the session relevance"},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

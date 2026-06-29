@@ -63,7 +63,6 @@ class BigFixSetupTemplateDictionary(Processor):  # pylint: disable=invalid-name
             "description": "python dictionary template with data for template"
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

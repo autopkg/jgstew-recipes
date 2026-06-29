@@ -115,7 +115,6 @@ class BigFixActioner(BESImport):
             "description": "Description of BigFix Actioner results."
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""
