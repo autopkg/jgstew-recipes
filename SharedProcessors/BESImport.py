@@ -50,6 +50,7 @@ class BESImport(Processor):
     }
     output_variables = {
         "bes_id": {"description": "The returned ID of the bigfix content imported."},
+        "bes_title": {"description": "The title parsed from the imported BES content."},
         "bes_import_summary_result": {
             "description": "Description of BigFix import results."
         },
@@ -98,7 +99,7 @@ class BESImport(Processor):
             )[0]
 
     def main(self):
-        """BESImport Main Method"""
+        """Execution starts here."""
         # Assign BES Console Variables
         bes_file = self.env.get("bes_file", self.env.get("content_file_pathname"))
 
