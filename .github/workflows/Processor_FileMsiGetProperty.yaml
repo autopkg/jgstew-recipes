@@ -3,6 +3,8 @@ name: Test Processor FileMsiGetProperty
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "SharedProcessors/FileMsiGetProperty.py"
       - "Test-Recipes/FileMsiGetProperty.test.recipe.yaml"

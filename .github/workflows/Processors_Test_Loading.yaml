@@ -3,6 +3,8 @@ name: Test Processor Loading
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "SharedProcessors/**"
       - "test_processors_load.sh"

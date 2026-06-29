@@ -3,6 +3,8 @@ name: Test AutoPkg Release Brew
 
 on:
   push:
+    branches:
+      - main
     paths:
       - ".github/workflows/AutoPkgReleaseBrew.yaml"
       - "AutoPkgRecipe/autopkg.rb.mustache"

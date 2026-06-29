@@ -3,6 +3,8 @@ name: Test VersionGetMajorMinor
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "SharedProcessors/VersionGetMajorMinor.py"
       - "Test-Recipes/VersionGetMajorMinor.test.recipe.yaml"

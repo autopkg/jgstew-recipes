@@ -11,6 +11,8 @@ name: Test AutoPkg Release MSI
 
 on:
   push:
+    branches:
+      - main
     paths:
       - ".github/workflows/AutoPkgReleaseMSI.yaml"
       - "AutoPkgRecipe/AutoPkgReleaseSource.download.recipe.yaml"
