@@ -41,7 +41,6 @@ class TemplateDictionaryReadKey(Processor):  # pylint: disable=invalid-name
             "description": ("name of the variable where the key value is stored")
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

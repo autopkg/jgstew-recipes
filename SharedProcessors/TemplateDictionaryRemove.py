@@ -34,7 +34,6 @@ class TemplateDictionaryRemove(Processor):  # pylint: disable=invalid-name
         "dictionary_name": {"description": ("The reduced dictionary name")},
         "dictionary_reduced": {"description": ("The reduced dictionary")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

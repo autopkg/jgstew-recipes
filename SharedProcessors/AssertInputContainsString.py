@@ -34,7 +34,6 @@ class AssertInputContainsString(Processor):  # pylint: disable=invalid-name
     output_variables = {
         "assert_result": {"description": ("The result of the check")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

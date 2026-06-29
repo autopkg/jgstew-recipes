@@ -76,8 +76,6 @@ class ExtractorShutilUnpack(Processor):
     }
     output_variables = {}
 
-    __doc__ = description
-
     def extract_7zip(self, filename, extract_dir):
         """Extract a 7-zip archive to a directory using the 7z executable.
 

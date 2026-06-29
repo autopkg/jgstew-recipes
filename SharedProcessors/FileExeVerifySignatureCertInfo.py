@@ -76,7 +76,6 @@ class FileExeVerifySignatureCertInfo(Processor):  # pylint: disable=invalid-name
             "description": "SHA256 fingerprint of the cert"
         },
     }
-    __doc__ = description
 
     def find_signer_certificate(self, signed_data):
         """Return the certificate that matches the signer (by serial number).

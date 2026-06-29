@@ -62,7 +62,6 @@ class ImageToAscii(Processor):  # pylint: disable=invalid-name
             "description": "The image rendered as ASCII art text",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

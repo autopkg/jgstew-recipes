@@ -30,7 +30,9 @@ DEFAULT_7ZIP_PATHS = [
 
 
 class ExtractorSevenZip(Processor):
-    description = "Extracts an archive using the 7z executable, with support for path preservation, include/exclude patterns, and custom arguments."
+    """Extracts an archive using the 7z executable, with support for path preservation, include/exclude patterns, and custom arguments."""
+
+    description = __doc__
     input_variables = {
         "file_path": {
             "required": False,
@@ -71,8 +73,6 @@ class ExtractorSevenZip(Processor):
         },
     }
     output_variables = {}
-
-    __doc__ = description
 
     def main(self):
         """Execution starts here:"""

@@ -65,7 +65,6 @@ class AutoPkgCacheCleanup(Processor):  # pylint: disable=invalid-name
             "description": ("Total size of the download cache in GB.")
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

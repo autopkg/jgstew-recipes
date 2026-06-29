@@ -50,7 +50,6 @@ class QRCodeGenerator(Processor):  # pylint: disable=invalid-name
             "description": "The QR code rendered as ASCII text",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

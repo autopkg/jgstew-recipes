@@ -36,7 +36,6 @@ class JsonPath(Processor):  # pylint: disable=invalid-name
     output_variables = {
         "json_path_result": {"description": ("The result")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

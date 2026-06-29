@@ -32,8 +32,6 @@ class FileHasher(Processor):  # pylint: disable=invalid-name
         "filehasher_size": {"description": "The input file size"},
     }
 
-    __doc__ = description
-
     def hash(self, file_path):
         """Compute SHA1, SHA256, and MD5 hashes and byte size of a file in a single streaming pass.
 

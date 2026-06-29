@@ -73,7 +73,6 @@ class FileAudioConvert(Processor):  # pylint: disable=invalid-name
             "description": "The path of the converted audio file",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

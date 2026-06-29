@@ -151,7 +151,6 @@ class URLDownloaderPython(URLDownloader):
             "description": "Description of interesting results."
         },
     }
-    __doc__ = description
 
     def download_changed(self, header):
         """Check if downloaded file changed on server."""

@@ -66,7 +66,6 @@ class FileExeGetInfoPeExpanded(Processor):  # pylint: disable=invalid-name
         "file_pe_imported_dlls": {"description": "Array of imported DLL names"},
         "file_pe_imported_dll_count": {"description": "Number of imported DLLs"},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

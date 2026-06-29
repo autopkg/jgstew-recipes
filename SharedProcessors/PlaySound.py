@@ -56,7 +56,6 @@ class PlaySound(Processor):  # pylint: disable=invalid-name
             "description": "The command line used to play the sound",
         },
     }
-    __doc__ = description
 
     def build_command(self, sound_file_path):
         """Build the platform-native command to play a sound file.

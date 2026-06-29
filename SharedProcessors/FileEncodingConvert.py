@@ -43,7 +43,6 @@ class FileEncodingConvert(Processor):  # pylint: disable=invalid-name
             )
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

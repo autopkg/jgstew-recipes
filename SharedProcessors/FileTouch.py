@@ -36,7 +36,6 @@ class FileTouch(Processor):  # pylint: disable=invalid-name
     output_variables = {
         "touch_result": {"description": ("The result")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

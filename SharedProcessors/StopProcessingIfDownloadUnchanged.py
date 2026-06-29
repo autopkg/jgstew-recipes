@@ -43,7 +43,6 @@ class StopProcessingIfDownloadUnchanged(Processor):  # pylint: disable=invalid-n
             "description": "Boolean. Should we stop processing the recipe?"
         }
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

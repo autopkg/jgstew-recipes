@@ -48,7 +48,6 @@ class FileArchiveListContents(Processor):  # pylint: disable=invalid-name
             "description": "Number of entries found in the archive",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

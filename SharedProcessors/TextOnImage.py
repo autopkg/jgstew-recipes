@@ -80,7 +80,6 @@ class TextOnImage(Processor):  # pylint: disable=invalid-name
             "description": "The path of the image with text drawn on it",
         },
     }
-    __doc__ = description
 
     def load_font(self, font_path, font_size):
         """Load a TrueType font, falling back to Pillow's scalable default.

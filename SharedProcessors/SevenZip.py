@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/autopkg/python
 """Creates archive using the 7z utility."""
 
 import os
@@ -30,7 +30,9 @@ DEFAULT_7ZIP_PATHS = [
 
 
 class SevenZip(Processor):
-    description = "Runs the 7z executable with custom arguments, optionally changing the working directory, for archiving or extraction tasks."
+    """Runs the 7z executable with custom arguments, optionally changing the working directory, for archiving or extraction tasks."""
+
+    description = __doc__
     input_variables = {
         "sevenzip_args": {
             "required": True,
@@ -54,8 +56,6 @@ class SevenZip(Processor):
         },
     }
     output_variables = {}
-
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

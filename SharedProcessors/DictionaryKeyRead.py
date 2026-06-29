@@ -37,7 +37,6 @@ class DictionaryKeyRead(Processor):
         },
     }
     output_variables = {}
-    __doc__ = description
 
     def read_dictionary_key(self, input_dictionary, dictionary_key):
         """Read the value associated with a key in a dictionary.

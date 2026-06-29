@@ -33,7 +33,6 @@ class TextToSpeech(Processor):  # pylint: disable=invalid-name
         "input_string": {"required": True, "description": "string to say"},
     }
     output_variables = {}
-    __doc__ = description
 
     @staticmethod
     def _speech_available():

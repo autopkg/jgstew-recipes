@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+"""See docstring for Notifier class"""
 
 import asyncio
 import logging

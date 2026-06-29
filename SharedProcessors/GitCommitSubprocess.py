@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+"""See docstring for GitCommitSubprocess class"""
 
 import os
 import subprocess

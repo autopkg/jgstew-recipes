@@ -49,7 +49,6 @@ class JSONWriter(Processor):  # pylint: disable=invalid-name
             "description": "The path of the JSON file that was written",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

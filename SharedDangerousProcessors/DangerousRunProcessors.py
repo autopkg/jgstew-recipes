@@ -34,7 +34,6 @@ class DangerousRunProcessors(Processor):  # pylint: disable=invalid-name
     output_variables = {
         "processor_results": {"description": ("The result of the processors")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

@@ -48,7 +48,6 @@ class FileGetMetadata(Processor):  # pylint: disable=invalid-name
             "description": "Image/video height in pixels, or empty string",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

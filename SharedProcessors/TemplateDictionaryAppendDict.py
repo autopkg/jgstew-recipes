@@ -34,7 +34,6 @@ class TemplateDictionaryAppendDict(Processor):  # pylint: disable=invalid-name
         "dictionary_name": {"description": ("The appended dictionary name")},
         "dictionary_appended": {"description": ("The appended dictionary")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

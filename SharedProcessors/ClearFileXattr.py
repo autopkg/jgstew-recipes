@@ -42,8 +42,6 @@ class ClearFileXattr(SharedUtilityMethods):  # pylint: disable=invalid-name
     }
     output_variables = {}
 
-    __doc__ = description
-
     def clear_etag(self, file_path, file_xattr):
         """Remove a specified extended attribute from a file.
 

@@ -38,7 +38,6 @@ class GetRecipeParentFolderName(Processor):  # pylint: disable=invalid-name
             )
         },
     }
-    __doc__ = description
 
     def get_parent_folder_name(self):
         """Return the parent directory name of the current recipe file.

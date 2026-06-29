@@ -44,7 +44,6 @@ class GetCommonPlatformEnumeration(Processor):  # pylint: disable=invalid-name
     output_variables = {
         "cpe": {"description": ("the env var to store the result")},
     }
-    __doc__ = description
 
     def get_parent_folder_name(self):
         """Return the parent directory name of the current recipe file.

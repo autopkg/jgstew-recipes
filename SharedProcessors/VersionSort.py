@@ -40,7 +40,6 @@ class VersionSort(Processor):  # pylint: disable=invalid-name
             "description": "The oldest (smallest) version in the array"
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

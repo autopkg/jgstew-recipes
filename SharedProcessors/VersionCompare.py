@@ -62,7 +62,6 @@ class VersionCompare(Processor):  # pylint: disable=invalid-name
             "description": "The newer of the two version strings (version2 if equal)",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

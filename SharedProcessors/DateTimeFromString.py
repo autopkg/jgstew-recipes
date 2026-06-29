@@ -44,7 +44,6 @@ class DateTimeFromString(Processor):  # pylint: disable=invalid-name
         },
         "datetime_parsed": {"description": ("parsed result")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

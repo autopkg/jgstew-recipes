@@ -75,7 +75,6 @@ class URLDownloaderRequests(URLDownloader):
     output_variables = {
         "pathname": {"description": "Path to the downloaded file."},
     }
-    __doc__ = description
 
     def get_requests_session(self) -> requests.Session:
         """Retrieve or create a persistent requests Session with cookie support.

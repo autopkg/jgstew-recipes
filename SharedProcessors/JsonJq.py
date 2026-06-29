@@ -53,7 +53,6 @@ class JsonJq(URLDownloader):  # pylint: disable=invalid-name
         "json_jq_result": {"description": ("The result")},
         "jq_bin_path": {"description": ("The jq binary used.")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

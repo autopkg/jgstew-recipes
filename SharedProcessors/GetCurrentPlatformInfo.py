@@ -42,7 +42,6 @@ class GetCurrentPlatformInfo(Processor):  # pylint: disable=invalid-name
         "platform_python_version": {"description": ("python platform.python_version")},
         # "platform_system_alias": {"description": ("python platform.system_alias")},
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

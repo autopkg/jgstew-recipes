@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/autopkg/python
 """
 Created by James Stewart
 Based on ExeVersionExtractor by Rusty Myers
@@ -79,8 +79,6 @@ class FileExeVersionExtractor(SharedUtilityMethods):
     output_variables = {
         "version": {"description": "Version of exe found."},
     }
-
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

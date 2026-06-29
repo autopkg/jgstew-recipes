@@ -41,7 +41,6 @@ class EnvironmentDump(Processor):  # pylint: disable=invalid-name
             "description": "The dumped environment as a formatted JSON string",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

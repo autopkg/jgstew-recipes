@@ -50,7 +50,6 @@ class StringFormat(Processor):  # pylint: disable=invalid-name
             "description": "The result of applying the format string",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

@@ -29,8 +29,6 @@ class VariableToString(Processor):
     }
     output_variables = {}
 
-    __doc__ = description
-
     def main(self):
         """Execution starts here."""
         input_variable = self.env.get("input_variable", "")

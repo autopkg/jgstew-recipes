@@ -63,7 +63,6 @@ class ContentFromTemplate(Processor):  # pylint: disable=invalid-name
             "description": ("The path of the file saved containing the content_string")
         },
     }
-    __doc__ = description
 
     def generate_content(self, template_dict):
         """
