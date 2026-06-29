@@ -3,6 +3,8 @@ name: plistlint
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "**.plist"
       - "**.recipe"

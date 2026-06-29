@@ -3,6 +3,8 @@ name: Test AutoPkg Core Processors
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "Test-Recipes/AutopkgCore.test.recipe.yaml"
       - ".github/workflows/AutoPkgCoreProcessors.yaml"

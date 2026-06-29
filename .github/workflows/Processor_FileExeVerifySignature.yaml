@@ -3,6 +3,8 @@ name: Test Processor FileExeVerifySignature
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "SharedProcessors/FileExeVerifySignature.py"
       - "Test-Recipes/FileExeVerifySignature.test.recipe.yaml"

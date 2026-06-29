@@ -3,6 +3,8 @@ name: Test Processor DateTimeFromString
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "SharedProcessors/DateTimeFromString.py"
       - "Test-Recipes/DateTimeFromString.test.recipe.yaml"

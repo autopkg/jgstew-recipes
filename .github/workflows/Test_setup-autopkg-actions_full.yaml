@@ -3,6 +3,8 @@ name: Test setup-autopkg-actions Full
 
 on:
   push:
+    branches:
+      - main
     paths:
       - ".github/workflows/Test_setup-autopkg-actions_full.yaml"
   pull_request:

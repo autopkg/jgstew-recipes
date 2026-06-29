@@ -3,6 +3,8 @@ name: Test Processor AutoPkgCacheCleanup
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "SharedProcessors/AutoPkgCacheCleanup.py"
       - "Test-Recipes/AutoPkgCacheCleanup.test.recipe.yaml"

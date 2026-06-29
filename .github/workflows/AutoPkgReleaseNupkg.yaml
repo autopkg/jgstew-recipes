@@ -4,6 +4,8 @@ name: Test AutoPkg Release Nupkg
 
 on:
   push:
+    branches:
+      - main
     paths:
       - ".github/workflows/AutoPkgReleaseNupkg.yaml"
       - "AutoPkgRecipe/AutoPkgReleaseSource.download.recipe.yaml"

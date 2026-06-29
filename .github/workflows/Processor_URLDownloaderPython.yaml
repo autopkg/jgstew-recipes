@@ -3,6 +3,8 @@ name: Test Processor URLDownloaderPython
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "SharedProcessors/URLDownloaderPython.py"
       - "Test-Recipes/URLDownloaderPython.test.recipe.yaml"

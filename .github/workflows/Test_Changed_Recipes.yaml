@@ -6,6 +6,8 @@ name: Test Changed Recipes
 # to catch vendor URL rot and processor regressions over time.
 on:
   push:
+    branches:
+      - main
     paths:
       - "**.recipe.yaml"
   pull_request:

@@ -8,6 +8,8 @@ name: Test Changed Processors
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "SharedProcessors/**.py"
   pull_request:
