@@ -45,7 +45,6 @@ class HelloWorld(Processor):  # pylint: disable=invalid-name
             "description": "The full greeting string that was produced",
         },
     }
-    __doc__ = description
 
     def main(self):
         """Execution starts here."""

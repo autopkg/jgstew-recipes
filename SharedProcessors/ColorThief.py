@@ -62,7 +62,6 @@ class ColorThief(Processor):  # pylint: disable=invalid-name
             "description": "Array of palette colors as #RRGGBB hex strings, most common first",
         },
     }
-    __doc__ = description
 
     def get_palette(self, image, color_count):
         """Quantize an image and return its palette ordered by pixel frequency.
