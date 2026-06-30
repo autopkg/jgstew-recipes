@@ -4,6 +4,19 @@ AutoPkg recipes which anyone can use from [JGStew](https://github.com/jgstew).
 
 Where possible recipes will be in YAML format for better cross platform support at the expense of requiring AutoPkg 2.3+
 
+## About this repo:
+
+The main goal of this repo is to showcase the custom AutoPkg processors in [`SharedProcessors/`](SharedProcessors/) so that others can reuse them in their own recipes. [`Test-Recipes/`](Test-Recipes/) and [`Recipes-Examples/`](Recipes-Examples/) show how to test and use each one.
+
+This repo is somewhat unusual among AutoPkg recipe repos:
+
+- Most AutoPkg repos target macOS only. Here, processors and recipes are generally intended to run **cross platform** (macOS, Windows, and Linux).
+- Because of that, this repo includes recipes for **non-macOS software**, as well as recipes that generate output for **all platforms** (e.g. BigFix and Chocolatey packaging in addition to macOS pkg/dmg).
+
+New here? The [`Mozilla/`](Mozilla/) folder is the most complete and expansive set of recipes (Firefox across every platform and recipe type) and is a good place to start.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how this cross-platform goal shapes the repo's conventions.
+
 ## Using these recipes:
 
 Add this repo to AutoPkg, then run a recipe:

@@ -4,6 +4,30 @@ Thanks for contributing to jgstew-recipes. This document covers the repository
 layout, how to set up a development environment, how changes are validated, and
 the conventions that custom processors are expected to follow.
 
+## Cross-platform support
+
+Unlike most AutoPkg recipe repos - which target macOS only - the processors and
+recipes here are generally intended to run on **macOS, Windows, and Linux**.
+
+What this means in practice:
+
+- Recipes are written in **YAML** (rather than plist) for better cross-platform
+  authoring, which is why AutoPkg 2.3+ is required.
+- Processors should avoid macOS-only assumptions (paths, shell tools, frameworks)
+  unless the processor is inherently platform-specific. Prefer cross-platform
+  Python and tooling, and guard or feature-detect anything platform-specific.
+- Platform-specific recipes and processors do exist as **exceptions** and are
+  named/scoped accordingly - e.g. the `-Win`, `-Mac`, `-Linux` suffixes on recipe
+  names (`Firefox-Win.download`, `Firefox-Mac.download`, `Firefox-Linux.download`),
+  Windows-only MSI handling, or macOS-only DMG/pkg steps.
+
+Because of this cross-platform goal, **some conventions here differ from
+macOS-only AutoPkg recipe repos.** If a convention in this repo looks different
+from what you have seen elsewhere, it is usually intentional and driven by the
+need to also work on Windows and Linux - follow the conventions in this document
+and the `autopkg_processor_check_conventions.py` hook rather than the macOS-only
+norms.
+
 ## Repository layout
 
 - `SharedProcessors/` - custom AutoPkg processors (Python). One class per file,
