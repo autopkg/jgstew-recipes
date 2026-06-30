@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/jgstew/jgstew-recipes/blob/main/.AutoPkgRecipeOpinionated.schema.json",
-  "$comment": "v0.1",
+  "$id": "https://github.com/autopkg/jgstew-recipes/blob/main/.AutoPkgRecipeOpinionated.schema.json",
+  "$comment": "v0.2",
   "title": "AutoPkg Recipe YAML schema",
   "description": "A schema for validating AutoPkg Recipe YAML files. Used by check-jsonschema pre-commit hook.",
   "$ref": "#/definitions/AutoPkgRecipe",
@@ -28,8 +28,8 @@
         },
         "MinimumVersion": {
           "type": "string",
-          "$comment": "Allow 0.0 through 3.9.9, does not support RC's",
-          "pattern": "[0-3](\\.\\d){1,2}"
+          "$comment": "anchored major.minor[.patch], multi-digit segments, no RC suffixes",
+          "pattern": "^\\d+(\\.\\d+){1,2}$"
         },
         "ParentRecipe": {
           "type": "string",
@@ -63,11 +63,15 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "Comment": {
+          "$comment": "AutoPkg allows a free-form Comment on any process step",
+          "type": "string"
+        },
         "Processor": {
           "anyOf": [
             {
               "type": "string",
-              "$comment": "The built in AutoPkg Processors from https://github.com/autopkg/autopkg/tree/dev/Code/autopkglib",
+              "$comment": "Built-in AutoPkg Processors (synced to v2.9.0: https://github.com/autopkg/autopkg/tree/v2.9.0/Code/autopkglib), plus legacy processors (e.g. BrewCaskInfoProvider) kept for older AutoPkg versions -- prefer allowing too much over rejecting a valid processor",
               "enum": [
                 "AppDmgVersioner",
                 "AppPkgCreator",
@@ -116,12 +120,13 @@
                 "URLDownloaderPython",
                 "URLGetter",
                 "URLTextSearcher",
+                "VariableSetter",
                 "Versioner"
               ]
             },
             {
               "type": "string",
-              "$comment": "JGStew's Processors from: https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors",
+              "$comment": "JGStew's Processors from: https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors",
               "enum": [
                 "com.github.jgstew.SharedProcessors/AssertInputContainsString",
                 "com.github.jgstew.SharedProcessors/AutoPkgCacheCleanup",
@@ -132,19 +137,28 @@
                 "com.github.jgstew.SharedProcessors/BigFixSessionRelevance",
                 "com.github.jgstew.SharedProcessors/BigFixSetupTemplateDictionary",
                 "com.github.jgstew.SharedProcessors/ClearFileXattr",
+                "com.github.jgstew.SharedProcessors/ColorThief",
                 "com.github.jgstew.SharedProcessors/ContentFromTemplate",
                 "com.github.jgstew.SharedProcessors/DateTimeFromString",
+                "com.github.jgstew.SharedProcessors/DictionaryKeyRead",
+                "com.github.jgstew.SharedProcessors/EnvRead",
+                "com.github.jgstew.SharedProcessors/EnvironmentDump",
                 "com.github.jgstew.SharedProcessors/ExtractorSevenZip",
                 "com.github.jgstew.SharedProcessors/ExtractorShutilUnpack",
+                "com.github.jgstew.SharedProcessors/FileArchiveListContents",
+                "com.github.jgstew.SharedProcessors/FileAudioConvert",
                 "com.github.jgstew.SharedProcessors/FileCopyNewest",
                 "com.github.jgstew.SharedProcessors/FileEncodingConvert",
                 "com.github.jgstew.SharedProcessors/FileExeGetIcon",
                 "com.github.jgstew.SharedProcessors/FileExeGetInfoPE",
+                "com.github.jgstew.SharedProcessors/FileExeGetInfoPeExpanded",
                 "com.github.jgstew.SharedProcessors/FileExeVerifySignature",
+                "com.github.jgstew.SharedProcessors/FileExeVerifySignatureCertInfo",
                 "com.github.jgstew.SharedProcessors/FileExeVersionExtractor",
                 "com.github.jgstew.SharedProcessors/FileGetBase64",
                 "com.github.jgstew.SharedProcessors/FileGetExecutable",
                 "com.github.jgstew.SharedProcessors/FileGetMagicType",
+                "com.github.jgstew.SharedProcessors/FileGetMetadata",
                 "com.github.jgstew.SharedProcessors/FileGetPathFile",
                 "com.github.jgstew.SharedProcessors/FileGetStat",
                 "com.github.jgstew.SharedProcessors/FileHasher",
@@ -158,21 +172,37 @@
                 "com.github.jgstew.SharedProcessors/GetCommonPlatformEnumeration",
                 "com.github.jgstew.SharedProcessors/GetCurrentPlatformInfo",
                 "com.github.jgstew.SharedProcessors/GetRecipeParentFolderName",
+                "com.github.jgstew.SharedProcessors/GitCommitSubprocess",
+                "com.github.jgstew.SharedProcessors/GoogleChromeUpdateInfoProvider",
+                "com.github.jgstew.SharedProcessors/ImageToAscii",
+                "com.github.jgstew.SharedProcessors/JSONWriter",
                 "com.github.jgstew.SharedProcessors/JsonJq",
                 "com.github.jgstew.SharedProcessors/JsonPath",
+                "com.github.jgstew.SharedProcessors/Notifier",
+                "com.github.jgstew.SharedProcessors/PlaySound",
+                "com.github.jgstew.SharedProcessors/QRCodeGenerator",
+                "com.github.jgstew.SharedProcessors/SevenZip",
                 "com.github.jgstew.SharedProcessors/SharedUtilityMethods",
+                "com.github.jgstew.SharedProcessors/Sleep",
                 "com.github.jgstew.SharedProcessors/StopProcessingIfDownloadUnchanged",
+                "com.github.jgstew.SharedProcessors/StringFormat",
                 "com.github.jgstew.SharedProcessors/TemplateDictionaryAppend",
                 "com.github.jgstew.SharedProcessors/TemplateDictionaryAppendDict",
                 "com.github.jgstew.SharedProcessors/TemplateDictionaryAppendInput",
+                "com.github.jgstew.SharedProcessors/TemplateDictionaryReadKey",
                 "com.github.jgstew.SharedProcessors/TemplateDictionaryRemove",
+                "com.github.jgstew.SharedProcessors/TextOnImage",
                 "com.github.jgstew.SharedProcessors/TextSearcher",
                 "com.github.jgstew.SharedProcessors/TextSubstitutionRegEx",
+                "com.github.jgstew.SharedProcessors/TextToSpeech",
                 "com.github.jgstew.SharedProcessors/URLDownloaderPython",
                 "com.github.jgstew.SharedProcessors/URLDownloaderRequests",
                 "com.github.jgstew.SharedProcessors/URLTextSearcherArray",
+                "com.github.jgstew.SharedProcessors/VariableToString",
+                "com.github.jgstew.SharedProcessors/VersionCompare",
                 "com.github.jgstew.SharedProcessors/VersionGetMajorMinor",
-                "com.github.jgstew.SharedProcessors/VersionMaximumArray"
+                "com.github.jgstew.SharedProcessors/VersionMaximumArray",
+                "com.github.jgstew.SharedProcessors/VersionSort"
               ]
             },
             {
