@@ -20,6 +20,10 @@ class GetCommonPlatformEnumeration(Processor):  # pylint: disable=invalid-name
 
     description = __doc__
     input_variables = {
+        "template_file_path": {
+            "required": False,
+            "description": "The template file path, used to infer the target software platform if not explicitly provided. Value should come from previous steps.",
+        },
         "cpe_product": {
             "required": False,
             "default": "",
