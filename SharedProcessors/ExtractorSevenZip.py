@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+# Created 2023 by JGStew
 """Extracts the file using the 7z utility."""
 
 import os

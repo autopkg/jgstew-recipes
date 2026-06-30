@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+# Created 2022 by JGStew
 """
 See docstring for FileGetMagicType class
 """

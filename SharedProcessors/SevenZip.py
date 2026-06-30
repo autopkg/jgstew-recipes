@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+# Created 2024 by JGStew
 """Creates archive using the 7z utility."""
 
 import os

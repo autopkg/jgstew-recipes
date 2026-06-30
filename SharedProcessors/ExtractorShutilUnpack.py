@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+# Created 2023 by JGStew
 """Extracts the file using shutil unpack_archive.
 
 For more advanced extraction with 7zip, see:

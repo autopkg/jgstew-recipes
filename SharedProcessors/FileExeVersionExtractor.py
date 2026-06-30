@@ -1,6 +1,7 @@
 #!/usr/local/autopkg/python
+# Created 2021 by JGStew
 """
-Created by James Stewart
+Created by JGStew
 Based on ExeVersionExtractor by Rusty Myers
 Based on WinInstallerExtractor by Matt Hansen
 

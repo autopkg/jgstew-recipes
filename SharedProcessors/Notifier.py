@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+# Created 2025 by JGStew
 """See docstring for Notifier class"""
 
 import asyncio

@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+# Created 2021 by JGStew
 """
 See docstring for FileGetExecutable class
 """

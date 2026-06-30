@@ -1,4 +1,5 @@
 #!/usr/local/autopkg/python
+# Created 2023 by JGStew
 """
 See docstring for FileGetStat class
 """
