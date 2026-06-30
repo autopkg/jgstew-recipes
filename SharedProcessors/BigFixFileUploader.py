@@ -80,5 +80,5 @@ class BigFixFileUploader(SharedUtilityMethods):
 
 
 if __name__ == "__main__":
-    processor = BigFixFileUploader()
-    processor.execute_shell()
+    PROCESSOR = BigFixFileUploader()
+    PROCESSOR.execute_shell()

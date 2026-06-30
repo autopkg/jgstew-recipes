@@ -278,5 +278,5 @@ class BESImport(Processor):
 
 
 if __name__ == "__main__":
-    processor = BESImport()
-    processor.execute_shell()
+    PROCESSOR = BESImport()
+    PROCESSOR.execute_shell()

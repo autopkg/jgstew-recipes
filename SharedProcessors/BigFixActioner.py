@@ -171,5 +171,5 @@ class BigFixActioner(BESImport):
 
 
 if __name__ == "__main__":
-    processor = BigFixActioner()
-    processor.execute_shell()
+    PROCESSOR = BigFixActioner()
+    PROCESSOR.execute_shell()

@@ -66,5 +66,5 @@ class BigFixSessionRelevance(SharedUtilityMethods):
 
 
 if __name__ == "__main__":
-    processor = BigFixSessionRelevance()
-    processor.execute_shell()
+    PROCESSOR = BigFixSessionRelevance()
+    PROCESSOR.execute_shell()
