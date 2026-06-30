@@ -173,5 +173,5 @@ class GoogleChromeUpdateInfoProvider(Processor):
 
 
 if __name__ == "__main__":
-    processor = GoogleChromeUpdateInfoProvider()
-    processor.execute_shell()
+    PROCESSOR = GoogleChromeUpdateInfoProvider()
+    PROCESSOR.execute_shell()

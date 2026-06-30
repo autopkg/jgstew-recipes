@@ -129,5 +129,5 @@ class ExtractorSevenZip(Processor):
 
 
 if __name__ == "__main__":
-    processor = ExtractorSevenZip()
-    processor.execute_shell()
+    PROCESSOR = ExtractorSevenZip()
+    PROCESSOR.execute_shell()

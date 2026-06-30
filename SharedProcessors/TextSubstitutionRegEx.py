@@ -75,5 +75,5 @@ class TextSubstitutionRegEx(Processor):
 
 
 if __name__ == "__main__":
-    PROCESSOR = TextSubstitutionRegEx
+    PROCESSOR = TextSubstitutionRegEx()
     PROCESSOR.execute_shell()

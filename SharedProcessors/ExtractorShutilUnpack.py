@@ -154,5 +154,5 @@ class ExtractorShutilUnpack(Processor):
 
 
 if __name__ == "__main__":
-    processor = ExtractorShutilUnpack()
-    processor.execute_shell()
+    PROCESSOR = ExtractorShutilUnpack()
+    PROCESSOR.execute_shell()

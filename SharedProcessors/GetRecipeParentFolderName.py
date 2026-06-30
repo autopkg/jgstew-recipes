@@ -45,7 +45,6 @@ class GetRecipeParentFolderName(Processor):  # pylint: disable=invalid-name
         Returns:
             Parent folder name string, typically the software vendor name
         """
-        print("get_parent_folder_name()")
 
         recipe_dir = self.env.get("RECIPE_DIR", "")
 

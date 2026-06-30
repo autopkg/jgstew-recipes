@@ -88,7 +88,7 @@ WARNING: input_keys_array was not a list, setting default value:
                 append_key = str(item).partition(input_keys_prefix)[2]
                 dictionary_to_append[append_key] = self.env[item]
             if item in input_keys_array:
-                print(f"{item} in array")
+                self.output(f"{item} in array", 3)
                 dictionary_to_append[str(item)] = self.env[item]
 
         # Writing output_variables

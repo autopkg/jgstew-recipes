@@ -42,7 +42,7 @@ class DangerousEvaluate(Processor):  # pylint: disable=invalid-name
                 compile(evaluate_string, "<string>", "exec")
             )
         except Exception as err:
-            print(err)
+            self.output(err, 3)
 
         self.output(f"self.env: \n{self.env}\n", 5)
 

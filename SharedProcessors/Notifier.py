@@ -125,6 +125,5 @@ class Notifier(Processor):
 
 
 if __name__ == "__main__":
-    # This allows the processor to be tested directly from the command line
-    processor = Notifier()
-    processor.execute_shell()
+    PROCESSOR = Notifier()
+    PROCESSOR.execute_shell()

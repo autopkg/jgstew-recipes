@@ -123,7 +123,7 @@ class FileExeVersionExtractor(SharedUtilityMethods):
         # https://stackoverflow.com/a/50627018/861745
         for line in Output.decode(encoding="utf8", errors="ignore").split("\n"):
             if verbosity > 2:
-                print(line)
+                self.output(line, 3)
             if version_string in line:
                 archiveVersion = line.split()[-1]
                 if version_first:
@@ -138,5 +138,5 @@ class FileExeVersionExtractor(SharedUtilityMethods):
 
 
 if __name__ == "__main__":
-    processor = FileExeVersionExtractor()
-    processor.execute_shell()
+    PROCESSOR = FileExeVersionExtractor()
+    PROCESSOR.execute_shell()

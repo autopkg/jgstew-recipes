@@ -85,9 +85,9 @@ class FileMsiGetInfoOLE(Processor):  # pylint: disable=too-few-public-methods
             getattr(ole_metadata, custom_oleinfo_index).decode()
         )
 
-        if verbose > 4:
-            print("MSI OLE Summary Info Dump:")
-            ole_metadata.dump()
+        self.output(
+            f"MSI OLE Summary Info Dump:\n--------\n{ole_metadata.dump()}\n--------", 4
+        )
 
         """
         Example OLEInfo:

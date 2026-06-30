@@ -120,5 +120,5 @@ class TextSearcher(Processor):
 
 
 if __name__ == "__main__":
-    PROCESSOR = TextSearcher
+    PROCESSOR = TextSearcher()
     PROCESSOR.execute_shell()

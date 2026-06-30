@@ -160,7 +160,7 @@ class FileExeVerifySignature(Processor):  # pylint: disable=too-few-public-metho
                             str(sig_result) + ":" + str(sig_explain)
                         )
                 except Exception as err:
-                    print(err)
+                    self.output(err, 3)
                     self.env["file_signature_result"] = "ERROR_NOT_VALID"
 
                 if (

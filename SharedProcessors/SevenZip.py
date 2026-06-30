@@ -103,5 +103,5 @@ class SevenZip(Processor):
 
 
 if __name__ == "__main__":
-    processor = SevenZip()
-    processor.execute_shell()
+    PROCESSOR = SevenZip()
+    PROCESSOR.execute_shell()
