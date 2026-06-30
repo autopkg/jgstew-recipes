@@ -32,7 +32,8 @@ Because the recipes are YAML, running them requires AutoPkg 2.3 or newer.
 
 Example pip command:
 
-- `pip3 install --requirement requirements.txt`
+- `python3 -m pip install -r <(grep -v '^[[:space:]]*--no-binary' ../autopkg/requirements.txt)`
+- `python3 -m pip install --requirement requirements.txt`
 
 ## AutoPkg Recipe Repo Requirements:
 
