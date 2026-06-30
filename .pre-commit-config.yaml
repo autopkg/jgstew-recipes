@@ -112,6 +112,17 @@ repos:
       - id: validate-plist
       - id: add-missing-docstrings
       # - id: github-action-set-output-fix
+      # https://github.com/jgstew/pre-commit-jgstew/blob/main/pre_commit_hooks/regex_search_filter_replace.py
+      # normalize the "# Created <year> by <author>" header to the canonical author name.
+      # NOTE: files override is required -- this hook defaults to xml/html/bes only.
+      - id: regex-search-filter-replace
+        name: Normalize "Created by" author name to JGStew
+        files: ^Shared(Dangerous)?Processors/.*\.py$
+        args:
+          - '--search=# Created \d{4} by (JGSTEW|jgstew)'
+          - '--filter=(JGSTEW|jgstew)'
+          - '--replace=JGStew'
+          - '--overwrite'
 
   - repo: local
     hooks:

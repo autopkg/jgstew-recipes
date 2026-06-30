@@ -1,5 +1,5 @@
 #!/usr/local/autopkg/python
-# Created 2021 by jgstew
+# Created 2021 by JGStew
 # pre-commit-skip: processor-conventions  (base/utility, not a standard runnable processor)
 """
 Created by JGStew

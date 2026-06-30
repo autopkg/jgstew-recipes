@@ -1,6 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2021
+# Created 2021 by JGStew
 #
 # Related:
 # - https://github.com/jgstew/bigfix_prefetch/blob/master/prefetch_from_dictionary.py
