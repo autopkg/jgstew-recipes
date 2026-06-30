@@ -172,8 +172,7 @@
                 "com.github.jgstew.SharedProcessors/URLDownloaderRequests",
                 "com.github.jgstew.SharedProcessors/URLTextSearcherArray",
                 "com.github.jgstew.SharedProcessors/VersionGetMajorMinor",
-                "com.github.jgstew.SharedProcessors/VersionMaximumArray",
-                "com.github.jgstew.SharedProcessors/WinGetPropertyMSI"
+                "com.github.jgstew.SharedProcessors/VersionMaximumArray"
               ]
             },
             {
