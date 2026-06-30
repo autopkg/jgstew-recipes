@@ -119,17 +119,24 @@ repos:
         name: Normalize "Created by" author name to JGStew.
         files: ^Shared(Dangerous)?Processors/.*\.py$
         args:
-          - '--search=# Created \d{4} by (JGSTEW|jgstew)'
-          - '--filter=(JGSTEW|jgstew)'
+          # non-capturing groups so re.findall returns the whole match, not just
+          # the name (else filetext.replace would swap every jgstew in the file)
+          - '--search=# Created \d{4} by (?:JGSTEW|jgstew)'
+          - '--filter=(?:JGSTEW|jgstew)'
           - '--replace=JGStew'
           - '--overwrite'
       - id: regex-search-filter-replace
         name: Normalize URLDownloaderPython to JGStew's version.
-        files: .(yaml|yml)$
-        exclude: ^(Test-Recipes/URLDownloaderPythonCore.test.recipe.yaml|.pre-commit-config.yaml)$
+        files: \.(ya?ml)$
+        exclude: ^(Test-Recipes/URLDownloaderPythonCore.test.recipe.yaml|.pre-commit-config.yaml)$|.github
         args:
-          - '--search=( Processor: URLDownloaderPython)'
-          - '--filter=( URLDownloaderPython)'
+          # The hook's final step is an UNANCHORED filetext.replace(match, ...), so a
+          # zero-width \b is not enough -- the match string must itself include a real
+          # boundary char (the trailing newline) or "URLDownloaderPythonCore" would be
+          # corrupted by the literal replace. No capturing groups, so re.findall
+          # returns the full match string.
+          - '--search= Processor: URLDownloaderPython\n'
+          - '--filter= URLDownloaderPython'
           - '--replace= com.github.jgstew.SharedProcessors/URLDownloaderPython'
           - '--overwrite'
 
