@@ -1,7 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2022
-#
+# Created 2022 by JGStew
 """See docstring for JsonPath class"""
 
 # pip3 install jsonpath-ng

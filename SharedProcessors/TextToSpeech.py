@@ -1,10 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2024
-#
-# Related:
-# - https://github.com/jgstew/bigfix_prefetch/blob/master/prefetch_from_dictionary.py
-#
+# Created 2024 by JGStew
 """See docstring for TextToSpeech class"""
 
 import os

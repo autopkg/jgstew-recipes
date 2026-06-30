@@ -1,8 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2021
-#
-#
+# Created 2021 by JGStew
 """See docstring for DateTimeFromString class"""
 
 import datetime

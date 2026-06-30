@@ -1,10 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2021
-#
-# Related:
-# - https://github.com/jgstew/bigfix_prefetch/blob/master/prefetch_from_dictionary.py
-#
+# Created 2021 by JGStew
 """See docstring for AssertInputContainsString class"""
 
 from autopkglib import (  # pylint: disable=import-error,wrong-import-position,unused-import

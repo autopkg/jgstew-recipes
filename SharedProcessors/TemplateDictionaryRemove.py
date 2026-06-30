@@ -1,11 +1,9 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2021
-#
+# Created 2022 by Jason Walker
+"""See docstring for TemplateDictionaryRemove class"""
+
 # Related:
 # - https://github.com/jgstew/bigfix_prefetch/blob/master/prefetch_from_dictionary.py
-#
-"""See docstring for TemplateDictionaryRemove class"""
 
 from autopkglib import (  # pylint: disable=import-error,wrong-import-position,unused-import
     Processor,

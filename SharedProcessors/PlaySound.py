@@ -1,11 +1,9 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2026
-#
+# Created 2026 by JGStew
+"""See docstring for PlaySound class"""
+
 # Related:
 # - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/TextToSpeech.py
-#
-"""See docstring for PlaySound class"""
 
 import os
 import platform

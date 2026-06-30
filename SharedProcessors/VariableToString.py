@@ -1,7 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2023
-#
+# Created 2023 by JGStew
 """See docstring for VariableToString class"""
 
 from autopkglib import (  # pylint: disable=import-error,wrong-import-position,unused-import

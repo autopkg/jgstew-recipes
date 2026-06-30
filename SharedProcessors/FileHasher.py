@@ -1,10 +1,8 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2021
-#
-# pylint: disable=C0103
+# Created 2021 by JGStew
 """See docstring for FileHasher class"""
 
+# pylint: disable=C0103
 from hashlib import md5, sha1, sha256
 
 from autopkglib import (  # pylint: disable=import-error,unused-import

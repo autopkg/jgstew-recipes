@@ -1,8 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2021
-#
-#
+# Created 2022 by JGStew
 """See docstring for GetCurrentPlatformInfo class"""
 
 import math

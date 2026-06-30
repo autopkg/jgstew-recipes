@@ -1,11 +1,9 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2026
-#
+# Created 2026 by JGStew
+"""See docstring for VersionSort class"""
+
 # Related:
 # - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/VersionMaximumArray.py
-#
-"""See docstring for VersionSort class"""
 
 import looseversion
 from autopkglib import (  # pylint: disable=import-error,wrong-import-position,unused-import

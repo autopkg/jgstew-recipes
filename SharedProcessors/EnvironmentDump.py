@@ -1,7 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2026
-#
+# Created 2026 by JGStew
 """See docstring for EnvironmentDump class"""
 
 import json

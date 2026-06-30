@@ -1,10 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2026
-#
-# Related:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/FileImageResize.py
-#
+# Created 2026 by JGStew
 """See docstring for ColorThief class"""
 
 import os.path

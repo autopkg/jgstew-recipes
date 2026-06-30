@@ -1,8 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# Copyright 2021 James Stewart @JGStew
-#
-# This is meant to handle sessions and cookies while downloading.
+# Created 2023 by JGStew
 """See docstring for URLDownloaderRequests class"""
 
 import os

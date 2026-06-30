@@ -1,11 +1,9 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2026
-#
+# Created 2026 by JGStew
+"""See docstring for TextOnImage class"""
+
 # Related:
 # - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/FileImageResize.py
-#
-"""See docstring for TextOnImage class"""
 
 import os.path
 

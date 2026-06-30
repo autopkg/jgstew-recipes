@@ -1,10 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2026
-#
-# Related:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/_template.py
-#
+# Created 2026 by JGStew
 """See docstring for QRCodeGenerator class"""
 
 import io

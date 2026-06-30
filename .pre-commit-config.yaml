@@ -115,16 +115,16 @@ repos:
       # https://github.com/jgstew/pre-commit-jgstew/blob/main/pre_commit_hooks/regex_search_filter_replace.py
       # normalize the "# Created <year> by <author>" header to the canonical author name.
       # NOTE: files override is required -- this hook defaults to xml/html/bes only.
-      - id: regex-search-filter-replace
-        name: Normalize "Created by" author name to JGStew.
-        files: ^Shared(Dangerous)?Processors/.*\.py$
-        args:
-          # non-capturing groups so re.findall returns the whole match, not just
-          # the name (else filetext.replace would swap every jgstew in the file)
-          - '--search=# Created \d{4} by (?:JGSTEW|jgstew)'
-          - '--filter=(?:JGSTEW|jgstew)'
-          - '--replace=JGStew'
-          - '--overwrite'
+      # - id: regex-search-filter-replace
+      #   name: Normalize "Created by" author name to JGStew.
+      #   files: ^Shared(Dangerous)?Processors/.*\.py$
+      #   args:
+      #     # non-capturing groups so re.findall returns the whole match, not just
+      #     # the name (else filetext.replace would swap every jgstew in the file)
+      #     - '--search=# Created \d{4} by (?:JGSTEW|jgstew)'
+      #     - '--filter=(?:JGSTEW|jgstew)'
+      #     - '--replace=JGStew'
+      #     - '--overwrite'
       - id: regex-search-filter-replace
         name: Normalize URLDownloaderPython to JGStew's version.
         files: \.(ya?ml)$

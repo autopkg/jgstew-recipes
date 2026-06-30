@@ -1,11 +1,9 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2026
-#
+# Created 2026 by JGStew
+"""See docstring for JSONWriter class"""
+
 # Related:
 # - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/JsonPath.py
-#
-"""See docstring for JSONWriter class"""
 
 import json
 

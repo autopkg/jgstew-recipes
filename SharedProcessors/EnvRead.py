@@ -1,6 +1,5 @@
 #!/usr/local/autopkg/python
-#
-# Copyright 2025 James Stewart
+# Created 2025 by JGStew
 """AutoPkg processor to read an environment variable and store its value."""
 
 import os

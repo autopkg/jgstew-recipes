@@ -1,11 +1,9 @@
 #!/usr/local/autopkg/python
-#
-# James Stewart @JGStew - 2021
-#
+# Created 2024 by JGStew
+"""See docstring for TemplateDictionaryReadKey class"""
+
 # Related:
 # - https://github.com/jgstew/bigfix_prefetch/blob/master/prefetch_from_dictionary.py
-#
-"""See docstring for TemplateDictionaryReadKey class"""
 
 from autopkglib import (  # pylint: disable=import-error,wrong-import-position,unused-import
     Processor,
