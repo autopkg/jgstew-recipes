@@ -116,12 +116,21 @@ repos:
       # normalize the "# Created <year> by <author>" header to the canonical author name.
       # NOTE: files override is required -- this hook defaults to xml/html/bes only.
       - id: regex-search-filter-replace
-        name: Normalize "Created by" author name to JGStew
+        name: Normalize "Created by" author name to JGStew.
         files: ^Shared(Dangerous)?Processors/.*\.py$
         args:
           - '--search=# Created \d{4} by (JGSTEW|jgstew)'
           - '--filter=(JGSTEW|jgstew)'
           - '--replace=JGStew'
+          - '--overwrite'
+      - id: regex-search-filter-replace
+        name: Normalize URLDownloaderPython to JGStew's version.
+        files: .(yaml|yml)$
+        exclude: ^(Test-Recipes/URLDownloaderPythonCore.test.recipe.yaml|.pre-commit-config.yaml)$
+        args:
+          - '--search=( Processor: URLDownloaderPython)'
+          - '--filter=( URLDownloaderPython)'
+          - '--replace= com.github.jgstew.SharedProcessors/URLDownloaderPython'
           - '--overwrite'
 
   - repo: local
