@@ -63,6 +63,7 @@ class FileGetBase64(Processor):  # pylint: disable=too-few-public-methods
                 )
             else:
                 self.output(f"Size of Base64 String from File: { size_base64 }", 2)
+            # output-undeclared-ok: file_base64 can be a very large string
             self.env["file_base64"] = file_base64
 
 

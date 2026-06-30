@@ -134,6 +134,7 @@ class ContentFromTemplate(Processor):  # pylint: disable=invalid-name
         else:
             raise ProcessorError("ERROR: No Template File Found!")
 
+        # output-undeclared-ok: content_string can be a very large string
         self.env["content_string"] = content_string
 
         return content_string
