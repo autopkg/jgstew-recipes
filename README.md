@@ -4,6 +4,15 @@ AutoPkg recipes which anyone can use from [JGStew](https://github.com/jgstew).
 
 Where possible recipes will be in YAML format for better cross platform support at the expense of requiring AutoPkg 2.3+
 
+## Using these recipes:
+
+Add this repo to AutoPkg, then run a recipe:
+
+- `autopkg repo-add jgstew-recipes` (resolves to `autopkg/jgstew-recipes`)
+- `autopkg run Firefox-Win64.download` (or any recipe by name/identifier, e.g. `com.github.jgstew.download.Firefox-Win64`)
+
+Because the recipes are YAML, running them requires AutoPkg 2.3 or newer.
+
 ## Python Requirements:
 
 `requirements.txt` contains the python modules required for the AutoPkg processors used by this repo
@@ -18,7 +27,11 @@ Example pip command:
 
 Example bash command to add all listed repos:
 
-- `for line in $(cat /tmp/.autopkg_repos.txt); do python3 ../autopkg/Code/autopkg repo-add $line; done`
+- `for line in $(cat .autopkg_repos.txt); do python3 ../autopkg/Code/autopkg repo-add $line; done`
+
+## Contributing:
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the repository layout, development setup (pre-commit), how changes are validated, and the conventions custom processors follow.
 
 ## Docker:
 
