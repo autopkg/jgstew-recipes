@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/jgstew/jgstew-recipes/blob/main/.AutoPkgRecipe.schema.json",
-  "$comment": "v0.1",
+  "$id": "https://github.com/autopkg/jgstew-recipes/blob/main/.AutoPkgRecipe.schema.json",
+  "$comment": "v0.2",
   "title": "AutoPkg Recipe YAML schema",
   "description": "A schema for validating AutoPkg Recipe YAML files. Used by check-jsonschema pre-commit hook.",
   "$ref": "#/definitions/AutoPkgRecipe",
@@ -23,8 +23,8 @@
         },
         "MinimumVersion": {
           "type": "string",
-          "comment": "Allow 0.0 through 3.9.9, does not support RC's",
-          "pattern": "[0-3](\\.\\d){1,2}"
+          "$comment": "anchored major.minor[.patch], multi-digit segments, no RC suffixes",
+          "pattern": "^\\d+(\\.\\d+){1,2}$"
         },
         "ParentRecipe": {
           "type": "string",
@@ -58,8 +58,72 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "Processor": {
+        "Comment": {
+          "$comment": "AutoPkg allows a free-form Comment on any process step",
           "type": "string"
+        },
+        "Processor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "$comment": "Built-in AutoPkg Processors (synced to v2.9.0) plus legacy ones for older AutoPkg versions; suggestions only -- the free-string branch below accepts any processor",
+              "enum": [
+                "AppDmgVersioner",
+                "AppPkgCreator",
+                "BrewCaskInfoProvider",
+                "ChocolateyPackager",
+                "CodeSignatureVerifier",
+                "Copier",
+                "CURLDownloader",
+                "CURLTextSearcher",
+                "DeprecationWarning",
+                "DmgCreator",
+                "DmgMounter",
+                "EndOfCheckPhase",
+                "FileCreator",
+                "FileFinder",
+                "FileMover",
+                "FindAndReplace",
+                "FlatPkgPacker",
+                "FlatPkgUnpacker",
+                "GitHubReleasesInfoProvider",
+                "Installer",
+                "InstallFromDMG",
+                "MunkiCatalogBuilder",
+                "MunkiImporter",
+                "MunkiInfoCreator",
+                "MunkiInstallsItemsCreator",
+                "MunkiOptionalReceiptEditor",
+                "MunkiPkginfoMerger",
+                "MunkiSetDefaultCatalog",
+                "PackageRequired",
+                "PathDeleter",
+                "PkgCopier",
+                "PkgCreator",
+                "PkgExtractor",
+                "PkgInfoCreator",
+                "PkgPayloadUnpacker",
+                "PkgRootCreator",
+                "PlistEditor",
+                "PlistReader",
+                "SignToolVerifier",
+                "SparkleUpdateInfoProvider",
+                "StopProcessingIf",
+                "Symlinker",
+                "Unarchiver",
+                "URLDownloader",
+                "URLDownloaderPython",
+                "URLGetter",
+                "URLTextSearcher",
+                "VariableSetter",
+                "Versioner"
+              ]
+            },
+            {
+              "type": "string",
+              "$comment": "any other processor name (this schema is not opinionated about which processors are allowed)"
+            }
+          ]
         },
         "Arguments": {
           "$ref": "#/definitions/Arguments"
