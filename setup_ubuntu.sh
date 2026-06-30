@@ -7,23 +7,35 @@ else
     alias sudo="" && shopt -s expand_aliases
 fi
 
+# determine the python version to install from .python-version (fallback: 3.10)
+# accepts "3.11" or "3.11.4" (uses the leading major.minor); run from the repo root
+PYTHON_VERSION="3.10"
+if [ -f .python-version ]; then
+    _pv="$(head -n1 .python-version | tr -d '[:space:]')"
+    if [[ "$_pv" =~ ^([0-9]+\.[0-9]+) ]]; then
+        PYTHON_VERSION="${BASH_REMATCH[1]}"
+    fi
+fi
+PYBIN="python${PYTHON_VERSION}"
+echo "Using ${PYBIN} (from .python-version, default 3.10)"
+
 sudo apt update && DEBIAN_FRONTEND=noninteractive apt install -y git
 # git clone https://github.com/jgstew/jgstew-recipes.git
 
-# setup python3.10: https://gist.github.com/rutcreate/c0041e842f858ceb455b748809763ddb
+# setup python via deadsnakes PPA: https://gist.github.com/rutcreate/c0041e842f858ceb455b748809763ddb
 sudo DEBIAN_FRONTEND=noninteractive apt install -y software-properties-common git
 sudo add-apt-repository ppa:deadsnakes/ppa -y && apt update
 
-sudo DEBIAN_FRONTEND=noninteractive apt install -y python3.10 python3.10-venv python3.10-dev
+sudo DEBIAN_FRONTEND=noninteractive apt install -y ${PYBIN} ${PYBIN}-venv ${PYBIN}-dev
 
 # https://pip.pypa.io/en/stable/installation/#ensurepip
-sudo python3.10 -m ensurepip --upgrade
+sudo ${PYBIN} -m ensurepip --upgrade
 
 # update python pip
-sudo python3.10 -m pip install --upgrade pip
+sudo ${PYBIN} -m pip install --upgrade pip
 
 # update python basics
-sudo python3.10 -m pip install --upgrade setuptools wheel build
+sudo ${PYBIN} -m pip install --upgrade setuptools wheel build
 
 # install packages needed for installing python requirements and using python processors
 sudo DEBIAN_FRONTEND=noninteractive apt install -y python-dev-is-python3 speech-dispatcher libcairo2-dev libmagic-dev jq p7zip-full msitools curl git wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev
@@ -39,7 +51,7 @@ bash -c "cd ../autopkg && git checkout dev"
 fi
 
 # create virtual environment
-python3.10 -m venv ../autopkg/.venv
+${PYBIN} -m venv ../autopkg/.venv
 ./../autopkg/.venv/bin/python3 -m pip install --upgrade pip
 ./../autopkg/.venv/bin/python3 -m pip install --upgrade setuptools wheel build
 

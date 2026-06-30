@@ -2,6 +2,17 @@
 
 # this script is intended to setup a mac from scratch to be able to develop or build autopkg recipes
 
+# determine the python version to install from .python-version (fallback: 3.10)
+# accepts "3.11" or "3.11.4" (uses the leading major.minor); run from the repo root
+PYTHON_VERSION="3.10"
+if [ -f .python-version ]; then
+    _pv="$(head -n1 .python-version | tr -d '[:space:]')"
+    if [[ "$_pv" =~ ^([0-9]+\.[0-9]+) ]]; then
+        PYTHON_VERSION="${BASH_REMATCH[1]}"
+    fi
+fi
+echo "Using Python ${PYTHON_VERSION} (from .python-version, default 3.10)"
+
 # check xcode command line tools install:
 # xcode-select --print-path
 
@@ -15,7 +26,7 @@ eval $(/opt/homebrew/bin/brew shellenv)
 
 # NONINTERACTIVE=1 brew tap microsoft/git
 
-NONINTERACTIVE=1 brew install --adopt python@3.10 sevenzip msitools visual-studio-code libmagic jq git-credential-manager-core cairo libffi
+NONINTERACTIVE=1 brew install --adopt "python@${PYTHON_VERSION}" sevenzip msitools visual-studio-code libmagic jq git-credential-manager-core cairo libffi
 
 python3 -m pip install --upgrade pip
 
