@@ -9,6 +9,7 @@ import os
 import subprocess
 
 try:
+    # platform-specific-ok: msilib is Windows-only; guarded, with a cross-platform fallback
     import msilib
 except ImportError:
     # this is expected on non-windows!

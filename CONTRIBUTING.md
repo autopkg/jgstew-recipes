@@ -110,10 +110,22 @@ Every file in `SharedProcessors/` is expected to have:
 
 - **All files must be ASCII** (`verify-files-are-ascii` hook). Write emoji or
   symbols as `\u` escapes in source, not as literal characters.
+- **Every processor needs a test recipe** in `Test-Recipes/` named after it
+  (`<Name>.test.recipe.yaml`, or a `<Name>-Win.test.recipe.yaml` variant); missing
+  ones are warned (W005).
 - **Undeclared outputs**: writing `self.env["key"] = ...` for a key that is not an
   `output_variable` is warned (W004). For values that are intentionally not
   declared (very large strings, internal state), add `# output-undeclared-ok` on
   the write line.
+- **Line-level opt-out markers** for the warnings that support them (place the
+  marker on the flagged line or the line directly above it):
+  - `# output-undeclared-ok` - undeclared `self.env` write (W004)
+  - `# platform-specific-ok` - a guarded platform-specific import, e.g. `msilib` (W006)
+  - `# input-unread-ok` - an input_variable declared but not read here (W007)
+  - `# hardcoded-path-ok` - a deliberate user/machine-specific path (W008)
+- **Other warnings**: W007 flags input_variables declared but never read from
+  self.env (dead inputs); W008 flags hardcoded user/machine-specific paths (home
+  dirs, per-user temp) - use cross-platform tool discovery instead.
 - **Credentials and very large strings** (e.g. `BES_PASSWORD`, `file_base64`,
   `content_string`) are intentionally **not** declared as `output_variables`.
 - **Recipe schemas**: `.AutoPkgRecipe*.schema.json` carry a list of built-in
