@@ -1,0 +1,41 @@
+---
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/FileYamlRead.py
+Description: Test FileYamlRead Processor
+Identifier: com.github.jgstew.test.FileYamlRead
+Input:
+  NAME: FileYamlReadTest
+MinimumVersion: "2.4.1"
+Process:
+  - Processor: FileCreator
+    Arguments:
+      file_path: "%RECIPE_CACHE_DIR%/test.yaml"
+      file_content: |
+        name: Example
+        version: "1.2.3"
+        nested:
+          host: example.com
+          tags:
+            - alpha
+            - beta
+
+  # read a nested dotted key from the file:
+  - Processor: com.github.jgstew.SharedProcessors/FileYamlRead
+    Arguments:
+      yaml_input: "%RECIPE_CACHE_DIR%/test.yaml"
+      yaml_key: "nested.host"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%yaml_read_result%"
+      assert_string: "example.com"
+
+  # read a list element by index:
+  - Processor: com.github.jgstew.SharedProcessors/FileYamlRead
+    Arguments:
+      yaml_input: "%RECIPE_CACHE_DIR%/test.yaml"
+      yaml_key: "nested.tags.1"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%yaml_read_result%"
+      assert_string: "beta"

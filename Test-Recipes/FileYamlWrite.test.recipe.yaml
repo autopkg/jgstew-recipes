@@ -1,0 +1,45 @@
+---
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/FileYamlWrite.py
+Description: Test FileYamlWrite Processor
+Identifier: com.github.jgstew.test.FileYamlWrite
+Input:
+  NAME: FileYamlWriteTest
+MinimumVersion: "2.4.1"
+Process:
+  # write a whole document from a YAML string:
+  - Processor: com.github.jgstew.SharedProcessors/FileYamlWrite
+    Arguments:
+      yaml_output_path: "%RECIPE_CACHE_DIR%/out.yaml"
+      yaml_input: |
+        name: Example
+        nested:
+          host: example.com
+
+  # update a single key, preserving the rest of the document:
+  - Processor: com.github.jgstew.SharedProcessors/FileYamlWrite
+    Arguments:
+      yaml_output_path: "%RECIPE_CACHE_DIR%/out.yaml"
+      yaml_key: "nested.host"
+      yaml_input: "updated.example.com"
+
+  # read the updated key back and assert:
+  - Processor: com.github.jgstew.SharedProcessors/FileYamlRead
+    Arguments:
+      yaml_input: "%RECIPE_CACHE_DIR%/out.yaml"
+      yaml_key: "nested.host"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%yaml_read_result%"
+      assert_string: "updated.example.com"
+
+  # confirm the untouched key survived the single-key update:
+  - Processor: com.github.jgstew.SharedProcessors/FileYamlRead
+    Arguments:
+      yaml_input: "%RECIPE_CACHE_DIR%/out.yaml"
+      yaml_key: "name"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%yaml_read_result%"
+      assert_string: "Example"

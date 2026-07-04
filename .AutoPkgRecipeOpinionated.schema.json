@@ -169,6 +169,8 @@
                 "com.github.jgstew.SharedProcessors/FileTextSearcher",
                 "com.github.jgstew.SharedProcessors/FileTouch",
                 "com.github.jgstew.SharedProcessors/FileXmlXpath",
+                "com.github.jgstew.SharedProcessors/FileYamlRead",
+                "com.github.jgstew.SharedProcessors/FileYamlWrite",
                 "com.github.jgstew.SharedProcessors/GetCommonPlatformEnumeration",
                 "com.github.jgstew.SharedProcessors/GetCurrentPlatformInfo",
                 "com.github.jgstew.SharedProcessors/GetRecipeParentFolderName",
