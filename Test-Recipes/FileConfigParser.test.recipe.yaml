@@ -50,6 +50,7 @@ Process:
     Arguments:
       config_file: "%RECIPE_CACHE_DIR%/testconfig.ini"
       config_key: "default.host"
+      config_output_variable: "config"
 
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
