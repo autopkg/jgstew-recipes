@@ -26,7 +26,7 @@ eval $(/opt/homebrew/bin/brew shellenv)
 
 # NONINTERACTIVE=1 brew tap microsoft/git
 
-NONINTERACTIVE=1 brew install --adopt "python@${PYTHON_VERSION}" sevenzip msitools visual-studio-code libmagic jq git-credential-manager-core cairo libffi
+NONINTERACTIVE=1 brew install --adopt "python@${PYTHON_VERSION}" sevenzip msitools visual-studio-code libmagic jq yq git-credential-manager-core cairo libffi
 
 python3 -m pip install --upgrade pip
 

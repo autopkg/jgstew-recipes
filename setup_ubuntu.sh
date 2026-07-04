@@ -40,6 +40,14 @@ sudo ${PYBIN} -m pip install --upgrade setuptools wheel build
 # install packages needed for installing python requirements and using python processors
 sudo DEBIAN_FRONTEND=noninteractive apt install -y python-dev-is-python3 speech-dispatcher libcairo2-dev libmagic-dev jq p7zip-full msitools curl git wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev
 
+# install yq (Mike Farah's Go yq) for FileYamlReadYq - not in apt, so download the
+# release binary matching this machine's architecture (amd64/arm64):
+if ! command -v yq >/dev/null 2>&1; then
+    YQ_ARCH="$(dpkg --print-architecture 2>/dev/null || echo amd64)"
+    sudo wget -q "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${YQ_ARCH}" -O /usr/local/bin/yq
+    sudo chmod +x /usr/local/bin/yq
+fi
+
 # This may solve a weird issue:
 # python3 -m pip install -U 'pyasn1<0.5.0'
 # python3 -m pip install -U pyasn1-modules<0.5.0 --ignore-installed pyasn1-modules

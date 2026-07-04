@@ -170,6 +170,7 @@
                 "com.github.jgstew.SharedProcessors/FileTouch",
                 "com.github.jgstew.SharedProcessors/FileXmlXpath",
                 "com.github.jgstew.SharedProcessors/FileYamlRead",
+                "com.github.jgstew.SharedProcessors/FileYamlReadYq",
                 "com.github.jgstew.SharedProcessors/FileYamlWrite",
                 "com.github.jgstew.SharedProcessors/GetCommonPlatformEnumeration",
                 "com.github.jgstew.SharedProcessors/GetCurrentPlatformInfo",
