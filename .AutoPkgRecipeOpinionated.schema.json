@@ -147,6 +147,7 @@
                 "com.github.jgstew.SharedProcessors/ExtractorShutilUnpack",
                 "com.github.jgstew.SharedProcessors/FileArchiveListContents",
                 "com.github.jgstew.SharedProcessors/FileAudioConvert",
+                "com.github.jgstew.SharedProcessors/FileConfigParser",
                 "com.github.jgstew.SharedProcessors/FileCopyNewest",
                 "com.github.jgstew.SharedProcessors/FileEncodingConvert",
                 "com.github.jgstew.SharedProcessors/FileExeGetIcon",

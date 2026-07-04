@@ -1,0 +1,57 @@
+---
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/FileConfigParser.py
+Description: Test FileConfigParser Processor
+Identifier: com.github.jgstew.test.FileConfigParser
+Input:
+  NAME: FileConfigParserTest
+MinimumVersion: "2.4.1"
+Process:
+  - Processor: FileCreator
+    Arguments:
+      file_path: "%RECIPE_CACHE_DIR%/testconfig.ini"
+      file_content: |
+        [default]
+        host = example.com
+        retries = 3
+
+        [server]
+        port = 8080
+        host = server.example.com
+
+  # read the ENTIRE file into the env as <basename>_<section>_<key>:
+  - Processor: com.github.jgstew.SharedProcessors/FileConfigParser
+    Arguments:
+      config_file: "%RECIPE_CACHE_DIR%/testconfig.ini"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%testconfig_default_host%"
+      assert_string: "example.com"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%testconfig_server_port%"
+      assert_string: "8080"
+
+  # read a single value from a real section into a named env variable:
+  - Processor: com.github.jgstew.SharedProcessors/FileConfigParser
+    Arguments:
+      config_file: "%RECIPE_CACHE_DIR%/testconfig.ini"
+      config_key: "server.host"
+      config_output_variable: "srv_host"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%srv_host%"
+      assert_string: "server.example.com"
+
+  # read a single value from the default section (default output variable "config"):
+  - Processor: com.github.jgstew.SharedProcessors/FileConfigParser
+    Arguments:
+      config_file: "%RECIPE_CACHE_DIR%/testconfig.ini"
+      config_key: "default.host"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%config%"
+      assert_string: "example.com"
