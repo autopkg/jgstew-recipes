@@ -1,0 +1,57 @@
+---
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/FileHtmlSelect.py
+# NOTE: requires lxml + cssselect (see requirements.txt)
+Description: Test FileHtmlSelect Processor
+Identifier: com.github.jgstew.test.FileHtmlSelect
+Input:
+  NAME: FileHtmlSelectTest
+MinimumVersion: "2.4.1"
+Process:
+  - Processor: FileCreator
+    Arguments:
+      file_path: "%RECIPE_CACHE_DIR%/test.html"
+      file_content: |
+        <html><body>
+          <h1 id="title">Example App</h1>
+          <a class="download" href="https://example.com/app-1.2.3.dmg">Download 1.2.3</a>
+          <span class="version">1.2.3</span>
+        </body></html>
+
+  # text content via CSS selector:
+  - Processor: com.github.jgstew.SharedProcessors/FileHtmlSelect
+    Arguments:
+      html_input: "%RECIPE_CACHE_DIR%/test.html"
+      css_selector: "span.version"
+      html_output_variable: "app_version"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%app_version%"
+      assert_string: "1.2.3"
+
+  # attribute value via CSS selector:
+  - Processor: com.github.jgstew.SharedProcessors/FileHtmlSelect
+    Arguments:
+      html_input: "%RECIPE_CACHE_DIR%/test.html"
+      css_selector: "a.download"
+      attribute: "href"
+      html_output_variable: "download_url"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%download_url%"
+      assert_string: "app-1.2.3.dmg"
+
+  # value via XPath (text() returns a string directly):
+  - Processor: com.github.jgstew.SharedProcessors/FileHtmlSelect
+    Arguments:
+      html_input: "%RECIPE_CACHE_DIR%/test.html"
+      xpath: "//h1[@id='title']/text()"
+      html_output_variable: "app_title"
+      # clear previous selector:
+      css_selector: ""
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%app_title%"
+      assert_string: "Example App"

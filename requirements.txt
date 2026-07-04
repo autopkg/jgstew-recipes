@@ -3,12 +3,14 @@ bigfix_prefetch
 cairosvg
 certifi
 chevron
+cssselect
 desktop_notifier
 generate_bes_from_template
 hachoir
 icoextract
 jsonpath_ng
 looseversion
+lxml
 olefile
 pefile
 Pillow

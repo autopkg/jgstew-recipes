@@ -1,0 +1,54 @@
+---
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/FileCsvRead.py
+Description: Test FileCsvRead Processor
+Identifier: com.github.jgstew.test.FileCsvRead
+Input:
+  NAME: FileCsvReadTest
+MinimumVersion: "2.4.1"
+Process:
+  - Processor: FileCreator
+    Arguments:
+      file_path: "%RECIPE_CACHE_DIR%/test.csv"
+      file_content: |
+        name,version,platform
+        Firefox,120.0,win
+        Chrome,119.0,mac
+
+  # single cell by row index + column name:
+  - Processor: com.github.jgstew.SharedProcessors/FileCsvRead
+    Arguments:
+      csv_input: "%RECIPE_CACHE_DIR%/test.csv"
+      csv_row: "0"
+      csv_column: "version"
+      csv_output_variable: "first_version"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%first_version%"
+      assert_string: "120.0"
+
+  # single cell by row index + column index:
+  - Processor: com.github.jgstew.SharedProcessors/FileCsvRead
+    Arguments:
+      csv_input: "%RECIPE_CACHE_DIR%/test.csv"
+      csv_row: "1"
+      csv_column: "0"
+      csv_output_variable: "second_name"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%second_name%"
+      assert_string: "Chrome"
+
+  # last row (negative index) + column name:
+  - Processor: com.github.jgstew.SharedProcessors/FileCsvRead
+    Arguments:
+      csv_input: "%RECIPE_CACHE_DIR%/test.csv"
+      csv_row: "-1"
+      csv_column: "platform"
+      csv_output_variable: "last_platform"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%last_platform%"
+      assert_string: "mac"
