@@ -10,6 +10,10 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/FileHasher
     Arguments:
       file_path: "%RECIPE_DIR%/../BigFix/BigFix_logo_DevSiteToOriginal_128px.png"
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%filehasher_sha256%"
+      assert_string: "cafac61f10e0b0581268917f3c92d276286260810501da37971b06d8c1b76440"
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
     Arguments:
       file_name: "BigFix_Logo.png"
