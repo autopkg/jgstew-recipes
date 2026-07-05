@@ -221,7 +221,7 @@ class BESImport(Processor):
                         file_handle,
                     )
 
-                self.output(upload_result)
+                self.output(upload_result, 3)
 
                 try:
                     # for tasks:

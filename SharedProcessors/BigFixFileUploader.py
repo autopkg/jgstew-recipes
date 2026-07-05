@@ -72,7 +72,7 @@ class BigFixFileUploader(SharedUtilityMethods):
         # https://github.com/jgstew/besapi/blob/ff145f09ee31c4d11d7ad7ea955e51e46b24e168/src/besapi/besapi.py#L508
         upload_result = bes_conn.upload(file_path, file_name_override, file_sha1)
 
-        self.output(upload_result)
+        self.output(upload_result, 3)
 
         # store result:
         self.env["file_upload_prefetch"] = bes_conn.parse_upload_result_to_prefetch(

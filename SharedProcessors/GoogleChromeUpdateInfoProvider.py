@@ -151,7 +151,7 @@ class GoogleChromeUpdateInfoProvider(Processor):
                 "app/updatecheck/manifest/packages/package"
             ).get("size")
         except AttributeError as err:
-            self.output(response.text)
+            self.output(response.text, 3)
             raise err
 
         urls = [
