@@ -36,7 +36,8 @@ class FileHtmlSelect(Processor):  # pylint: disable=invalid-name
             "default": "",
             "description": (
                 "CSS selector to match elements (e.g. `a.download`, `#version`)."
-                " Provide either this or xpath."
+                " Provide exactly one of css_selector or xpath (setting both is an"
+                " error)."
             ),
         },
         "xpath": {
@@ -44,7 +45,8 @@ class FileHtmlSelect(Processor):  # pylint: disable=invalid-name
             "default": "",
             "description": (
                 "XPath expression to match, as an alternative to css_selector (e.g."
-                " `//a[@class='download']/@href`)."
+                " `//a[@class='download']/@href`). Provide exactly one of"
+                " css_selector or xpath."
             ),
         },
         "attribute": {
@@ -110,6 +112,13 @@ class FileHtmlSelect(Processor):  # pylint: disable=invalid-name
 
         if not css_selector and not xpath:
             raise ProcessorError("provide either css_selector or xpath")
+        if css_selector and xpath:
+            raise ProcessorError(
+                "both css_selector and xpath are set, which is ambiguous. Clear one"
+                " of them (set it to an empty string) -- most likely a value bled"
+                " over from a previous FileHtmlSelect step, since AutoPkg keeps"
+                " input_variables set across process steps."
+            )
 
         # parse from a file if it exists, otherwise treat the input as HTML text
         if os.path.isfile(html_input):
