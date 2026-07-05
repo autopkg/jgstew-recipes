@@ -203,9 +203,9 @@ class SharedUtilityMethods(Processor):
         # this is from BESImport.py
 
         try:
-            from ConfigParser import SafeConfigParser
+            from ConfigParser import NoSectionError, SafeConfigParser
         except (ImportError, ModuleNotFoundError):
-            from configparser import SafeConfigParser
+            from configparser import NoSectionError, SafeConfigParser
 
         config_path = [
             "/etc/besapi.conf",
@@ -217,7 +217,11 @@ class SharedUtilityMethods(Processor):
             config_path.append(conf_file)
 
         CONFPARSER = SafeConfigParser()
-        CONFPARSER.read(config_path)
+        # .read() returns the subset of config_path that existed and parsed
+        # (missing files are silently skipped):
+        files_read = CONFPARSER.read(config_path)
+        for path in files_read:
+            self.output(path, 2)
 
         if CONFPARSER:
             try:
@@ -226,10 +230,10 @@ class SharedUtilityMethods(Processor):
                 )
                 self.env["BES_USER_NAME"] = CONFPARSER.get("besapi", "BES_USER_NAME")
                 self.env["BES_PASSWORD"] = CONFPARSER.get("besapi", "BES_PASSWORD")
-            except KeyError as err:
+            except (KeyError, NoSectionError) as err:
                 self.output(err, 0)
                 self.env["stop_processing_recipe"] = True
-                raise
+                raise ProcessorError(f"Error loading configuration: {err}") from err
 
     def main(self):
         """Execution starts here."""
