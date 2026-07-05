@@ -7,11 +7,18 @@ MinimumVersion: "2.4.1"
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
       # url: https://deploymenttools.acp.adobeoobe.com/RUM/Win/RemoteUpdateManager.zip
       url: http://software.bigfix.com/download/redist/unzip-5.52.exe
       COMPUTE_HASHES: False
+
   - Processor: com.github.jgstew.SharedProcessors/ExtractorShutilUnpack
     Arguments:
       extract_dir: "test"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%extract_path%"
+      assert_string: "com.github.jgstew.test.ExtractorShutilUnpack"

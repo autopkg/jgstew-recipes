@@ -9,3 +9,14 @@ Process:
     Arguments:
       env_var_name: "USER"
       output_var_name: "user"
+
+  - Processor: com.github.jgstew.SharedProcessors/EnvRead
+    Arguments:
+      env_var_name: "HOME"
+      output_var_name: "home_path"
+
+  - Processor: com.github.jgstew.SharedProcessors/TextSearcher
+    Arguments:
+      input_string: "%home_path%"
+      re_pattern: '/|\\'
+      output_var_name: "path_separator"

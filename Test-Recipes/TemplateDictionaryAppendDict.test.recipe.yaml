@@ -9,3 +9,27 @@ Process:
     Arguments:
       template_dictionary: {"key1":"value1", "key2":"2"}
       append_dict: {"key2":"value2", "key3":"value3"}
+
+  # key3 comes only from append_dict:
+  - Processor: com.github.jgstew.SharedProcessors/DictionaryKeyRead
+    Arguments:
+      input_dictionary: dictionary_appended
+      dictionary_key: key3
+      output_variable: key3
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%key3%"
+      assert_string: "value3"
+
+  # key2 exists in both, and append_dict must win (overrides "2" with "value2"):
+  - Processor: com.github.jgstew.SharedProcessors/DictionaryKeyRead
+    Arguments:
+      input_dictionary: dictionary_appended
+      dictionary_key: key2
+      output_variable: key2
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%key2%"
+      assert_string: "value2"

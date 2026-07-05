@@ -25,3 +25,8 @@ Process:
       download_missing_file: False
       download_save_file: False
       disable_ssl_validation: False
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%pathname%"
+      assert_string: "%filename%"

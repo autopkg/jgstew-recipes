@@ -20,10 +20,15 @@ Process:
       COMPUTE_HASHES: False
       requests_session: ""
 
-  - Processor: com.github.jgstew.SharedProcessors/URLDownloaderRequests
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
-      # https://edelivery.oracle.com/osdc/cliauth
-      url: https://edelivery.oracle.com/osdc/cliauth
-      filename: test-oracle.html
-      COMPUTE_HASHES: False
-      requests_session: ""
+      input_string: "%pathname%"
+      assert_string: "%filename%"
+
+  # - Processor: com.github.jgstew.SharedProcessors/URLDownloaderRequests
+  #   Arguments:
+  #     # https://edelivery.oracle.com/osdc/cliauth
+  #     url: https://edelivery.oracle.com/osdc/cliauth
+  #     filename: test-oracle.html
+  #     COMPUTE_HASHES: False
+  #     requests_session: ""

@@ -16,3 +16,8 @@ Process:
   - Processor: com.github.hansen-m.SharedProcessors/HachoirMetaDataProvider3
     Arguments:
       metadata_key: mime_type
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%mime_type%"
+      assert_string: "application/"

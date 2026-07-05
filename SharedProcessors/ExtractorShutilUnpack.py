@@ -75,7 +75,11 @@ class ExtractorShutilUnpack(Processor):
             "description": "Ignore any errors during the extraction.",
         },
     }
-    output_variables = {}
+    output_variables = {
+        "extract_path": {
+            "description": "Path to the extracted files.",
+        }
+    }
 
     def extract_7zip(self, filename, extract_dir):
         """Extract a 7-zip archive to a directory using the 7z executable.
@@ -142,7 +146,8 @@ class ExtractorShutilUnpack(Processor):
             else:
                 shutil.unpack_archive(file_path, extract_path)
 
-            self.output(f"Extracted Archive Path: {extract_path}")
+            # self.output(f"Extracted Archive Path: {extract_path}")
+            self.env["extract_path"] = extract_path
         except BaseException as err:
             err_message = f"ERROR extracting archive '{file_path}': {err}"
             if not ignore_errors:

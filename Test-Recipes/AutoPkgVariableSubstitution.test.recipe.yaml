@@ -12,6 +12,12 @@ Process:
   - Processor: EndOfCheckPhase
     Arguments:
       test_var: "%TestStr%"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%TestStr%"
+      assert_string: "0"
+
   # this fails:
   # - Processor: EndOfCheckPhase
   #   Arguments:

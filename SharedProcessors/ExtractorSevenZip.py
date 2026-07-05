@@ -73,7 +73,11 @@ class ExtractorSevenZip(Processor):
             "description": "Array of cmd args to pass to 7z executable.",
         },
     }
-    output_variables = {}
+    output_variables = {
+        "extract_path": {
+            "description": "Path to the extracted files.",
+        }
+    }
 
     def main(self):
         """Execution starts here:"""
@@ -126,7 +130,8 @@ class ExtractorSevenZip(Processor):
             if not ignore_errors:
                 raise
 
-        self.output(f"Extracted Archive Path: {extract_path}")
+        self.env["extract_path"] = extract_path
+        # self.output(f"Extracted Archive Path: {extract_path}")
 
 
 if __name__ == "__main__":

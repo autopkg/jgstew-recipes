@@ -9,3 +9,27 @@ Input:
 MinimumVersion: "2.4.1"
 Process:
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppendInput
+
+  # `Template_*` inputs are added to `template_dictionary` with the prefix
+  # stripped, so `Template_example` becomes the `example` key:
+  - Processor: com.github.jgstew.SharedProcessors/DictionaryKeyRead
+    Arguments:
+      input_dictionary: template_dictionary
+      dictionary_key: example
+      output_variable: example
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%example%"
+      assert_string: "example value"
+
+  - Processor: com.github.jgstew.SharedProcessors/DictionaryKeyRead
+    Arguments:
+      input_dictionary: template_dictionary
+      dictionary_key: version
+      output_variable: version
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%version%"
+      assert_string: "0.0.0"

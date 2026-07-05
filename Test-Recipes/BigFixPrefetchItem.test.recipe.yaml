@@ -27,3 +27,14 @@ Process:
       prefetch_url: http://www.pantaray.com/SuperOrcaSetup.exe
       # pathname: "folder/whatever.exe"
       prefetch_type: block
+
+  # the generated prefetch statement should reference the file and its sha256:
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%bigfix_prefetch_item%"
+      assert_string: "SuperOrcaSetup.exe"
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%bigfix_prefetch_item%"
+      assert_string: "68ed565438e206e805f81980374e6439e6f4f60f63a3fcb6f0840c8a8de189da"

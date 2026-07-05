@@ -23,3 +23,8 @@ Process:
       filename: unzip.exe
       download_missing_file: False
       download_save_file: False
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%download_url%"
+      assert_string: "software.bigfix.com/download/redist/unzip-6.0.exe"

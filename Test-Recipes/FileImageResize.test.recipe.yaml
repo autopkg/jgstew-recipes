@@ -12,3 +12,9 @@ Process:
     Arguments:
       file_pathname: "BigFix/BigFix_logo_DevSiteToOriginal_128px.png"
       max_pixel_dim: 64
+
+  # the resized output path is `<original>_resized<max_pixel_dim><ext>`:
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%file_path_resized%"
+      assert_string: "_resized64.png"

@@ -7,10 +7,12 @@ MinimumVersion: "2.4.1"
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
       url: http://software.bigfix.com/download/redist/unzip-5.52.exe
       COMPUTE_HASHES: False
+
   - Processor: com.github.jgstew.SharedProcessors/ExtractorSevenZip
     Arguments:
       extract_dir: "test"
@@ -20,3 +22,8 @@ Process:
       ignore_pattern: ".text"
       # also include `.rdata`:
       sevenzip_args: ["-ir!.rdata"]
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%extract_path%"
+      assert_string: "com.github.jgstew.test.ExtractorSevenZip"

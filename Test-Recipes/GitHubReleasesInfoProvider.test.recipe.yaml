@@ -17,3 +17,8 @@ Process:
   #     filename: audacity-win-64bit.exe
   #     download_version: ""
   - Processor: EndOfCheckPhase
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%url%"
+      assert_string: "github.com/audacity/audacity/releases/download"

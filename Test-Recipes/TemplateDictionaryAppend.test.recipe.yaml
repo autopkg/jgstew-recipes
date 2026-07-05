@@ -24,3 +24,15 @@ Process:
       # NOTE: even though `dictionary_name` is not specified, this will append to `download_info`
       append_key: example_key2
       append_value: example_value2
+
+  # read back the first key appended to the default `template_dictionary`:
+  - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryReadKey
+    Arguments:
+      dictionary_key: example_key2
+      dictionary_name: dictionary_appended
+      dictionary_value_name: read_back_value
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%read_back_value%"
+      assert_string: "example_value2"

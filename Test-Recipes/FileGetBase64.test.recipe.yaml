@@ -8,3 +8,10 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/FileGetBase64
     Arguments:
       file_pathname: "%RECIPE_DIR%/../BigFix/BigFix_logo_DevSiteToOriginal_128px.png"
+
+  # a PNG always base64-encodes to a string starting with `iVBORw0KGgo`
+  # (from the PNG magic bytes), so this confirms the encoding worked:
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%file_base64%"
+      assert_string: "iVBORw0KGgo"
