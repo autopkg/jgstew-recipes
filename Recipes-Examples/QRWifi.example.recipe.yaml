@@ -5,10 +5,10 @@
 # scan it with a phone to join the network. Fully offline, no API needed.
 # Uses only existing processors: StringFormat, QRCodeGenerator.
 # https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
-Description: Example WifiQR recipe - builds a standard WIFI QR code from an SSID and password so a phone can scan it to join the network.
-Identifier: com.github.jgstew.example.WifiQR
+Description: Example QRWifi recipe - builds a standard WIFI QR code from an SSID and password so a phone can scan it to join the network.
+Identifier: com.github.jgstew.example.QRWifi
 Input:
-  NAME: WifiQR
+  NAME: QRWifi
   wifi_ssid: "FakeGuestNetwork"
   wifi_password: "SuperSecret123"
   # security type: WPA (covers WPA/WPA2/WPA3), WEP, or nopass for open networks:

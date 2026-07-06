@@ -6,10 +6,10 @@
 # Uses only existing processors: StringFormat, QRCodeGenerator.
 # Note: DTSTART/DTEND use iCal UTC basic format: YYYYMMDDTHHMMSSZ
 # https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
-Description: Example CalendarEventQR recipe - builds an iCalendar event and renders it as a scannable QR code to add to a calendar.
-Identifier: com.github.jgstew.example.CalendarEventQR
+Description: Example QRCalendarEvent recipe - builds an iCalendar event and renders it as a scannable QR code to add to a calendar.
+Identifier: com.github.jgstew.example.QRCalendarEvent
 Input:
-  NAME: CalendarEventQR
+  NAME: QRCalendarEvent
   event_summary: "Automate Anything! AutoPkg Processors for Everything"
   event_location: "Deans Hall 1"
   # iCal UTC basic format: YYYYMMDDTHHMMSSZ

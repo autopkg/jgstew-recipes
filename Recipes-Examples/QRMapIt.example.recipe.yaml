@@ -6,10 +6,10 @@
 # Uses only existing processors: QRCodeGenerator.
 # geo URI scheme: https://en.wikipedia.org/wiki/Geo_URI_scheme
 # https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
-Description: Example MapItQR recipe - renders a geo location as a scannable QR code to open in a maps app.
-Identifier: com.github.jgstew.example.MapItQR
+Description: Example QRMapIt recipe - renders a geo location as a scannable QR code to open in a maps app.
+Identifier: com.github.jgstew.example.QRMapIt
 Input:
-  NAME: MapItQR
+  NAME: QRMapIt
   # default coordinates: Apple Park, Cupertino, CA
   map_latitude: "37.3349"
   map_longitude: "-122.0090"
