@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "assert-yaml-recipe",
+      "type": "shell",
+      "command": "case \"${fileExtname}\" in .yaml|.yml|.recipe|.plist) exit 0 ;; *) echo 'Active file is not an AutoPkg recipe (.yaml/.yml/.recipe/.plist)'; exit 1 ;; esac",
+      "windows": {
+        "options": { "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] } },
+        "command": "if ('${fileExtname}' -in '.yaml','.yml','.recipe','.plist') { exit 0 } else { Write-Output 'Active file is not an AutoPkg recipe (.yaml/.yml/.recipe/.plist)'; exit 1 }"
+      },
+      "presentation": { "reveal": "silent" },
+      "problemMatcher": []
+    }
+  ]
+}
