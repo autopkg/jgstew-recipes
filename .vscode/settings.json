@@ -7,7 +7,7 @@
   "git.autofetch": true,
   "python.analysis.completeFunctionParens": true,
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/jgstew/jgstew-recipes/main/.AutoPkgRecipeOpinionated.schema.json": [
+    "https://raw.githubusercontent.com/autopkg/jgstew-recipes/refs/heads/main/.AutoPkgRecipeOpinionated.schema.json": [
       "**.recipe.yaml",
       "**.recipe.yml"
     ]
