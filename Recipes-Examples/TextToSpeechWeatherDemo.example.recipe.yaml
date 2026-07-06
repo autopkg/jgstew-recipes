@@ -1,0 +1,77 @@
+---
+Description: Example TextToSpeech Weather Recipe
+Identifier: com.github.jgstew.example.TextToSpeechWeather
+Input:
+  NAME: TextToSpeechWeather
+  # get free API key here: https://ipinfo.io/
+  # API_IPINFO: REDACTED (set in autopkg config/prefs)
+  # get free API key here: https://openweathermap.org/
+  # API_OPENWEATHER: REDACTED (set in autopkg config/prefs)
+MinimumVersion: "2.4.1"
+Process:
+  # # https://ipinfo.io/?token=APIKEY
+  # - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
+  #   Arguments:
+  #     url: https://ipinfo.io/?token=%API_IPINFO%
+  #     filename: ipinfo.json
+
+  # # get jq result:
+  # - Processor: com.github.jgstew.SharedProcessors/JsonJq
+  #   Arguments:
+  #     json_input: "%RECIPE_CACHE_DIR%/downloads/ipinfo.json"
+  #     json_jq: '.loc'
+
+  # # get lat / lon
+  # - Processor: com.github.jgstew.SharedProcessors/TextSearcher
+  #   Arguments:
+  #     input_string: "%json_jq_result%"
+  #     re_pattern: '.*?(?P<lat>-?\d+\.\d+),(?P<lon>-?\d+\.\d+)'
+
+  - Processor: EndOfCheckPhase
+    Arguments:
+      # State College: 40.79367411580273, -77.86062704316248
+      lat: "40.79367411580273"
+      lon: "-77.86062704316248"
+
+  # https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=33.44&lon=-94.04&appid=
+  - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
+    Arguments:
+      url: https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=%lat%&lon=%lon%&appid=%API_OPENWEATHER%
+      filename: weather.json
+
+  # get current temp
+  - Processor: com.github.jgstew.SharedProcessors/JsonJq
+    Arguments:
+      json_input: "%RECIPE_CACHE_DIR%/downloads/weather.json"
+      json_jq: '.main.temp'
+
+  # get current temp
+  - Processor: com.github.jgstew.SharedProcessors/TextSearcher
+    Arguments:
+      input_string: "%json_jq_result%"
+      re_pattern: '.*?(?P<current_temp>-?\d+)(\.\d+)?'
+
+  # get city
+  - Processor: com.github.jgstew.SharedProcessors/JsonJq
+    Arguments:
+      json_input: "%RECIPE_CACHE_DIR%/downloads/weather.json"
+      json_jq: '.name'
+
+  # get city name
+  - Processor: com.github.jgstew.SharedProcessors/TextSearcher
+    Arguments:
+      input_string: "%json_jq_result%"
+      re_pattern: '"(?P<city_name>.+)"'
+
+  # read weather aloud:
+  - Processor: com.github.jgstew.SharedProcessors/TextToSpeech
+    Arguments:
+      input_string: "It is currently %current_temp% degrees out in %city_name% area"
+
+  # - Processor: com.github.jgstew.SharedProcessors/Notifier
+  #   Arguments:
+  #     notification_app_name: "AutoPkg Weather"
+  #     notification_title: "Current Weather from AutoPkg"
+  #     notification_message: "It is currently %current_temp% degrees out in %city_name% area."
+
+  - Processor: EndOfCheckPhase
