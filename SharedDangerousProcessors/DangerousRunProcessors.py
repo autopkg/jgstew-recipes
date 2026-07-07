@@ -32,7 +32,7 @@ class DangerousRunProcessors(Processor):  # pylint: disable=invalid-name
         },
     }
     output_variables = {
-        "processor_results": {"description": ("The result of the processors")},
+        # "processor_results": {"description": ("The result of the processors")},
     }
 
     def main(self):
