@@ -13,12 +13,13 @@
 
 import json
 import os
+import shutil
 import ssl
 from hashlib import md5, sha1, sha256
 from urllib.request import Request, urlopen
 
 import certifi
-from autopkglib import Processor, ProcessorError
+from autopkglib import Processor, ProcessorError, get_identifier, recipe_from_file
 from autopkglib.URLDownloader import URLDownloader
 
 __all__ = ["URLDownloaderPython"]
@@ -113,6 +114,21 @@ class URLDownloaderPython(URLDownloader):
              but the metadata is present that shows it is the same file,
              skip download?
             """,
+        },
+        "search_parent_caches": {
+            "required": False,
+            "default": True,
+            "description": (
+                "If True, before downloading, search the cache folders of every "
+                "parent recipe (from PARENT_RECIPES) for an existing copy of this "
+                "file. If a parent holds a newer copy than the current recipe's "
+                "cache, it is copied into the current downloads dir so the normal "
+                "change-check can validate and reuse it instead of re-downloading "
+                "the payload (copy on reuse). Never writes into a parent's cache. "
+                "Self-contained: reads the parent recipe files directly and does "
+                "not depend on any other processor. Set to False to disable. "
+                "Defaults to True."
+            ),
         },
         "download_save_file": {
             "required": False,
@@ -468,6 +484,71 @@ class URLDownloaderPython(URLDownloader):
 
         return download_dictionary
 
+    def get_parent_cache_dirs(self):
+        """Return the AutoPkg cache dir (CACHE_DIR/<identifier>) for each parent
+        recipe in the PARENT_RECIPES chain.
+
+        Self-contained: reads the parent recipe files directly to resolve each
+        identifier rather than relying on any other processor's output.
+        """
+        parent_recipes = self.env.get("PARENT_RECIPES", []) or []
+        # same default as autopkglib when CACHE_DIR is unset:
+        cache_dir = self.env.get("CACHE_DIR") or os.path.expanduser(
+            "~/Library/AutoPkg/Cache"
+        )
+        cache_dirs = []
+        for recipe_path in parent_recipes:
+            recipe_dict = recipe_from_file(recipe_path)
+            identifier = get_identifier(recipe_dict) if recipe_dict else None
+            if identifier:
+                cache_dirs.append(os.path.join(cache_dir, identifier))
+        return cache_dirs
+
+    def find_newest_parent_download(self, filename):
+        """Search each parent recipe's downloads folder for an existing copy of
+        `filename` that also has a `.info.json` sidecar, and return the path to
+        the newest (by mtime), non-empty one -- or None if there is no match.
+        """
+        newest_path = None
+        newest_mtime = -1.0
+        for cache_dir in self.get_parent_cache_dirs():
+            candidate = os.path.join(cache_dir, "downloads", filename)
+            candidate_info = candidate + ".info.json"
+            if not (os.path.isfile(candidate) and os.path.isfile(candidate_info)):
+                continue
+            # skip zero-byte/truncated leftovers:
+            if os.path.getsize(candidate) == 0:
+                continue
+            mtime = os.path.getmtime(candidate)
+            if mtime > newest_mtime:
+                newest_mtime = mtime
+                newest_path = candidate
+        return newest_path
+
+    def reuse_newest_parent_download(self, filename):
+        """Copy-on-reuse: if a parent recipe's cache holds a newer copy of this
+        download than the current recipe's cache, copy that payload and its
+        `.info.json` into the current downloads dir so the normal change-check
+        can validate and reuse it. Never writes into a parent's cache.
+        """
+        source = self.find_newest_parent_download(filename)
+        if not source:
+            return
+
+        current_path = self.env["pathname"]
+        current_mtime = (
+            os.path.getmtime(current_path) if os.path.isfile(current_path) else -1.0
+        )
+        # only reuse a parent copy that is newer than what we already have:
+        if os.path.getmtime(source) <= current_mtime:
+            return
+
+        self.output(f"reusing newer cached download from parent recipe: {source}", 1)
+        # copy2 preserves mtime so future runs compare correctly (and this stays
+        # idempotent -- next run sees the copy is not newer and does nothing):
+        shutil.copy2(source, current_path)
+        shutil.copy2(source + ".info.json", current_path + ".info.json")
+
     def main(self):
         """Execution starts here."""
         # Clear and initiazize data structures
@@ -495,6 +576,12 @@ class URLDownloaderPython(URLDownloader):
 
         # clear empty file from previous run
         self.clear_zero_file(self.env["pathname"])
+
+        # optionally seed the current cache from the newest copy already cached
+        # by a parent recipe, so a payload fetched under a parent's cache can be
+        # reused instead of re-downloaded (opt-in; copy on reuse):
+        if self.env.get("search_parent_caches", True):
+            self.reuse_newest_parent_download(filename)
 
         # change headers to test if CHECK_FILESIZE_ONLY
         if self.env.get("CHECK_FILESIZE_ONLY", None):
