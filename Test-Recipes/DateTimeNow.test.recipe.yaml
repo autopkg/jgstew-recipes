@@ -1,15 +1,15 @@
 ---
-Description: Test GetDateTimeNow Processor (with DateTimeFromString cross-checks)
-Identifier: com.github.jgstew.test.GetDateTimeNow
+Description: Test DateTimeNow Processor (with DateTimeFromString cross-checks)
+Identifier: com.github.jgstew.test.DateTimeNow
 Input:
-  NAME: GetDateTimeNowTest
+  NAME: DateTimeNowTest
 MinimumVersion: "2.4.1"
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
 
   # ---- defaults: local time, format "%Y-%m-%d %H:%M:%S", offset 0 ----
-  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeNow
   # date portion present
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
@@ -39,7 +39,7 @@ Process:
       assert_string: "%year_local%"
 
   # ---- UTC: offset 0, format "%Y" (datetime_now becomes the year) ----
-  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeNow
     Arguments:
       datetime_use_utc: true
       datetime_strftime: "%Y"
@@ -56,9 +56,9 @@ Process:
 
   # ---- negative offset (-5h), UTC, clean format ----
   # NOTE: AutoPkg env values persist between processors, so from here on every
-  # GetDateTimeNow call sets all three inputs explicitly to keep scenarios
+  # DateTimeNow call sets all three inputs explicitly to keep scenarios
   # independent (the first call above intentionally exercises the defaults).
-  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeNow
     Arguments:
       datetime_offset_hours: -5
       datetime_use_utc: true
@@ -80,19 +80,26 @@ Process:
       input_string: "%datetime_now%"
       assert_string: "%date_negative_offset%"
 
-  # ---- positive offset passed as a string ("5"), local time ----
-  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+  # ---- positive offset passed as a string ("5"), local time, slash format ----
+  # (avoid strftime formats like "%Y-%m-%dT..." - AutoPkg mis-reads the "%d T %H"
+  # run as a "%dT%" variable substitution and logs a spurious undefined-key warning)
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeNow
     Arguments:
       datetime_offset_hours: "5"
       datetime_use_utc: false
-      datetime_strftime: "%Y-%m-%dT%H:%M:%S"
+      datetime_strftime: "%Y/%m/%d %H:%M:%S"
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now%"
+      assert_string: "/"
+  # ISO output always contains the date/time "T" separator regardless of format
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now_iso%"
       assert_string: "T"
 
   # ---- fractional offset (1.5h), local time, default-style format ----
-  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeNow
     Arguments:
       datetime_offset_hours: 1.5
       datetime_use_utc: false
@@ -103,7 +110,7 @@ Process:
       assert_string: "T"
 
   # ---- custom literal format string, offset back to 0 ----
-  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeNow
     Arguments:
       datetime_offset_hours: 0
       datetime_use_utc: true

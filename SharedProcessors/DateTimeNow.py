@@ -3,16 +3,16 @@
 # James Stewart @JGStew - 2026
 #
 # Link:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/GetDateTimeNow.py
+# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/DateTimeNow.py
 #
-"""See docstring for GetDateTimeNow class
+"""See docstring for DateTimeNow class
 
 to run this directly from bash, use:
 
 ```
 PYTHONPATH="../autopkg/Code:SharedProcessors" ./.venv/bin/python <<EOF
-from GetDateTimeNow import GetDateTimeNow
-p = GetDateTimeNow({"datetime_offset_hours": -5})
+from DateTimeNow import DateTimeNow
+p = DateTimeNow({"datetime_offset_hours": -5})
 p.main()
 print(p.env)
 EOF
@@ -27,10 +27,10 @@ from autopkglib import (  # pylint: disable=import-error,wrong-import-position,u
     ProcessorError,
 )
 
-__all__ = ["GetDateTimeNow"]
+__all__ = ["DateTimeNow"]
 
 
-class GetDateTimeNow(Processor):  # pylint: disable=invalid-name
+class DateTimeNow(Processor):  # pylint: disable=invalid-name
     """Gets the current date and time, with an optional offset in hours (positive or negative)."""
 
     description = __doc__
@@ -105,5 +105,5 @@ class GetDateTimeNow(Processor):  # pylint: disable=invalid-name
 
 
 if __name__ == "__main__":
-    PROCESSOR = GetDateTimeNow()
+    PROCESSOR = DateTimeNow()
     PROCESSOR.execute_shell()
