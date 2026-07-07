@@ -23,10 +23,10 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from SharedUtilityMethods import SharedUtilityMethods  # noqa: E402  isort:skip
 
-__all__ = ["ClearFileXattr"]
+__all__ = ["FileXattrClear"]
 
 
-class ClearFileXattr(SharedUtilityMethods):  # pylint: disable=invalid-name
+class FileXattrClear(SharedUtilityMethods):  # pylint: disable=invalid-name
     """Removes a specified extended attribute from a file, typically used to clear the etag and force a fresh download."""
 
     description = __doc__
@@ -70,5 +70,5 @@ class ClearFileXattr(SharedUtilityMethods):  # pylint: disable=invalid-name
 
 
 if __name__ == "__main__":
-    PROCESSOR = ClearFileXattr()
+    PROCESSOR = FileXattrClear()
     PROCESSOR.execute_shell()

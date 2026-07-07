@@ -136,7 +136,7 @@
                 "com.github.jgstew.SharedProcessors/BigFixPrefetchItem",
                 "com.github.jgstew.SharedProcessors/BigFixSessionRelevance",
                 "com.github.jgstew.SharedProcessors/BigFixSetupTemplateDictionary",
-                "com.github.jgstew.SharedProcessors/ClearFileXattr",
+                "com.github.jgstew.SharedProcessors/FileXattrClear",
                 "com.github.jgstew.SharedProcessors/ColorThief",
                 "com.github.jgstew.SharedProcessors/ContentFromTemplate",
                 "com.github.jgstew.SharedProcessors/DateTimeFromString",

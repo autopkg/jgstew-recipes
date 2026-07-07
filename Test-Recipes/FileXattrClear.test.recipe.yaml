@@ -1,0 +1,12 @@
+---
+Description: Test FileXattrClear Processor
+Identifier: com.github.jgstew.test.FileXattrClear
+Input:
+  NAME: FileXattrClearTest
+MinimumVersion: "2.4.1"
+Process:
+  # `SharedUtilityMethods` must come first
+  - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+  - Processor: com.github.jgstew.SharedProcessors/FileXattrClear
+    Arguments:
+      file_path: "%RECIPE_DIR%/FileXattrClear.test.recipe.yaml"

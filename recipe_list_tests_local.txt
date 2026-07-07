@@ -2,7 +2,7 @@
 com.github.jgstew.test.AssertInputContainsString
 com.github.jgstew.test.BigFixPrefetchItem
 com.github.jgstew.test.BigFixSetupTemplateDictionary
-com.github.jgstew.test.ClearFileXattr
+com.github.jgstew.test.FileXattrClear
 com.github.jgstew.test.ContentFromTemplate
 com.github.jgstew.test.DateTimeFromString
 com.github.jgstew.test.FileGetBase64

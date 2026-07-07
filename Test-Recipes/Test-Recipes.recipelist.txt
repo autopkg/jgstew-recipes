@@ -3,7 +3,7 @@ com.github.jgstew.test.AutoPkgCacheCleanup
 com.github.jgstew.test.AutoPkgCore
 com.github.jgstew.test.AutoPkgVariableSubstitution
 com.github.jgstew.test.AutopkgBuildRecipeListTest
-com.github.jgstew.test.ClearFileXattr
+com.github.jgstew.test.FileXattrClear
 com.github.jgstew.test.ColorThief
 com.github.jgstew.test.ContentFromTemplate
 com.github.jgstew.test.DangerousCommandRunner
