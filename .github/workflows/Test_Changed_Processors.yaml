@@ -116,3 +116,4 @@ jobs:
           recipe-list: TestProcessorsAction.txt
           title: "AutoPkg Processor Test Results"
           item-label: "Test Recipe"
+          run-outcome: ${{ steps.autopkg-run.outcome }}

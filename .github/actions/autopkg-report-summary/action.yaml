@@ -15,6 +15,10 @@ inputs:
     description: "Table column header for the item, e.g. Recipe. The count noun is its lowercase form."
     required: false
     default: "Recipe"
+  run-outcome:
+    description: "Outcome of the autopkg run step (steps.<id>.outcome). Used to catch failures that AutoPkg does not record in the report plist, e.g. an unresolvable recipe in the list ('No valid recipe found', exit 70)."
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -25,6 +29,7 @@ runs:
         RECIPE_LIST: ${{ inputs.recipe-list }}
         SUMMARY_TITLE: ${{ inputs.title }}
         ITEM_LABEL: ${{ inputs.item-label }}
+        RUN_OUTCOME: ${{ inputs.run-outcome }}
       run: |
           python3 - <<'PYEOF'
           import os
@@ -41,11 +46,25 @@ runs:
           label = os.environ.get("ITEM_LABEL", "Recipe")
           noun = label.lower()
 
+          run_outcome = os.environ.get("RUN_OUTCOME", "")
+
           try:
               with open(os.environ["RECIPE_LIST"], encoding="utf-8") as handle:
-                  total = len([line for line in handle if line.strip()])
+                  entries = [line.strip() for line in handle if line.strip()]
           except FileNotFoundError:
-              total = 0
+              entries = []
+          total = len(entries)
+
+          # Recipes listed but no longer present on disk (e.g. renamed/deleted in
+          # this commit but still reported as "changed"). AutoPkg cannot resolve
+          # these, prints "No valid recipe found", and exits 70 -- but records
+          # nothing in the report plist, so they must be caught here.
+          missing = [
+              entry
+              for entry in entries
+              if ("/" in entry or entry.endswith((".recipe.yaml", ".recipe")))
+              and not os.path.isfile(entry)
+          ]
 
           failures = []
           report_exists = os.path.isfile(report)
@@ -54,6 +73,12 @@ runs:
                   failures = plistlib.load(handle).get("failures", []) or []
 
           lines = [f"# {title}", "", f"Ran **{total}** {noun}(s).", ""]
+
+          # A non-zero run with no recorded failures/missing recipes still needs
+          # to be surfaced (e.g. an unresolvable recipe or a crash before the
+          # report was written) rather than shown as a pass.
+          run_failed = run_outcome not in ("", "success", "skipped")
+          run_failed_unexplained = run_failed and not failures and not missing
 
           if failures:
               lines.append(f"## {ICON_FAIL} {len(failures)} of {total} failed")
@@ -70,6 +95,19 @@ runs:
                   recipe = recipe.replace("|", "\\|")
                   message = message.replace("|", "\\|")
                   lines.append(f"| `{recipe}` | {message} |")
+          elif missing:
+              lines.append(f"## {ICON_FAIL} {len(missing)} {noun}(s) could not be found")
+          elif run_failed_unexplained:
+              lines.append(
+                  f"## {ICON_FAIL} The run failed (outcome: {run_outcome}) "
+                  "with no per-recipe failure recorded in the report"
+              )
+              lines.append("")
+              lines.append(
+                  "AutoPkg exited non-zero for a reason it did not write to the "
+                  "report plist (e.g. an unresolvable recipe or a crash). Check "
+                  "the run step log."
+              )
           elif report_exists:
               lines.append(f"## {ICON_PASS} All {total} {noun}(s) passed")
           else:
@@ -78,14 +116,28 @@ runs:
                   "(the run may have crashed before writing it)"
               )
 
+          # list unresolvable recipes (shown in addition to any failures above):
+          if missing:
+              lines.append("")
+              lines.append(
+                  f"These {noun}(s) were in the list but not found on disk "
+                  "(renamed or deleted?) -- AutoPkg exits 70 on an unresolvable "
+                  f"{noun}:"
+              )
+              lines.append("")
+              for entry in missing:
+                  lines.append(f"- `{entry}`")
+
           summary = "\n".join(lines) + "\n"
           if summary_path:
               with open(summary_path, "a", encoding="utf-8") as handle:
                   handle.write(summary)
           print(summary)
 
-          # fail the job if any recipe failed (covers the case where autopkg
-          # somehow exits 0 despite failures):
-          if failures:
+          # fail the job if any recipe failed, a listed recipe was unresolvable,
+          # or the run failed for a reason not captured in the report (covers the
+          # case where autopkg exits 0 despite failures, and the inverse where it
+          # exits non-zero without recording anything):
+          if failures or missing or run_failed_unexplained:
               raise SystemExit(1)
           PYEOF
