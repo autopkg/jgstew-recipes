@@ -1,6 +1,6 @@
 #!/bin/bash
 {{! This is a template for installing Firefox on Linux systems with bash. }}
-# URL of the file to download
+# URL of the file to download, released on {{SourceReleaseDate}}
 url="{{download_url}}"
 
 # Expected SHA-256 hash of the file

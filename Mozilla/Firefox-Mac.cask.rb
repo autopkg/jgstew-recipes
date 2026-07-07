@@ -2,6 +2,7 @@
 # brew install --cask --verbose ~/Library/AutoPkg/Cache/com.github.jgstew.cask.Firefox-Mac/firefox.rb
 cask "firefox" do
     version "{{version}}"
+    # Released on {{SourceReleaseDate}}
 
     language "en", default: true do
       sha256 "{{file_sha256}}"
