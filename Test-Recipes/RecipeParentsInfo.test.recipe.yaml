@@ -1,0 +1,50 @@
+---
+Description: Test RecipeParentsInfo Processor
+Identifier: com.github.jgstew.test.RecipeParentsInfo
+Input:
+  NAME: RecipeParentsInfoTest
+MinimumVersion: "2.4.1"
+ParentRecipe: com.github.jgstew.test.AssertInputContainsString
+Process:
+  - Processor: com.github.jgstew.SharedProcessors/RecipeParentsInfo
+
+  # NOTE: the list/int outputs (parent_recipe_identifiers, parent_recipes_info,
+  # parent_recipe_count) cannot be used in "%variable%" substitution -- AutoPkg
+  # only substitutes string values -- so the assertions below use the string
+  # outputs instead.
+
+  # the joined identifier string must contain the parent's identifier
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%parent_recipe_identifiers_string%"
+      assert_string: "com.github.jgstew.test.AssertInputContainsString"
+
+  # the identifier is the AutoPkg-style reverse-DNS form
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%parent_recipe_first_identifier%"
+      assert_string: "com.github.jgstew.test."
+
+  # the parent's cache dir is CACHE_DIR/<identifier>
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%parent_recipe_first_cache_dir%"
+      assert_string: "/Library/AutoPkg/Cache/com.github.jgstew.test.AssertInputContainsString"
+
+  # the terminal (running) recipe is a ".test" recipe, so the chain terminal type is "test"
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%recipe_chain_terminal_type%"
+      assert_string: "test"
+
+  # the processor union spans both the parent's processor ...
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%chain_processors_string%"
+      assert_string: "SharedProcessors/AssertInputContainsString"
+
+  # ... and the running recipe's own processor
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%chain_processors_string%"
+      assert_string: "SharedProcessors/RecipeParentsInfo"
