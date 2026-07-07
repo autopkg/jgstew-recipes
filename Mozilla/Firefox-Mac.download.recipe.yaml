@@ -36,13 +36,5 @@ Process:
   # this is specifically for BigFix, but won't hurt other use cases:
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
 
-  - Processor: com.github.jgstew.SharedProcessors/FileHasher
-
   # this is not actually BigFix specific, just sets up some defaults in the template dictionary:
   - Processor: com.github.jgstew.SharedProcessors/BigFixSetupTemplateDictionary
-
-  - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend
-    Arguments:
-      dictionary_name: template_dictionary
-      append_key: file_sha256
-      append_value: "%filehasher_sha256%"
