@@ -1,0 +1,114 @@
+---
+Description: Test GetDateTimeNow Processor (with DateTimeFromString cross-checks)
+Identifier: com.github.jgstew.test.GetDateTimeNow
+Input:
+  NAME: GetDateTimeNowTest
+MinimumVersion: "2.4.1"
+Process:
+  # `SharedUtilityMethods` must come first
+  - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
+  # ---- defaults: local time, format "%Y-%m-%d %H:%M:%S", offset 0 ----
+  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+  # date portion present
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now%"
+      assert_string: "-"
+  # time portion present
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now%"
+      assert_string: ":"
+  # ISO output is valid (has date/time separator)
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now_iso%"
+      assert_string: "T"
+  # cross-check: parse the formatted string back out with DateTimeFromString,
+  # extract just the year, then confirm the ISO output contains that same year.
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeFromString
+    Arguments:
+      datetime_string: "%datetime_now%"
+      datetime_strptime: "%Y-%m-%d %H:%M:%S"
+      datetime_strftime: "%Y"
+      datetime_parsed_name: year_local
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now_iso%"
+      assert_string: "%year_local%"
+
+  # ---- UTC: offset 0, format "%Y" (datetime_now becomes the year) ----
+  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+    Arguments:
+      datetime_use_utc: true
+      datetime_strftime: "%Y"
+  # UTC ISO output must carry the +00:00 offset (timezone-aware UTC)
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now_iso%"
+      assert_string: "+00:00"
+  # same moment: the ISO string must contain the year we just formatted
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now_iso%"
+      assert_string: "%datetime_now%"
+
+  # ---- negative offset (-5h), UTC, clean format ----
+  # NOTE: AutoPkg env values persist between processors, so from here on every
+  # GetDateTimeNow call sets all three inputs explicitly to keep scenarios
+  # independent (the first call above intentionally exercises the defaults).
+  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+    Arguments:
+      datetime_offset_hours: -5
+      datetime_use_utc: true
+      datetime_strftime: "%Y-%m-%d %H:%M:%S"
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now_iso%"
+      assert_string: "+00:00"
+  # the offset result is a coherent, parseable datetime: parse it back to a date
+  # and confirm that date is contained in the formatted string.
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeFromString
+    Arguments:
+      datetime_string: "%datetime_now%"
+      datetime_strptime: "%Y-%m-%d %H:%M:%S"
+      datetime_strftime: "%Y-%m-%d"
+      datetime_parsed_name: date_negative_offset
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now%"
+      assert_string: "%date_negative_offset%"
+
+  # ---- positive offset passed as a string ("5"), local time ----
+  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+    Arguments:
+      datetime_offset_hours: "5"
+      datetime_use_utc: false
+      datetime_strftime: "%Y-%m-%dT%H:%M:%S"
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now%"
+      assert_string: "T"
+
+  # ---- fractional offset (1.5h), local time, default-style format ----
+  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+    Arguments:
+      datetime_offset_hours: 1.5
+      datetime_use_utc: false
+      datetime_strftime: "%Y-%m-%d %H:%M:%S"
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now_iso%"
+      assert_string: "T"
+
+  # ---- custom literal format string, offset back to 0 ----
+  - Processor: com.github.jgstew.SharedProcessors/GetDateTimeNow
+    Arguments:
+      datetime_offset_hours: 0
+      datetime_use_utc: true
+      datetime_strftime: "YEAR=%Y"
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%datetime_now%"
+      assert_string: "YEAR=20"
