@@ -77,9 +77,9 @@ jobs:
             # no longer exist so a rename/delete doesn't fail the run (AutoPkg exits
             # 70 on an unresolvable recipe in the list).
             for file in ${{ steps.changed-files.outputs.all_changed_and_modified_files }}; do
-              if [ -f "$file" ]; then
+              #if [ -f "$file" ]; then
                 echo "$file" >> TestRecipesAction.txt
-              fi
+              #fi
             done
           fi
           if [ -s TestRecipesAction.txt ]; then
@@ -144,9 +144,15 @@ jobs:
         id: autopkg-run
         if: steps.build-list.outputs.should_run == 'true'
         run: |
+          # capture autopkg's exit code (e.g. 70 for an unresolvable recipe) so
+          # the summary step can report it, then re-exit so the job still fails.
+          set +e
           python autopkg/Code/autopkg run -vv \
             --recipe-list TestRecipesAction.txt \
             --report-plist "${RUNNER_TEMP}/autopkg_report.plist"
+          code=$?
+          echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+          exit "$code"
 
       # Summarize pass/fail in the GitHub Actions job summary
       # (shared composite action: .github/actions/autopkg-report-summary)
@@ -159,3 +165,4 @@ jobs:
           title: "AutoPkg Recipe Test Results"
           item-label: "Recipe"
           run-outcome: ${{ steps.autopkg-run.outcome }}
+          run-exit-code: ${{ steps.autopkg-run.outputs.exit-code }}

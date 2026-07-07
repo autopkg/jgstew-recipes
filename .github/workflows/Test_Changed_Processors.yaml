@@ -102,9 +102,15 @@ jobs:
         id: autopkg-run
         if: steps.map-tests.outputs.has_tests == 'true'
         run: |
+          # capture autopkg's exit code (e.g. 70 for an unresolvable recipe) so
+          # the summary step can report it, then re-exit so the job still fails.
+          set +e
           python autopkg/Code/autopkg run -vv \
             --recipe-list TestProcessorsAction.txt \
             --report-plist "${RUNNER_TEMP}/autopkg_report.plist"
+          code=$?
+          echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+          exit "$code"
 
       # Summarize pass/fail in the GitHub Actions job summary
       # (shared composite action: .github/actions/autopkg-report-summary)
@@ -117,3 +123,4 @@ jobs:
           title: "AutoPkg Processor Test Results"
           item-label: "Test Recipe"
           run-outcome: ${{ steps.autopkg-run.outcome }}
+          run-exit-code: ${{ steps.autopkg-run.outputs.exit-code }}

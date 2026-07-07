@@ -19,6 +19,10 @@ inputs:
     description: "Outcome of the autopkg run step (steps.<id>.outcome). Used to catch failures that AutoPkg does not record in the report plist, e.g. an unresolvable recipe in the list ('No valid recipe found', exit 70)."
     required: false
     default: ""
+  run-exit-code:
+    description: "Numeric exit code of the autopkg run step (steps.<id>.outputs.exit-code). Reported in the summary and preferred over run-outcome for detecting failure."
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -30,6 +34,7 @@ runs:
         SUMMARY_TITLE: ${{ inputs.title }}
         ITEM_LABEL: ${{ inputs.item-label }}
         RUN_OUTCOME: ${{ inputs.run-outcome }}
+        RUN_EXIT_CODE: ${{ inputs.run-exit-code }}
       run: |
           python3 - <<'PYEOF'
           import os
@@ -47,6 +52,17 @@ runs:
           noun = label.lower()
 
           run_outcome = os.environ.get("RUN_OUTCOME", "")
+          run_exit_raw = os.environ.get("RUN_EXIT_CODE", "").strip()
+          try:
+              run_exit_code = int(run_exit_raw) if run_exit_raw else None
+          except ValueError:
+              run_exit_code = None
+          # a note like " (exit code 70)" for the failure headers, when known:
+          exit_note = (
+              f" (exit code {run_exit_code})"
+              if run_exit_code not in (None, 0)
+              else ""
+          )
 
           try:
               with open(os.environ["RECIPE_LIST"], encoding="utf-8") as handle:
@@ -76,12 +92,16 @@ runs:
 
           # A non-zero run with no recorded failures/missing recipes still needs
           # to be surfaced (e.g. an unresolvable recipe or a crash before the
-          # report was written) rather than shown as a pass.
-          run_failed = run_outcome not in ("", "success", "skipped")
+          # report was written) rather than shown as a pass. Prefer the numeric
+          # exit code when available; otherwise fall back to the outcome string.
+          if run_exit_code is not None:
+              run_failed = run_exit_code != 0
+          else:
+              run_failed = run_outcome not in ("", "success", "skipped")
           run_failed_unexplained = run_failed and not failures and not missing
 
           if failures:
-              lines.append(f"## {ICON_FAIL} {len(failures)} of {total} failed")
+              lines.append(f"## {ICON_FAIL} {len(failures)} of {total} failed{exit_note}")
               lines.append("")
               lines.append(f"| {label} | Error |")
               lines.append("| --- | --- |")
@@ -96,10 +116,16 @@ runs:
                   message = message.replace("|", "\\|")
                   lines.append(f"| `{recipe}` | {message} |")
           elif missing:
-              lines.append(f"## {ICON_FAIL} {len(missing)} {noun}(s) could not be found")
-          elif run_failed_unexplained:
               lines.append(
-                  f"## {ICON_FAIL} The run failed (outcome: {run_outcome}) "
+                  f"## {ICON_FAIL} {len(missing)} {noun}(s) could not be found{exit_note}"
+              )
+          elif run_failed_unexplained:
+              if run_exit_code not in (None, 0):
+                  detail = f"exit code {run_exit_code}"
+              else:
+                  detail = f"outcome: {run_outcome}"
+              lines.append(
+                  f"## {ICON_FAIL} The run failed ({detail}) "
                   "with no per-recipe failure recorded in the report"
               )
               lines.append("")
