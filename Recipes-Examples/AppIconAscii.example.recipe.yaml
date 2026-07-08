@@ -1,0 +1,35 @@
+---
+# A "for fun" demo recipe in the spirit of TextToSpeechWeather.example.recipe.yaml
+# It downloads a Windows application, extracts its icon, and renders that icon
+# as ASCII art in the log - terminal eye-candy from a real app's icon.
+# Uses only existing processors: URLDownloaderPython, FileExeGetIcon,
+# ImageToAscii.
+# Swap `exe_url` for any Windows .exe (e.g. a VS Code or 7-Zip installer).
+# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+Description: Example AppIconAscii recipe - extracts a Windows app's icon and renders it as ASCII art.
+Identifier: com.github.jgstew.example.AppIconAscii
+Input:
+  NAME: AppIconAscii
+  # a small, stable, signed Windows .exe that carries an icon:
+  exe_url: https://raw.githubusercontent.com/ralphje/signify/master/tests/test_data/SoftwareUpdate.exe
+MinimumVersion: "2.4.1"
+Process:
+  # download the Windows executable:
+  - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
+    Arguments:
+      url: "%exe_url%"
+      filename: "%NAME%.exe"
+      download_version: ""
+      COMPUTE_HASHES: False
+
+  # extract the executable's icon to an .ico (defaults to RECIPE_CACHE_DIR/NAME.ico):
+  - Processor: com.github.jgstew.SharedProcessors/FileExeGetIcon
+
+  # render the icon as ASCII art (printed to the log); ImageToAscii scales the
+  # image to ascii_width on its own, so no separate resize step is needed:
+  - Processor: com.github.jgstew.SharedProcessors/ImageToAscii
+    Arguments:
+      file_pathname: "%icon_file_output%"
+      ascii_width: 50
+
+  - Processor: EndOfCheckPhase

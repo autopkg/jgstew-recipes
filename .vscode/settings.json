@@ -6,6 +6,9 @@
   "editor.formatOnSave": true,
   "git.autofetch": true,
   "python.analysis.completeFunctionParens": true,
+  "workbench.editorAssociations": {
+    "*.md": "vscode.markdown.preview.editor"
+  },
   "yaml.schemas": {
     "https://raw.githubusercontent.com/autopkg/jgstew-recipes/refs/heads/main/.AutoPkgRecipeOpinionated.schema.json": [
       "**.recipe.yaml",

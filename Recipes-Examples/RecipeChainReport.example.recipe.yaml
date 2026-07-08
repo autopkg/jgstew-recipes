@@ -1,0 +1,43 @@
+---
+# A "for fun" (but genuinely useful) demo recipe in the spirit of
+# TextToSpeechWeather.example.recipe.yaml
+# It introspects its own parent recipe chain and writes a Markdown report:
+# the parent identifiers, the immediate parent's cache dir, the recipe types,
+# and the union of processors used across the chain.
+# Uses only existing processors: RecipeParentsInfo, VariableToString,
+# ContentFromTemplate.
+# Point ParentRecipe at any recipe to document that recipe's lineage instead.
+# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+Description: Example RecipeChainReport recipe - documents its own parent recipe chain as Markdown.
+Identifier: com.github.jgstew.example.RecipeChainReport
+# a parent so there is a chain to report (any recipe works here):
+ParentRecipe: com.github.jgstew.test.AssertInputContainsString
+Input:
+  NAME: RecipeChainReport
+MinimumVersion: "2.4.1"
+Process:
+  # gather info about every parent recipe of this one:
+  - Processor: com.github.jgstew.SharedProcessors/RecipeParentsInfo
+
+  # the count is an integer; stringify it so it can go into the template dict
+  # (AutoPkg '%variable%' substitution only works with string values):
+  - Processor: com.github.jgstew.SharedProcessors/VariableToString
+    Arguments:
+      input_variable: parent_recipe_count
+      output_variable: parent_recipe_count_string
+
+  # render the Markdown report from the template + the string outputs:
+  - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
+    Arguments:
+      template_file_path: "%RECIPE_DIR%/RecipeChainReport.template.md"
+      content_file_pathname: "%RECIPE_CACHE_DIR%/%NAME%.md"
+      template_dictionary:
+        name: "%NAME%"
+        terminal_type: "%recipe_chain_terminal_type%"
+        parent_count: "%parent_recipe_count_string%"
+        parents: "%parent_recipe_identifiers_string%"
+        first_parent: "%parent_recipe_first_identifier%"
+        first_cache_dir: "%parent_recipe_first_cache_dir%"
+        processors: "%chain_processors_string%"
+
+  - Processor: EndOfCheckPhase

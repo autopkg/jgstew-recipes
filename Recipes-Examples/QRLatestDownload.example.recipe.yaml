@@ -1,0 +1,43 @@
+---
+# A "for fun" (but genuinely useful) demo recipe in the spirit of
+# TextToSpeechWeather.example.recipe.yaml
+# It resolves the CURRENT Google Chrome download URL and renders it as a
+# scannable QR code labeled with the package name (which includes the version).
+# Scan it with a phone to download the latest Chrome directly.
+# Uses only existing processors: GoogleChromeUpdateInfoProvider,
+# QRCodeGenerator, TextOnImage.
+# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+Description: Example QRLatestDownload recipe - QR code of the current Chrome download URL, labeled with the version.
+Identifier: com.github.jgstew.example.QRLatestDownload
+Input:
+  NAME: QRLatestDownload
+MinimumVersion: "2.4.1"
+Process:
+  # resolve the current Chrome package download URL and name (with version):
+  - Processor: com.github.jgstew.SharedProcessors/GoogleChromeUpdateInfoProvider
+
+  # pull just the version out of the package name (e.g. "149.0.7827.201"),
+  # so the label is short enough to fit on the image:
+  - Processor: com.github.jgstew.SharedProcessors/TextSubstitutionRegEx
+    Arguments:
+      input_string: "%chrome_package_name%"
+      re_pattern: '^([0-9.]+).*'
+      re_substitution: '\1'
+      result_output_var_name: chrome_version
+
+  # render the resolved URL as a scannable QR code (printed and saved as PNG):
+  - Processor: com.github.jgstew.SharedProcessors/QRCodeGenerator
+    Arguments:
+      qr_data: "%url%"
+      qr_output_path: "%RECIPE_CACHE_DIR%/%NAME%.png"
+
+  # label the QR image with the version, so it is visible at a glance:
+  - Processor: com.github.jgstew.SharedProcessors/TextOnImage
+    Arguments:
+      file_pathname: "%RECIPE_CACHE_DIR%/%NAME%.png"
+      text_string: "Chrome %chrome_version%"
+      position: bottom
+      font_size: 28
+      file_path_save: "%RECIPE_CACHE_DIR%/%NAME%_labeled.png"
+
+  - Processor: EndOfCheckPhase
