@@ -104,7 +104,7 @@ repos:
         # args: ["--ignore-words-list=autopkg,AutoPkg,AutoPkgRecipe,AutoPkgRecipes,AutoPkgRecipeList,AutoPkgRecipeLists"]
 
   - repo: https://github.com/jgstew/pre-commit-jgstew
-    rev: v1.3.2
+    rev: v1.4.0
     hooks:
       - id: verify-files-are-ascii
         exclude: "Firefox-Win.ChocolateyTemplate.Firefox.nuspec$"
@@ -139,6 +139,11 @@ repos:
           - '--filter= URLDownloaderPython'
           - '--replace= com.github.jgstew.SharedProcessors/URLDownloaderPython'
           - '--overwrite'
+
+  # - repo: https://github.com/koalaman/shellcheck-precommit
+  #   rev: v0.11.0
+  #   hooks:
+  #     - id: shellcheck
 
   - repo: local
     hooks:
