@@ -7,12 +7,16 @@ on:
       - main
     paths:
       - "SharedProcessors/**"
+      - "tests/**"
+      - "pytest.ini"
       - "test_processors_load.sh"
       - "requirements.txt"
       - ".github/workflows/Processors_Test_Loading.yaml"
   pull_request:
     paths:
       - "SharedProcessors/**"
+      - "tests/**"
+      - "pytest.ini"
       - "test_processors_load.sh"
       - "requirements.txt"
       - ".github/workflows/Processors_Test_Loading.yaml"
@@ -82,4 +86,12 @@ jobs:
 
       - name: Run processor loading tests
         run: bash test_processors_load.sh
+        shell: bash
+
+      # Unit/contract tests for the processors (imports autopkglib via the
+      # in-repo autopkg/Code checkout; pytest comes from requirements.txt). The
+      # contract test skips any processor whose optional native dep is missing on
+      # this OS, so this is safe across the macOS/Linux/Windows matrix.
+      - name: Run pytest suite
+        run: python -m pytest tests/ -ra
         shell: bash
