@@ -1,0 +1,42 @@
+---
+# A "for fun" (but genuinely useful) demo recipe in the spirit of
+# TextToSpeechWeather.example.recipe.yaml
+# It counts the files in a folder and reads the count aloud. By default it counts
+# the recipe files in this Recipes-Examples folder, so it is self-contained and
+# offline.
+# Uses only existing processors: FolderListFiles, VariableToString, StringFormat,
+# TextToSpeech.
+# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+Description: Example FolderCountAnnouncer recipe - counts files in a folder and reads the count aloud.
+Identifier: com.github.jgstew.example.FolderCountAnnouncer
+Input:
+  NAME: FolderCountAnnouncer
+  target_folder: "%RECIPE_DIR%"
+  target_pattern: "*.recipe.yaml"
+MinimumVersion: "2.4.1"
+Process:
+  # list the matching files in the folder:
+  - Processor: com.github.jgstew.SharedProcessors/FolderListFiles
+    Arguments:
+      folder_path: "%target_folder%"
+      pattern: "%target_pattern%"
+
+  # folder_file_count is an int; stringify it so it can be used in substitution:
+  - Processor: com.github.jgstew.SharedProcessors/VariableToString
+    Arguments:
+      input_variable: folder_file_count
+
+  # build a friendly announcement:
+  - Processor: com.github.jgstew.SharedProcessors/StringFormat
+    Arguments:
+      format_string: "Found {count} recipe files in {folder}."
+      format_kwargs:
+        count: "%folder_file_count%"
+        folder: "%target_folder%"
+
+  # read it aloud (no-op on a headless host):
+  - Processor: com.github.jgstew.SharedProcessors/Notifier
+    Arguments:
+      notification_message: "%formatted_string%"
+
+  - Processor: EndOfCheckPhase

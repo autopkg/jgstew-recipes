@@ -1,8 +1,29 @@
 ---
+# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/FolderListFiles.py
 Description: Test FolderListFiles Processor
 Identifier: com.github.jgstew.test.FolderListFiles
 Input:
   NAME: FolderListFilesTest
 MinimumVersion: "2.4.1"
 Process:
+  # list this Test-Recipes folder, filtered to this recipe file itself:
   - Processor: com.github.jgstew.SharedProcessors/FolderListFiles
+    Arguments:
+      folder_path: "%RECIPE_DIR%"
+      pattern: "FolderListFiles*.test.recipe.yaml"
+
+  # the newline-joined path list must contain this recipe file:
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%folder_file_list_string%"
+      assert_string: "FolderListFiles.test.recipe.yaml"
+
+  # exactly one file matches the pattern; folder_file_count is an int, so
+  # stringify it before the (substring) assertion:
+  - Processor: com.github.jgstew.SharedProcessors/VariableToString
+    Arguments:
+      input_variable: folder_file_count
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%folder_file_count%"
+      assert_string: "1"
