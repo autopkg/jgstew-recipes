@@ -2,6 +2,7 @@
 
 import pytest
 from AssertInputContainsString import AssertInputContainsString
+from autopkglib import ProcessorError
 
 
 def test_assert_found_sets_result():
@@ -37,3 +38,47 @@ def test_assert_coerces_non_string_inputs():
     proc = AssertInputContainsString({"input_string": 12345, "assert_string": 234})
     proc.main()
     assert proc.env["assert_result"] == "found!"
+
+
+# ---- via Processor.process() ----------------------------------------------
+# process() is AutoPkg's real entry point: it applies input_variables defaults
+# and enforces `required` inputs, then calls main(). These tests drive the
+# processor the way the AutoPkg engine does, exercising that wrapping around
+# main() rather than calling main() directly.
+
+
+def test_process_returns_env_on_success():
+    proc = AssertInputContainsString({"input_string": "1_2_3", "assert_string": "_"})
+    result = proc.process()
+    assert result is proc.env
+    assert result["assert_result"] == "found!"
+
+
+def test_process_applies_raise_error_default_and_raises_when_not_found():
+    # raise_error is not supplied; process() must apply its default (True) from
+    # input_variables, so a not-found assertion raises.
+    proc = AssertInputContainsString({"input_string": "abc", "assert_string": "xyz"})
+    assert "raise_error" not in proc.env  # default not applied yet
+    with pytest.raises(AssertionError):
+        proc.process()
+    assert proc.env["raise_error"] is True  # process() applied the default
+
+
+def test_process_respects_raise_error_false():
+    proc = AssertInputContainsString(
+        {"input_string": "abc", "assert_string": "xyz", "raise_error": False}
+    )
+    result = proc.process()  # must not raise
+    assert result["assert_result"].startswith("ERROR")
+
+
+def test_process_missing_required_input_string_raises():
+    proc = AssertInputContainsString({"assert_string": "x"})
+    with pytest.raises(ProcessorError):
+        proc.process()
+
+
+def test_process_missing_required_assert_string_raises():
+    proc = AssertInputContainsString({"input_string": "abc"})
+    with pytest.raises(ProcessorError):
+        proc.process()
