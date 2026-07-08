@@ -9,12 +9,22 @@
 #   4. python
 #
 # Any arguments are passed straight through to pytest, e.g.:
-#   ./run_pytests.sh -k RecipeParentsInfo -v
-#   ./run_pytests.sh tests/test_urldownloaderpython.py
+#   ./pytests_run.sh -k RecipeParentsInfo -v
+#   ./pytests_run.sh tests/test_urldownloaderpython.py
 
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# macOS only: Homebrew installs native libraries (e.g. cairo, needed by cairosvg
+# for the FileImageSvgToPng processor) under a prefix that dlopen() and
+# ctypes.util.find_library() do not search by default. Add Homebrew's lib dir as
+# a dyld fallback so those processors import instead of being skipped. Must be
+# exported before Python launches (dyld reads it at process start).
+if [[ "$(uname -s)" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
+    brew_lib="$(brew --prefix)/lib"
+    export DYLD_FALLBACK_LIBRARY_PATH="${brew_lib}${DYLD_FALLBACK_LIBRARY_PATH:+:${DYLD_FALLBACK_LIBRARY_PATH}}"
+fi
 
 # In preference order. The two .venv entries are the same venv on Unix vs Windows.
 candidates=(
