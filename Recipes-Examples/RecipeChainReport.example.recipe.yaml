@@ -11,7 +11,7 @@
 Description: Example RecipeChainReport recipe - documents its own parent recipe chain as Markdown.
 Identifier: com.github.jgstew.example.RecipeChainReport
 # a parent so there is a chain to report (any recipe works here):
-ParentRecipe: com.github.jgstew.test.AssertInputContainsString
+ParentRecipe: com.github.jgstew.download.Firefox-Linux
 Input:
   NAME: RecipeChainReport
 MinimumVersion: "2.4.1"
