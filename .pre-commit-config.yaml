@@ -9,7 +9,9 @@ repos:
   - repo: meta
     hooks:
       - id: check-useless-excludes
+        stages: [manual, pre-push]
       - id: check-hooks-apply
+        stages: [manual, pre-push]
 
   - repo: https://github.com/homebysix/pre-commit-macadmin
     rev: v1.25.0
@@ -18,7 +20,8 @@ repos:
       - id: check-autopkg-recipes
         args: ["--recipe-prefix=com.github.jgstew.", "--override-prefix=com.github.jgstew.", "--strict", "--"]
         exclude: ".*.test.recipe.yaml"
-      # - id: forbid-autopkg-overrides
+      - id: forbid-autopkg-overrides
+        stages: [manual, pre-push]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
