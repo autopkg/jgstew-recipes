@@ -159,3 +159,42 @@ def test_main_no_parents(make_processor):
     assert proc.env["parent_recipe_first_identifier"] == ""
     assert proc.env["parent_recipe_first_cache_dir"] == ""
     assert proc.env["chain_processors"] == []
+
+
+def test_main_unreadable_parent_is_counted_but_has_no_identifier(
+    tmp_path, make_processor
+):
+    """A PARENT_RECIPES path that does not exist yields identifier/cache None."""
+    missing = tmp_path / "Ghost.download.recipe.yaml"  # never created
+    env = {"PARENT_RECIPES": [str(missing)], "CACHE_DIR": str(tmp_path / "cache")}
+    proc = make_processor(RecipeParentsInfo, env)
+    proc.main()
+
+    assert proc.env["parent_recipe_count"] == 1  # the path is still counted
+    assert proc.env["parent_recipe_identifiers"] == []  # but no identifier resolved
+    assert proc.env["parent_recipe_cache_dirs"] == []
+    assert proc.env["parent_recipe_types"] == ["download"]  # type is filename-derived
+    info = proc.env["parent_recipes_info"][0]
+    assert info["identifier"] is None
+    assert info["cache_dir"] is None
+
+
+def test_main_parent_without_identifier(tmp_path, make_processor):
+    """A readable parent recipe that declares no Identifier resolves to None."""
+    parent = tmp_path / "NoId.download.recipe.yaml"
+    _write(
+        parent,
+        """\
+        Description: no identifier here
+        Input:
+          NAME: NoId
+        Process: []
+        """,
+    )
+    env = {"PARENT_RECIPES": [str(parent)], "CACHE_DIR": str(tmp_path / "cache")}
+    proc = make_processor(RecipeParentsInfo, env)
+    proc.main()
+
+    assert proc.env["parent_recipe_count"] == 1
+    assert proc.env["parent_recipe_identifiers"] == []
+    assert proc.env["parent_recipes_info"][0]["identifier"] is None

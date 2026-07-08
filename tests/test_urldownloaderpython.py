@@ -51,6 +51,25 @@ def test_get_parent_cache_dirs_no_parents(tmp_path):
     assert proc.get_parent_cache_dirs() == []
 
 
+def test_get_parent_cache_dirs_skips_unresolvable_parents(tmp_path):
+    """Unreadable paths and recipes without an identifier are skipped."""
+    good = tmp_path / "Good.download.recipe.yaml"
+    _make_recipe(good, "com.test.good")
+    no_id = tmp_path / "NoId.download.recipe.yaml"
+    no_id.write_text(
+        "Description: x\nInput:\n  NAME: X\nProcess: []\n", encoding="utf-8"
+    )
+    missing = tmp_path / "Ghost.download.recipe.yaml"  # never created
+    cache = tmp_path / "cache"
+    proc = URLDownloaderPython(
+        {
+            "PARENT_RECIPES": [str(good), str(no_id), str(missing)],
+            "CACHE_DIR": str(cache),
+        }
+    )
+    assert proc.get_parent_cache_dirs() == [os.path.join(str(cache), "com.test.good")]
+
+
 # ---- find_newest_parent_download ------------------------------------------
 
 
@@ -113,6 +132,20 @@ def test_reuse_copies_when_current_missing(proc_with_two_parents, tmp_path):
 
     assert current.read_bytes() == b"PARENT"
     assert (current.parent / "thing.zip.info.json").is_file()
+
+
+def test_reuse_copies_when_current_older(proc_with_two_parents, tmp_path):
+    proc, p1_dl, _p2_dl = proc_with_two_parents
+    source = _make_cached_download(p1_dl, "thing.zip", content=b"PARENT-NEWER")
+    os.utime(source, (5000, 5000))
+    current = tmp_path / "child" / "downloads" / "thing.zip"
+    os.makedirs(current.parent, exist_ok=True)
+    current.write_bytes(b"CURRENT-OLDER")
+    os.utime(current, (1000, 1000))
+    proc.env["pathname"] = str(current)
+
+    proc.reuse_newest_parent_download("thing.zip")
+    assert current.read_bytes() == b"PARENT-NEWER"  # replaced by newer parent copy
 
 
 def test_reuse_is_idempotent(proc_with_two_parents, tmp_path):
