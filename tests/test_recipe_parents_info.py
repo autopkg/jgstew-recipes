@@ -1,5 +1,6 @@
 """Unit tests for RecipeParentsInfo (static methods + main() behavior)."""
 
+# pre-commit-skip: processor-conventions
 import os
 import textwrap
 

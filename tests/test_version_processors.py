@@ -1,5 +1,6 @@
 """Unit tests for the version-handling processors (positive + negative cases)."""
 
+# pre-commit-skip: processor-conventions
 import pytest
 from autopkglib import ProcessorError
 from VersionCompare import VersionCompare, compare_versions

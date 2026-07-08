@@ -18,6 +18,7 @@ import coverage is provided by test_processors_load.sh in CI. A genuine code
 error (SyntaxError, NameError, ...) is not an ImportError/OSError and still fails.
 """
 
+# pre-commit-skip: processor-conventions
 import pytest
 from processor_utils import (
     all_processor_module_names,

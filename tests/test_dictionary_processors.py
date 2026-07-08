@@ -1,5 +1,6 @@
 """Unit tests for the dictionary/template-dictionary processors."""
 
+# pre-commit-skip: processor-conventions
 import pytest
 from autopkglib import ProcessorError
 from DictionaryKeyRead import DictionaryKeyRead

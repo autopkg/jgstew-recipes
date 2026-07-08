@@ -1,5 +1,6 @@
 """Unit tests for DateTimeFromString and DateTimeNow."""
 
+# pre-commit-skip: processor-conventions
 import pytest
 from autopkglib import ProcessorError
 from DateTimeFromString import DateTimeFromString

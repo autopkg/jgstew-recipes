@@ -8,6 +8,7 @@ install. `conftest.py` imports this module so the path setup runs before any tes
 module imports a processor.
 """
 
+# pre-commit-skip: processor-conventions
 import importlib
 import inspect
 import os

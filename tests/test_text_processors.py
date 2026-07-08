@@ -1,5 +1,6 @@
 """Unit tests for the string/text processors (positive + negative cases)."""
 
+# pre-commit-skip: processor-conventions
 import re
 
 import pytest

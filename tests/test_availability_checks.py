@@ -4,6 +4,7 @@ Both expose a static _*_available() that returns False on a headless Linux host
 (no D-Bus session / no display) and True on macOS/Windows.
 """
 
+# pre-commit-skip: processor-conventions
 import Notifier as notifier_mod
 import pytest
 import TextToSpeech as tts_mod

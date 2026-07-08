@@ -1,5 +1,6 @@
 """Unit tests for FileConfigParser methods (env_safe, load_config, read_*)."""
 
+# pre-commit-skip: processor-conventions
 import textwrap
 
 import pytest

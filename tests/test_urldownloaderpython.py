@@ -4,6 +4,7 @@ These cover the self-contained cache introspection / copy-on-reuse logic without
 any network I/O.
 """
 
+# pre-commit-skip: processor-conventions
 import json
 import os
 import textwrap

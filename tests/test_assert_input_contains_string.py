@@ -1,5 +1,6 @@
 """Unit tests for AssertInputContainsString (positive + negative cases)."""
 
+# pre-commit-skip: processor-conventions
 import pytest
 from AssertInputContainsString import AssertInputContainsString
 from autopkglib import ProcessorError

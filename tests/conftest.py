@@ -4,6 +4,7 @@ Importing processor_utils sets up sys.path (autopkglib + SharedProcessors) befor
 any test module imports a processor.
 """
 
+# pre-commit-skip: processor-conventions
 import processor_utils  # noqa: F401  (import side effect: sets up sys.path)
 import pytest
 
