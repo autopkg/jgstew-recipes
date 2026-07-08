@@ -155,3 +155,19 @@ repos:
         # auto-fixes fixable issues (currently E001 shebang); use --auto-fix=no to only report
         args: ["--auto-fix=yes"]
         files: ^Shared(Dangerous)?Processors/.*\.py$
+
+      # Run via pytests_run.sh rather than an isolated pre-commit venv: the tests
+      # import autopkglib (which does `import imp`, removed in Python 3.12, so it
+      # must run on the repo's Python <3.12) plus the processor dependencies from
+      # requirements.txt. pytests_run.sh selects a suitable interpreter
+      # (.venv/bin/python, then the autopkg-bundled python, then python3/python)
+      # and applies the macOS Homebrew dyld fix. language: system reuses that
+      # already-set-up environment instead of building a fresh one.
+      - id: pytest
+        name: pytest (SharedProcessors unit/contract tests)
+        description: Run the pytest suite via pytests_run.sh.
+        language: system
+        entry: ./pytests_run.sh
+        pass_filenames: false
+        always_run: true
+        stages: [manual, pre-push]
