@@ -50,10 +50,11 @@ BES_PASSWORD), keys the processor writes itself, and get() fallback defaults.
 
 Warnings (do not fail the hook): W003 (the `__main__` guard is not last in the
 file), W004 (writes a `self.env[...]` key not declared in output_variables),
-W005 (no Test-Recipes/<Name>*.test.recipe.yaml for this processor), W006 (imports
-a platform-specific module in a cross-platform repo), W007 (an input_variable is
-declared but never read from self.env), and W008 (a hardcoded user/machine-
-specific path). W004/W006/W007/W008 each accept a per-line opt-out comment
+W005 (no Test-Recipes/<Name>*.test.recipe.yaml for this processor -- auto-fixed
+when a sibling "*test*" folder exists, by writing a stub test recipe that calls
+the processor), W006 (imports a platform-specific module in a cross-platform
+repo), W007 (an input_variable is declared but never read from self.env), and
+W008 (a hardcoded user/machine-specific path). W004/W006/W007/W008 each accept a per-line opt-out comment
 (`# output-undeclared-ok`, `# platform-specific-ok`, `# input-unread-ok`,
 `# hardcoded-path-ok`) for reviewed, intentional exceptions.
 
@@ -156,6 +157,12 @@ HARDCODED_PATH_RE = re.compile(
 # is the minimum stripped length; the shortest real docstring in the repo is ~65
 # characters, so 40 cleanly separates genuine descriptions from stub placeholders.
 MIN_CLASS_DOCSTRING_LEN = 40
+
+# Convention for the stub test recipe the W005 auto-fix generates: it calls the
+# processor via `com.github.jgstew.<Folder>/<Name>` and is written into a sibling
+# folder whose name contains "test" (e.g. Test-Recipes/).
+RECIPE_IDENTIFIER_PREFIX = "com.github.jgstew."
+TEST_RECIPE_MIN_VERSION = "2.4.1"
 
 # Every check ID this tool can emit -- used to validate --disable arguments so a
 # typo (e.g. "E99") is reported rather than silently ignored.
@@ -1306,38 +1313,52 @@ def check_outputs_declared(proc, attrs, source_lines):
     return issues
 
 
+def sibling_test_dirs(path):
+    """Return sibling folders of the processor whose name contains "test".
+
+    These are the sibling directories (case-insensitive "test" in the name, e.g.
+    Test-Recipes/) that hold this repo's test recipes. Shared by the W005 check
+    and its auto-fix so both agree on where test recipes live.
+    """
+    proc_dir = os.path.dirname(path)
+    repo_root = os.path.dirname(proc_dir)
+    dirs = []
+    try:
+        for entry in sorted(os.listdir(repo_root or ".")):
+            full = os.path.join(repo_root, entry)
+            if full != proc_dir and "test" in entry.lower() and os.path.isdir(full):
+                dirs.append(full)
+    except OSError:
+        pass
+    return dirs
+
+
+def is_test_recipe_name(name, stem):
+    """True if `name` is a test recipe for `stem`.
+
+    Matches `<stem>.test.recipe.yaml` and `<stem>-*.test.recipe.yaml` variants
+    (e.g. `<stem>-Win.test.recipe.yaml`).
+    """
+    suffix = ".test.recipe.yaml"
+    return name == stem + suffix or (
+        name.startswith(stem + "-") and name.endswith(suffix)
+    )
+
+
 def check_test_recipe(path, stem):
     """W005: a processor should have at least one test recipe.
 
     Looks for `<stem>.test.recipe.yaml` (or a `<stem>-*.test.recipe.yaml` variant,
     e.g. `<stem>-Win.test.recipe.yaml`) in the processor's own folder or in any
     sibling folder whose name contains "test" (case-insensitive), e.g.
-    Test-Recipes/. Report-only.
+    Test-Recipes/. Auto-fixed by maybe_fix_test_recipe (which writes a stub into a
+    sibling test folder when one exists); reported here otherwise.
     """
-    suffix = ".test.recipe.yaml"
-    prefix = stem + "-"
-
-    def is_test_recipe(name):
-        return name == stem + suffix or (
-            name.startswith(prefix) and name.endswith(suffix)
-        )
-
     proc_dir = os.path.dirname(path)
-    repo_root = os.path.dirname(proc_dir)
-
-    # search the processor's own folder, plus sibling "*test*" folders
-    search_dirs = [proc_dir or "."]
-    try:
-        for entry in os.listdir(repo_root or "."):
-            full = os.path.join(repo_root, entry)
-            if full != proc_dir and "test" in entry.lower() and os.path.isdir(full):
-                search_dirs.append(full)
-    except OSError:
-        pass
-
+    search_dirs = [proc_dir or "."] + sibling_test_dirs(path)
     for directory in search_dirs:
         try:
-            if any(is_test_recipe(name) for name in os.listdir(directory)):
+            if any(is_test_recipe_name(name, stem) for name in os.listdir(directory)):
                 return []
         except OSError:
             continue
@@ -1794,6 +1815,61 @@ def maybe_fix_main_guard(path, proc, info):
     return []
 
 
+def test_recipe_stub_text(stem, processor_ref):
+    """Return the YAML for a minimal test recipe that calls the processor."""
+    return (
+        "---\n"
+        f"Description: Test {stem} Processor\n"
+        f"Identifier: {RECIPE_IDENTIFIER_PREFIX}test.{stem}\n"
+        "Input:\n"
+        f"  NAME: {stem}Test\n"
+        f'MinimumVersion: "{TEST_RECIPE_MIN_VERSION}"\n'
+        "Process:\n"
+        f"  - Processor: {processor_ref}\n"
+    )
+
+
+def maybe_fix_test_recipe(path, stem):
+    """Auto-fix W005: create a stub test recipe in a sibling *test* folder.
+
+    Acts only when the processor has no test recipe yet AND a sibling folder whose
+    name contains "test" (e.g. Test-Recipes/, preferred when present) exists to
+    hold it -- with no such folder there is nowhere to put it, so W005 stays
+    reported. Writes `<stem>.test.recipe.yaml` calling the processor via
+    `com.github.jgstew.<Folder>/<stem>`, so the next run finds it and W005 no
+    longer fires. Never overwrites an existing file. Returns the list of fixed
+    entries (empty if not applicable).
+    """
+    if not check_test_recipe(path, stem):
+        return []  # a test recipe already exists
+
+    test_dirs = sibling_test_dirs(path)
+    if not test_dirs:
+        return []  # no Test-Recipes/-style folder to create it in
+    target_dir = next(
+        (d for d in test_dirs if os.path.basename(d) == "Test-Recipes"), test_dirs[0]
+    )
+
+    recipe_path = os.path.join(target_dir, f"{stem}.test.recipe.yaml")
+    if os.path.exists(recipe_path):
+        return []  # do not overwrite
+
+    # the processor is referenced as com.github.jgstew.<parent folder>/<Name>
+    parent_folder = os.path.basename(os.path.dirname(os.path.abspath(path)))
+    processor_ref = f"{RECIPE_IDENTIFIER_PREFIX}{parent_folder}/{stem}"
+    with open(recipe_path, "w", encoding="utf-8") as handle:
+        handle.write(test_recipe_stub_text(stem, processor_ref))
+
+    return [
+        (
+            1,
+            "W005",
+            f"created stub test recipe {os.path.relpath(recipe_path)} "
+            f"calling {stem} (fill in real Input/Process assertions)",
+        )
+    ]
+
+
 def check_file(path, auto_fix=True, disabled=frozenset()):
     """Check one file.
 
@@ -1920,6 +1996,11 @@ def check_file(path, auto_fix=True, disabled=frozenset()):
     issues += check_all_defined(tree, info)  # E026
     issues += check_processor_error_import(info)  # E005
     issues += check_autopkglib_import(tree)  # E031
+    # W005: create a stub test recipe in a sibling *test* folder when missing.
+    # The fix writes a separate .yaml (not this .py), so no re-parse is needed;
+    # the check right after then finds it and does not re-report.
+    if auto_fix and "W005" not in disabled:
+        fixed += maybe_fix_test_recipe(path, stem)
     issues += check_test_recipe(path, stem)  # W005
     issues += check_platform_imports(tree, source_lines)  # W006
     issues += check_hardcoded_paths(tree, source_lines)  # W008
