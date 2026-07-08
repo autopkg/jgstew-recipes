@@ -102,13 +102,14 @@ class BESImport(Processor):
         """Execution starts here."""
         # Assign BES Console Variables
         bes_file = self.env.get("bes_file", self.env.get("content_file_pathname"))
+        besapi_conf_file = self.env.get("besapi_conf_file", None)
 
         if not bes_file:
             self.output("Nothing to import", 0)
             return 0
 
         try:
-            self.get_config()
+            self.get_config(besapi_conf_file)
         except BaseException:
             self.output("ERROR: No besapi config loaded, use bescli to create one", 0)
             return 0
