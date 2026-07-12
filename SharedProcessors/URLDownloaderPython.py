@@ -6,7 +6,7 @@
 #  - https://github.com/autopkg/autopkg/blob/master/Code/autopkglib/URLDownloader.py
 #
 # This processor effectively lives in 3 places, each less to more stable:
-#  - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/URLDownloaderPython.py
+#  - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/URLDownloaderPython.py
 #  - https://github.com/jgstew/autopkg/blob/dev/Code/autopkglib/URLDownloaderPython.py
 #  - https://github.com/autopkg/autopkg/blob/dev/Code/autopkglib/URLDownloaderPython.py
 """See docstring for URLDownloaderPython class"""

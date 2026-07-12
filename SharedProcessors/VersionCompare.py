@@ -3,7 +3,7 @@
 """See docstring for VersionCompare class"""
 
 # Related:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/VersionGetMajorMinor.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/VersionGetMajorMinor.py
 
 import looseversion
 from autopkglib import (  # pylint: disable=import-error,wrong-import-position,unused-import

@@ -13,14 +13,14 @@ try:
     import chevron  # pylint: disable=import-error
 except ImportError:
     print("ERROR: `chevron` library required.")
-    print("https://github.com/jgstew/jgstew-recipes/blob/main/requirements.txt")
+    print("https://github.com/autopkg/jgstew-recipes/blob/main/requirements.txt")
 
 try:
     import validate_bes_xml  # pylint: disable=import-error
 except ImportError:
     print("ERROR: `validate_bes_xml` module required for bes validation")
     print("Install: pip install --upgrade validate_bes_xml")
-    print("See: https://github.com/jgstew/jgstew-recipes/blob/main/requirements.txt")
+    print("See: https://github.com/autopkg/jgstew-recipes/blob/main/requirements.txt")
     validate_bes_xml = None
 
 from autopkglib import (  # pylint: disable=import-error,wrong-import-position,unused-import

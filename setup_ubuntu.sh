@@ -20,7 +20,7 @@ PYBIN="python${PYTHON_VERSION}"
 echo "Using ${PYBIN} (from .python-version, default 3.10)"
 
 sudo apt update && DEBIAN_FRONTEND=noninteractive apt install -y git
-# git clone https://github.com/jgstew/jgstew-recipes.git
+# git clone https://github.com/autopkg/jgstew-recipes.git
 
 # setup python via deadsnakes PPA: https://gist.github.com/rutcreate/c0041e842f858ceb455b748809763ddb
 sudo DEBIAN_FRONTEND=noninteractive apt install -y software-properties-common git

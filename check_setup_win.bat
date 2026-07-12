@@ -278,8 +278,8 @@ echo      --- AutoPkg version (expected 2.3 or later)
 
 echo.
 echo Add/Update jgstew-recipes in AutoPkg
-echo python ..\autopkg\Code\autopkg repo-add https://github.com/jgstew/jgstew-recipes
-python ..\autopkg\Code\autopkg repo-add https://github.com/jgstew/jgstew-recipes
+echo python ..\autopkg\Code\autopkg repo-add https://github.com/autopkg/jgstew-recipes
+python ..\autopkg\Code\autopkg repo-add https://github.com/autopkg/jgstew-recipes
 
 REM hansen-m-recipes
 echo.

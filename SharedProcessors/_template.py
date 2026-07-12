@@ -4,7 +4,7 @@
 # James Stewart @JGStew - 2026
 #
 # Link:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/_template.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/_template.py
 #
 """See docstring for HelloWorld class
 

@@ -3,7 +3,7 @@
 # James Stewart @JGStew - 2026
 #
 # Link:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/DateTimeNow.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/DateTimeNow.py
 #
 """See docstring for DateTimeNow class
 

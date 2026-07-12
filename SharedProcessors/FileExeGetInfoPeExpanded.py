@@ -3,7 +3,7 @@
 # James Stewart @JGStew - 2026
 #
 # Related:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/FileExeGetInfoPE.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/FileExeGetInfoPE.py
 #
 """See docstring for FileExeGetInfoPeExpanded class"""
 

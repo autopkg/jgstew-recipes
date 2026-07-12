@@ -9,7 +9,7 @@ Description: Example GitHubStarsAnnouncer recipe - fetches a GitHub repo's star 
 Identifier: com.github.jgstew.example.GitHubStarsAnnouncer
 Input:
   NAME: GitHubStarsAnnouncer
-  github_repo: "jgstew/jgstew-recipes"
+  github_repo: "autopkg/jgstew-recipes"
 MinimumVersion: "2.4.1"
 Process:
   # fetch the repo metadata as JSON (GitHub API requires a User-Agent):

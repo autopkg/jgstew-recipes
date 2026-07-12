@@ -3,7 +3,7 @@
 # James Stewart @JGStew - 2026
 #
 # Related:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/TextSubstitutionRegEx.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/TextSubstitutionRegEx.py
 #
 """See docstring for StringFormat class"""
 

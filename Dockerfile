@@ -11,8 +11,8 @@ LABEL maintainer="james@jgstew.com"
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.name="jgstewrecipes"
 LABEL org.label-schema.description="Run jgstew-recipes using AutoPkg on Ubuntu:latest"
-LABEL org.label-schema.url="https://github.com/jgstew/jgstew-recipes"
-LABEL org.label-schema.vcs-url="https://github.com/jgstew/jgstew-recipes"
+LABEL org.label-schema.url="https://github.com/autopkg/jgstew-recipes"
+LABEL org.label-schema.vcs-url="https://github.com/autopkg/jgstew-recipes"
 LABEL org.label-schema.docker.cmd="docker run --rm jgstewrecipes run -vv com.github.jgstew.test.DateTimeFromString"
 
 # Update everything?

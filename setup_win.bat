@@ -1,5 +1,5 @@
 
-REM curl -O https://raw.githubusercontent.com/jgstew/jgstew-recipes/main/setup_win.bat
+REM curl -O https://raw.githubusercontent.com/autopkg/jgstew-recipes/main/setup_win.bat
 
 echo set powershell ExecutionPolicy
 powershell -command "Set-ExecutionPolicy -Force -ExecutionPolicy RemoteSigned -Scope CurrentUser"
@@ -95,7 +95,7 @@ if not exist %UserProfile%\_Code (
 
 cd %UserProfile%\_Code
 
-git clone https://github.com/jgstew/jgstew-recipes.git
+git clone https://github.com/autopkg/jgstew-recipes.git
 
 git clone https://github.com/jgstew/autopkg.git
 

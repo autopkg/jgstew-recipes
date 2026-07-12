@@ -3,7 +3,7 @@
 """See docstring for JSONWriter class"""
 
 # Related:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/JsonPath.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/JsonPath.py
 
 import json
 

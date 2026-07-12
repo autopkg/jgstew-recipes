@@ -3,7 +3,7 @@
 # James Stewart @JGStew - 2026
 #
 # Related:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/FileGetStat.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/FileGetStat.py
 #
 """See docstring for FileGetMetadata class"""
 

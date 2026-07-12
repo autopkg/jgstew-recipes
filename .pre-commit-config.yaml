@@ -144,12 +144,12 @@ repos:
           - '--overwrite'
       - id: regex-search-filter-replace
         name: Fix references to jgstew/jgstew-recipes.
-        files: \.(ya?ml)$
-        exclude: ^(.pre-commit-config.yaml)$
+        files: .*
+        exclude: ^(.pre-commit-config.yaml|.github/workflows/AutoPkgReleaseBrew.yaml|GoToMeeting/GoToMeeting-Win.download.recipe.yaml)$
         args:
-          - '--search=https://github.com/jgstew/jgstew-recipes'
-          - '--filter=https://github.com/jgstew/jgstew-recipes'
-          - '--replace=https://github.com/autopkg/jgstew-recipes'
+          - '--search=jgstew/jgstew-recipes'
+          - '--filter=jgstew/jgstew-recipes'
+          - '--replace=autopkg/jgstew-recipes'
           - '--overwrite'
 
   # - repo: https://github.com/koalaman/shellcheck-precommit

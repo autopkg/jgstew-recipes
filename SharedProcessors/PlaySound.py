@@ -3,7 +3,7 @@
 """See docstring for PlaySound class"""
 
 # Related:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/TextToSpeech.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/TextToSpeech.py
 
 import os
 import platform
