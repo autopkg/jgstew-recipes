@@ -1,0 +1,29 @@
+---
+# https://github.com/jgstew/jgstew-recipes/tree/main/SharedDangerousProcessors/DangerousPowerShellRunner.py
+# Uses cross-platform PowerShell (pwsh), which is preinstalled on the
+# macOS/Linux/Windows GitHub-hosted runners.
+Description: Test DangerousPowerShellRunner Processor
+Identifier: com.github.jgstew.test.DangerousPowerShellRunner
+Input:
+  NAME: DangerousPowerShellRunnerTest
+  test_string: "Hello from powershell!"
+MinimumVersion: "2.4.1"
+Process:
+  # run a trivial inline script via the default cross-platform pwsh:
+  - Processor: com.github.jgstew.SharedDangerousProcessors/DangerousPowerShellRunner
+    Arguments:
+      powershell_script: 'Write-Output "%test_string%"'
+
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%powershell_output%"
+      assert_string: "%test_string%"
+
+  # the return code is 0 on success; stringify it (int) then assert:
+  - Processor: com.github.jgstew.SharedProcessors/VariableToString
+    Arguments:
+      input_variable: powershell_return_code
+  - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
+    Arguments:
+      input_string: "%powershell_return_code%"
+      assert_string: "0"
