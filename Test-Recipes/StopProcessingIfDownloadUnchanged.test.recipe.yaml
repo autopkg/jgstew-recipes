@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/StopProcessingIfDownloadUnchanged.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/StopProcessingIfDownloadUnchanged.py
 # NOTE: only the "continue processing" path is asserted - if the processor sets
 # stop_processing_recipe to True, AutoPkg halts and later steps never run.
 Description: Test StopProcessingIfDownloadUnchanged Processor

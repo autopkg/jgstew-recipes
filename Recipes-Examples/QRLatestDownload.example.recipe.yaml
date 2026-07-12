@@ -6,7 +6,7 @@
 # Scan it with a phone to download the latest Chrome directly.
 # Uses only existing processors: GoogleChromeUpdateInfoProvider,
 # QRCodeGenerator, TextOnImage.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRLatestDownload recipe - QR code of the current Chrome download URL, labeled with the version.
 Identifier: com.github.jgstew.example.QRLatestDownload
 Input:

@@ -5,7 +5,7 @@
 # link in a browser. Fully offline, no API needed.
 # Uses only existing processors: QRCodeGenerator.
 # A URL needs no assembly, so it can be substituted directly into qr_data.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRUrl recipe - renders a URL as a scannable QR code to open in a browser.
 Identifier: com.github.jgstew.example.QRUrl
 Input:

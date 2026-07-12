@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/EnvironmentDump.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/EnvironmentDump.py
 Description: Test EnvironmentDump Processor
 Identifier: com.github.jgstew.test.EnvironmentDump
 Input:

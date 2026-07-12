@@ -5,7 +5,7 @@
 # Uses only existing processors: URLDownloaderPython, FileExeGetIcon,
 # ImageToAscii.
 # Swap `exe_url` for any Windows .exe (e.g. a VS Code or 7-Zip installer).
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example AppIconAscii recipe - extracts a Windows app's icon and renders it as ASCII art.
 Identifier: com.github.jgstew.example.AppIconAscii
 Input:

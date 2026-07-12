@@ -6,7 +6,7 @@
 # offline.
 # Uses only existing processors: FolderListFiles, VariableToString, StringFormat,
 # TextToSpeech.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example FolderCountAnnouncer recipe - counts files in a folder and reads the count aloud.
 Identifier: com.github.jgstew.example.FolderCountAnnouncer
 Input:

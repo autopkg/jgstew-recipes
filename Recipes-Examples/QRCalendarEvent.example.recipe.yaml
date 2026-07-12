@@ -5,7 +5,7 @@
 # scan it with a phone to add the event to a calendar. Fully offline.
 # Uses only existing processors: StringFormat, QRCodeGenerator.
 # Note: DTSTART/DTEND use iCal UTC basic format: YYYYMMDDTHHMMSSZ
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRCalendarEvent recipe - builds an iCalendar event and renders it as a scannable QR code to add to a calendar.
 Identifier: com.github.jgstew.example.QRCalendarEvent
 Input:

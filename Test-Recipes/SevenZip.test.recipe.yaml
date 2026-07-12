@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/SevenZip.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/SevenZip.py
 # Requires the 7z executable (Ubuntu: p7zip-full, macOS: brew install p7zip).
 Description: Test SevenZip Processor
 Identifier: com.github.jgstew.test.SevenZip

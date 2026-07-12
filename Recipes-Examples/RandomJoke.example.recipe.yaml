@@ -3,7 +3,7 @@
 # It fetches a random joke from a free, no-API-key endpoint, then reads the
 # setup aloud, pauses for comedic timing, and delivers the punchline.
 # Uses only existing processors: URLDownloaderPython, JsonPath, Sleep, TextToSpeech.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example RandomJoke recipe - fetches a random joke and reads the setup and punchline aloud with a dramatic pause in between.
 Identifier: com.github.jgstew.example.RandomJoke
 Input:

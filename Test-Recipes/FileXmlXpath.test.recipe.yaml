@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/FileXmlXpath.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/FileXmlXpath.py
 Description: Test FileXmlXpath Processor
 Identifier: com.github.jgstew.test.FileXmlXpath
 Input:

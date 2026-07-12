@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/PlaySound.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/PlaySound.py
 Description: Test PlaySound Processor
 Identifier: com.github.jgstew.test.PlaySound
 Input:

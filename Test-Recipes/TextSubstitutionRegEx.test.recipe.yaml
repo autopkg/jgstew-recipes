@@ -1,6 +1,6 @@
 ---
 Description: Test TextSubstitutionRegEx Processor
-# https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/TextSubstitutionRegEx.py
+# https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/TextSubstitutionRegEx.py
 Identifier: com.github.jgstew.test.TextSubstitutionRegEx
 Input:
   NAME: TextSubstitutionRegExTest
@@ -8,7 +8,7 @@ MinimumVersion: "2.4.1"
 Process:
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
 
-  # see here: https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/TextSubstitutionRegEx.py
+  # see here: https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/TextSubstitutionRegEx.py
   # using TextSubstitutionRegEx to change sourceforge download mirrors
   - Processor: com.github.jgstew.SharedProcessors/TextSubstitutionRegEx
     Arguments:

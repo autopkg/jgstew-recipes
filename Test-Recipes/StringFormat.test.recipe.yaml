@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/StringFormat.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/StringFormat.py
 # Demonstrates the Python format mini-language:
 # https://docs.python.org/3/library/string.html#format-specification-mini-language
 Description: Test StringFormat Processor

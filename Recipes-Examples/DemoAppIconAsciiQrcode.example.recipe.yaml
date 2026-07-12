@@ -3,7 +3,7 @@
 # It shows off how far AutoPkg can be pushed beyond packaging:
 #   download -> extract an icon -> draw that icon in your terminal as ASCII ->
 #   show a scannable QR code of the download link -> ping a chat webhook.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example demo recipe - downloads an app, draws its icon as terminal ASCII art, and shows a scannable QR code.
 Identifier: com.github.jgstew.example.ConferenceDemo
 Input:

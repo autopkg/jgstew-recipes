@@ -5,7 +5,7 @@
 # the location in a maps app. Fully offline, no API needed.
 # Uses only existing processors: QRCodeGenerator.
 # geo URI scheme: https://en.wikipedia.org/wiki/Geo_URI_scheme
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRMapIt recipe - renders a geo location as a scannable QR code to open in a maps app.
 Identifier: com.github.jgstew.example.QRMapIt
 Input:

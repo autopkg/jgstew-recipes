@@ -4,10 +4,10 @@ name: Test AutoPkg Release MSI
 # https://github.com/microsoft/setup-msbuild
 
 # Uses the following:
-# - https://github.com/jgstew/jgstew-recipes/blob/main/.templates/projectname.wixproj.mustache
-# - https://github.com/jgstew/jgstew-recipes/blob/main/.templates/projectname.wxs.mustache
-# - https://github.com/jgstew/jgstew-recipes/blob/main/_Shared/ui.wxs
-# - https://github.com/jgstew/jgstew-recipes/blob/main/AutoPkgRecipe/AutoPkgRelease.msbuild.recipe.yaml
+# - https://github.com/autopkg/jgstew-recipes/blob/main/.templates/projectname.wixproj.mustache
+# - https://github.com/autopkg/jgstew-recipes/blob/main/.templates/projectname.wxs.mustache
+# - https://github.com/autopkg/jgstew-recipes/blob/main/_Shared/ui.wxs
+# - https://github.com/autopkg/jgstew-recipes/blob/main/AutoPkgRecipe/AutoPkgRelease.msbuild.recipe.yaml
 
 on:
   push:

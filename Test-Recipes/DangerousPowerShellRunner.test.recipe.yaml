@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedDangerousProcessors/DangerousPowerShellRunner.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedDangerousProcessors/DangerousPowerShellRunner.py
 # Uses cross-platform PowerShell (pwsh), which is preinstalled on the
 # macOS/Linux/Windows GitHub-hosted runners.
 Description: Test DangerousPowerShellRunner Processor

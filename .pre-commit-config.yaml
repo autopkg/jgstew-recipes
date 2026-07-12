@@ -142,6 +142,15 @@ repos:
           - '--filter= URLDownloaderPython'
           - '--replace= com.github.jgstew.SharedProcessors/URLDownloaderPython'
           - '--overwrite'
+      - id: regex-search-filter-replace
+        name: Fix references to jgstew/jgstew-recipes.
+        files: \.(ya?ml)$
+        exclude: ^(.pre-commit-config.yaml)$
+        args:
+          - '--search=https://github.com/jgstew/jgstew-recipes'
+          - '--filter=https://github.com/jgstew/jgstew-recipes'
+          - '--replace=https://github.com/autopkg/jgstew-recipes'
+          - '--overwrite'
 
   # - repo: https://github.com/koalaman/shellcheck-precommit
   #   rev: v0.11.0

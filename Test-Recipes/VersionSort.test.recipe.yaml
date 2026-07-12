@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/VersionSort.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/VersionSort.py
 Description: Test VersionSort Processor
 Identifier: com.github.jgstew.test.VersionSort
 Input:

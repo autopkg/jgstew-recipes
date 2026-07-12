@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/ImageToAscii.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/ImageToAscii.py
 Description: Test ImageToAscii Processor
 Identifier: com.github.jgstew.test.ImageToAscii
 Input:

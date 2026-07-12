@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/FolderListFiles.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/FolderListFiles.py
 Description: Test FolderListFiles Processor
 Identifier: com.github.jgstew.test.FolderListFiles
 Input:

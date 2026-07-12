@@ -5,7 +5,7 @@
 # audio pipeline: download -> FileAudioConvert -> PlaySound.
 # Uses only existing processors: URLDownloaderPython, FileAudioConvert, PlaySound.
 # Requires ffmpeg for the conversion: brew/apt/choco install ffmpeg
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example Soundboard recipe - downloads a free sound effect, converts it from .oga to .wav, and plays it aloud.
 Identifier: com.github.jgstew.example.Soundboard
 Input:

@@ -7,7 +7,7 @@
 # Uses only existing processors: RecipeParentsInfo, VariableToString,
 # ContentFromTemplate.
 # Point ParentRecipe at any recipe to document that recipe's lineage instead.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example RecipeChainReport recipe - documents its own parent recipe chain as Markdown.
 Identifier: com.github.jgstew.example.RecipeChainReport
 # a parent so there is a chain to report (any recipe works here):

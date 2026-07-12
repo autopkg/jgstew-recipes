@@ -4,7 +4,7 @@
 # It builds a standard WIFI QR code string and renders a scannable QR code -
 # scan it with a phone to join the network. Fully offline, no API needed.
 # Uses only existing processors: StringFormat, QRCodeGenerator.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRWifi recipe - builds a standard WIFI QR code from an SSID and password so a phone can scan it to join the network.
 Identifier: com.github.jgstew.example.QRWifi
 Input:

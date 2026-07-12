@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/VersionMaximumArray.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/VersionMaximumArray.py
 Description: Test VersionMaximumArray Processor
 Identifier: com.github.jgstew.test.VersionMaximumArray
 Input:

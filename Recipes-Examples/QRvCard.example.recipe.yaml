@@ -4,7 +4,7 @@
 # It builds a vCard contact card and renders it as a scannable QR code -
 # scan it with a phone to save the contact. Fully offline, no API needed.
 # Uses only existing processors: StringFormat, QRCodeGenerator.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRvCard recipe - builds a vCard contact card and renders it as a scannable QR code to save the contact.
 Identifier: com.github.jgstew.example.QRvCard
 Input:

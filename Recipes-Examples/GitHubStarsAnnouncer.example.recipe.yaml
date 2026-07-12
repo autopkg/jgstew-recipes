@@ -4,7 +4,7 @@
 # self-referential demo when presenting the very repo on screen.
 # Uses only existing processors: URLDownloaderPython, JsonPath, StringFormat, TextToSpeech.
 # Unauthenticated GitHub API is rate-limited to 60 requests/hour - plenty for a demo.
-# https://github.com/jgstew/jgstew-recipes/tree/main/Recipes-Examples
+# https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example GitHubStarsAnnouncer recipe - fetches a GitHub repo's star count and reads it aloud.
 Identifier: com.github.jgstew.example.GitHubStarsAnnouncer
 Input:

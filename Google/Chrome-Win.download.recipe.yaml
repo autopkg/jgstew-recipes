@@ -9,7 +9,7 @@ Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
 
-  # https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/GoogleChromeUpdateInfoProvider.py
+  # https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/GoogleChromeUpdateInfoProvider.py
   - Processor: com.github.jgstew.SharedProcessors/GoogleChromeUpdateInfoProvider
     Arguments:
       chrome_os_arch: "x64"

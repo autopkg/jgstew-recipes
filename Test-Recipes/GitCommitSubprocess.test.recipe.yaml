@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/GitCommitSubprocess.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/GitCommitSubprocess.py
 # Sets up an isolated throwaway git repo in the cache so the test never touches
 # the real repository and never pushes (push_changes defaults to False).
 Description: Test GitCommitSubprocess Processor

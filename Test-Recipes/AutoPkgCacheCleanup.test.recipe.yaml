@@ -6,7 +6,7 @@ Input:
 MinimumVersion: "2.4.1"
 Process:
   # create empty test file for later cleanup:
-  # https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/FileTouch.py
+  # https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/FileTouch.py
   - Processor: com.github.jgstew.SharedProcessors/FileTouch
     Arguments:
       pathname: "%RECIPE_CACHE_DIR%/downloads/testfile.txt"
@@ -19,7 +19,7 @@ Process:
       touch_create_folders: True
       touch_time_offset_days: -40
 
-  # https://github.com/jgstew/jgstew-recipes/blob/main/SharedProcessors/AutoPkgCacheCleanup.py
+  # https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/AutoPkgCacheCleanup.py
   - Processor: com.github.jgstew.SharedProcessors/AutoPkgCacheCleanup
     Arguments:
       cleanup_max_age_days: 30

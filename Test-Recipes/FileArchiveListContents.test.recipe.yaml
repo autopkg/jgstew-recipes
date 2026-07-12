@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/FileArchiveListContents.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/FileArchiveListContents.py
 Description: Test FileArchiveListContents Processor
 Identifier: com.github.jgstew.test.FileArchiveListContents
 Input:

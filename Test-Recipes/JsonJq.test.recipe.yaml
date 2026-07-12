@@ -1,5 +1,5 @@
 ---
-# https://github.com/jgstew/jgstew-recipes/tree/main/SharedProcessors/JsonJq.py
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/JsonJq.py
 Description: Test JsonJq Processor
 Identifier: com.github.jgstew.test.JsonJq
 Input:
