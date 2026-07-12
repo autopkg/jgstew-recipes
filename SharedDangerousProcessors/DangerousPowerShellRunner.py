@@ -18,7 +18,11 @@ __all__ = ["DangerousPowerShellRunner"]
 
 
 class DangerousPowerShellRunner(Processor):  # pylint: disable=invalid-name
-    """Runs a PowerShell script (inline text or a .ps1 file) via subprocess.
+    """Runs PowerShell via subprocess.
+
+    `powershell_script` is auto-detected: if it is a path to an existing file it
+    is run as a script file (-File), otherwise it is run as inline script text
+    (-Command).
 
     Defaults to the cross-platform PowerShell (`pwsh`, available on macOS, Linux,
     and Windows). Set `use_windows_powershell` to prefer Windows PowerShell
@@ -33,16 +37,12 @@ class DangerousPowerShellRunner(Processor):  # pylint: disable=invalid-name
     description = __doc__
     input_variables = {
         "powershell_script": {
-            "required": False,
+            "required": True,
             "description": (
-                "Inline PowerShell script text to run (via -Command). Provide "
-                "this or powershell_script_path; powershell_script_path wins if "
-                "both are set."
+                "The PowerShell to run. If this value is a path to an existing "
+                "file on disk it is run as a script file (via -File); otherwise "
+                "it is treated as inline PowerShell script text (via -Command)."
             ),
-        },
-        "powershell_script_path": {
-            "required": False,
-            "description": "Path to a .ps1 script file to run (via -File).",
         },
         "powershell_args": {
             "required": False,
@@ -129,17 +129,16 @@ class DangerousPowerShellRunner(Processor):  # pylint: disable=invalid-name
     def main(self):
         """Execution starts here."""
         script = self.env.get("powershell_script")
-        script_path = self.env.get("powershell_script_path")
         args = [str(arg) for arg in (self.env.get("powershell_args") or [])]
         execution_policy = self.env.get("powershell_execution_policy", "Bypass")
         ignore_errors = bool(self.env.get("powershell_ignore_errors", False))
 
-        if script_path and not os.path.isfile(script_path):
-            raise ProcessorError(f"powershell_script_path not found: {script_path}")
-        if not script_path and not script:
-            raise ProcessorError(
-                "provide powershell_script (inline) or powershell_script_path"
-            )
+        if not script:
+            raise ProcessorError("powershell_script is required")
+
+        # If the value points at an existing file, run it as a script file;
+        # otherwise treat it as inline PowerShell script text.
+        is_file = isinstance(script, str) and os.path.isfile(script)
 
         executable = self.resolve_executable()
         is_windows = platform.system() == "Windows"
@@ -147,13 +146,14 @@ class DangerousPowerShellRunner(Processor):  # pylint: disable=invalid-name
         command = [executable, "-NoProfile"]
         if is_windows:
             command += ["-ExecutionPolicy", execution_policy]
-        if script_path:
-            command += ["-File", script_path]
+        if is_file:
+            command += ["-File", script]
         else:
             command += ["-Command", script]
         command += args
 
-        self.output(f"running PowerShell via {executable}", 2)
+        mode = "script file" if is_file else "inline command"
+        self.output(f"running PowerShell ({mode}) via {executable}", 2)
         try:
             proc = subprocess.run(command, capture_output=True, text=True, check=False)
         except OSError as err:
