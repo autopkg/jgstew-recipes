@@ -36,6 +36,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: palette_colors
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%palette_colors%"

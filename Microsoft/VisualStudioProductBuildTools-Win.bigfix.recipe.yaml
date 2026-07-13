@@ -11,29 +11,38 @@ Process:
   - Processor: com.github.hansen-m.SharedProcessors/HachoirMetaDataProvider3
     Arguments:
       metadata_key: version
+
   - Processor: com.github.jgstew.SharedDangerousProcessors/DangerousEvaluate
     Arguments:
       # get the source release date based upon last_modified HTTP header
       evaluate_string: 'from datetime import datetime ; self.env["yyyymmdd"] = datetime.strptime(self.env.get("last_modified", None), "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")'
+
   #- Processor: com.github.jgstew.SharedProcessors/FileHasher
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
+
   - Processor: com.github.jgstew.SharedProcessors/BigFixSetupTemplateDictionary
+
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend
     Arguments:
       append_key: SourceReleaseDate
       append_value: "%yyyymmdd%"
+
   # get base64 of icon file
   - Processor: com.github.jgstew.SharedProcessors/FileGetBase64
     Arguments:
       file_pathname: "Microsoft/VisualStudioProductBuildTools-Icon.png"
+
   # add base64 of icon file to Template Dictionary
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend
     Arguments:
       append_key: "icon_base64"
       append_value: "%file_base64%"
+
   - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
     Arguments:
       template_file_path: "Microsoft/VisualStudioProductBuildTools-Win-Install.bes.mustashe"
       content_file_pathname: "%RECIPE_CACHE_DIR%/%NAME%.bes"
+
   - Processor: com.github.jgstew.SharedProcessors/BESImport
+
   - Processor: com.github.jgstew.SharedProcessors/BigFixActioner

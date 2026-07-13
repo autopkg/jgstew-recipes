@@ -8,6 +8,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/FileGetPathFile
     Arguments:
       command_name: "curl"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%exe_path%"

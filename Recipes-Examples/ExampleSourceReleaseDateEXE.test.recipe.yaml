@@ -10,12 +10,14 @@ Process:
       github_repo: Maximus5/ConEmu
       asset_regex: ConEmuSetup\..+\.exe$
       include_prereleases: False
+
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
       # example url https://github.com/Maximus5/ConEmu/releases/download/v22.04.18/ConEmuSetup.220418.exe
       filename: ConEmu.exe
       download_version: ""
       COMPUTE_HASHES: True
+
   - Processor: EndOfCheckPhase
 
   # validate file signature and get signature date as SourceReleaseDate:

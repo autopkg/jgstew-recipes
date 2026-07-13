@@ -11,6 +11,7 @@ ParentRecipe: com.github.jgstew.download.log4j2-scan-Universal
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   # `BigFixPrefetchItem` takes the hashes from `URLDownloaderPython`
   #   Then it assembles them into a BigFix Prefetch Statement or Block
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
@@ -55,7 +56,6 @@ Process:
   # `BESImport` imports the generated BES content into a BigFix Server
   #   Which server and credentials are used is dictated by `~/.besapi.conf`
   - Processor: com.github.jgstew.SharedProcessors/BESImport
-
 
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend
     Arguments:

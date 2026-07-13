@@ -13,4 +13,5 @@ Process:
       url: https://aka.ms/vs/16/release/vs_buildtools.exe
       #prefetch_filename: True
       COMPUTE_HASHES: True
+
   - Processor: EndOfCheckPhase  # how do I stop here if nothing changed?

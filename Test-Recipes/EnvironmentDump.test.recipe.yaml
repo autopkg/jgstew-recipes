@@ -33,6 +33,7 @@ Process:
     Arguments:
       json_input: "%RECIPE_CACHE_DIR%/environment_dump.json"
       json_path: "$.NAME"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%json_path_result%"

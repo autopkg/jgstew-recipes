@@ -35,6 +35,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: file_metadata
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_metadata%"
@@ -57,6 +58,7 @@ Process:
     Arguments:
       input_string: "%file_metadata_width%"
       assert_string: "512"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_metadata_height%"

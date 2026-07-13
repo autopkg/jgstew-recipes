@@ -9,6 +9,7 @@ Process:
     Arguments:
       version_string: 1.2.3
       separator_string: _
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%version_major_minor%"

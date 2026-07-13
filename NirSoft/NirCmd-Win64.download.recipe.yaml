@@ -12,5 +12,7 @@ Process:
       # filename: actions-runner-%OS%.%TYPE%
       #download_version: "%version%"
       COMPUTE_HASHES: True
+
   - Processor: EndOfCheckPhase
+
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem

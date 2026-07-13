@@ -26,10 +26,12 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/FileGetMagicType
     Arguments:
       file_pathname: "%file_path_text%"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_mime_type%"
       assert_string: "image/png"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_path_text%"
@@ -45,6 +47,7 @@ Process:
       text_color: "yellow"
       outline_color: "red"
       file_path_save: "%RECIPE_CACHE_DIR%/coords.png"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_path_text%"
@@ -57,9 +60,11 @@ Process:
       text_string: "CENTERED"
       position: center
       file_path_save: "%RECIPE_CACHE_DIR%/centered.jpg"
+
   - Processor: com.github.jgstew.SharedProcessors/FileGetMagicType
     Arguments:
       file_pathname: "%file_path_text%"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_mime_type%"

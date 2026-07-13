@@ -6,6 +6,7 @@ Input:
 MinimumVersion: "2.4.1"
 Process:
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   - Processor: com.github.jgstew.SharedProcessors/FileTextSearcher
     Arguments:
       search_path: "%RECIPE_DIR%/FileTextSearcher.test.recipe.yaml"
@@ -13,10 +14,12 @@ Process:
       file_search_results_var: "file_search_results_var"
       search_pattern: "NAME: +([\"\\w]+)"
       search_extension: ".yaml"
+
   - Processor: com.github.jgstew.SharedProcessors/FileTextSearcher
     Arguments:
       search_path: "%RECIPE_DIR%"
       file_search_results_var: "file_search_results_var"
+
   - Processor: com.github.jgstew.SharedProcessors/FileTextSearcher
     Arguments:
       first_result_only: True
@@ -34,6 +37,7 @@ Process:
       search_path: "%RECIPE_DIR%/../BigFix"
       search_pattern: "Test-ThisShouldNotMatchAnything"
       file_search_results_var: "file_search_results_var"
+
   - Processor: com.github.jgstew.SharedProcessors/FileTextSearcher
     Arguments:
       first_result_only: False
@@ -43,6 +47,7 @@ Process:
 
   # test reading from vendor file:
   - Processor: com.github.jgstew.SharedProcessors/GetRecipeParentFolderName
+
   - Processor: com.github.jgstew.SharedProcessors/FileTextSearcher
     Arguments:
       first_result_only: True
@@ -51,6 +56,7 @@ Process:
       file_search_results_var: "content_id_vendor"
       search_pattern: 'content_id_vendor *= *(\d+)'
       search_extension: ".cfg"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%content_id_vendor%"

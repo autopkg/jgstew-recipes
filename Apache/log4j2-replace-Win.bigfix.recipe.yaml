@@ -12,6 +12,7 @@ ParentRecipe: com.github.jgstew.download.log4j2-bin
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   # `BigFixPrefetchItem` takes the hashes from `URLDownloaderPython`
   #   Then it assembles them into a BigFix Prefetch Statement or Block
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
@@ -45,10 +46,12 @@ Process:
           "/Program Files/7-Zip/7z.exe",
           "/Program Files (x86)/7-Zip/7z.exe",
         ]
+
   - Processor: com.github.hansen-m.SharedProcessors/WinInstallerExtractor
     Arguments:
       extract_dir: "ExtractedArchive"
       preserve_paths: False
+
   - Processor: com.github.jgstew.SharedProcessors/FileHasher
     Arguments:
       file_path: "%RECIPE_CACHE_DIR%/ExtractedArchive/log4j-core-%version%.jar"
@@ -57,10 +60,12 @@ Process:
     Arguments:
       append_key: "log4j-core-sha1"
       append_value: "%filehasher_sha1%"
+
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend
     Arguments:
       append_key: "log4j-core-sha256"
       append_value: "%filehasher_sha256%"
+
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend
     Arguments:
       append_key: "log4j-core-size"

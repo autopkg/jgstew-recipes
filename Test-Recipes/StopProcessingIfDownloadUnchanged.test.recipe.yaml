@@ -19,6 +19,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: stop_processing_recipe
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%stop_processing_recipe%"
@@ -34,6 +35,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: stop_processing_recipe
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%stop_processing_recipe%"

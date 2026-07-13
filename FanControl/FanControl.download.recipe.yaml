@@ -10,7 +10,9 @@ Process:
     Arguments:
       url: https://github.com/Rem0o/FanControl.Releases/blob/master/FanControl.zip?raw=true
       COMPUTE_HASHES: True
+
   - Processor: EndOfCheckPhase
+
   - Processor: URLTextSearcher
     Arguments:
       # https://api.github.com/repos/Rem0o/FanControl.Releases/releases

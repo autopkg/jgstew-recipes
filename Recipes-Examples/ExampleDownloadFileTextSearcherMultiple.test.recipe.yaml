@@ -8,9 +8,9 @@ MinimumVersion: "2.4.1"
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   # NOTE: every download recipe is going to be a bit different depending on the software
   #         that said, there a few common cases to use as examples.
-
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
       # the url used to download is from re_pattern result from `(?P<url>)`

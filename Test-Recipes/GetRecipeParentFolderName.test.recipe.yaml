@@ -6,6 +6,7 @@ Input:
 MinimumVersion: "2.4.1"
 Process:
   - Processor: com.github.jgstew.SharedProcessors/GetRecipeParentFolderName
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%parent_folder_result%"

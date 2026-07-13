@@ -12,6 +12,7 @@ Process:
       # use URLTextSearcher or URLDownloader instead to interact with curl
       command_path: "curl"
       command_args: ["google.com", "-f", "-s"]
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%command_output%"

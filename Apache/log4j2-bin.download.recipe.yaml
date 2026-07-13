@@ -14,6 +14,7 @@ Process:
       url: https://logging.apache.org/log4j/2.x/download.html
       # example match `https://www.apache.org/dyn/closer.lua/logging/log4j/2.17.0/apache-log4j-2.17.0-bin.zip`
       re_pattern: '(?P<urlpart>logging/log4j/(?P<version>.+)/apache-log4j-.+-bin.%TYPE%)"'
+
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
       # Example URL https://dlcdn.apache.org/logging/log4j/2.17.0/apache-log4j-2.17.0-bin.zip
@@ -21,4 +22,5 @@ Process:
       filename: apache-log4j-bin.%TYPE%
       download_version: "%version%"
       COMPUTE_HASHES: True
+
   - Processor: EndOfCheckPhase

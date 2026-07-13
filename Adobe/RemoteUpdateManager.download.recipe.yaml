@@ -17,4 +17,5 @@ Process:
       # - https://deploymenttools.acp.adobeoobe.com/RUM/WinARM64/RemoteUpdateManager.zip
       # - https://deploymenttools.acp.adobeoobe.com/RUM/%ARCH%/RemoteUpdateManager.dmg
       url: https://deploymenttools.acp.adobeoobe.com/RUM/%ARCH%/RemoteUpdateManager.%TYPE%
+
   - Processor: EndOfCheckPhase

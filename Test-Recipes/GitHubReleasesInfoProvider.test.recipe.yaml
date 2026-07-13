@@ -12,6 +12,7 @@ Process:
       github_repo: audacity/audacity
       asset_regex: .*64bit\.exe$
       include_prereleases: False
+
   # - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
   #   Arguments:
   #     filename: audacity-win-64bit.exe

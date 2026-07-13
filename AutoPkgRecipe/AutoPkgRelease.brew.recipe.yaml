@@ -10,6 +10,7 @@ MinimumVersion: "2.4.1"
 ParentRecipe: com.github.jgstew.download.AutoPkgReleasePkg
 Process:
   - Processor: com.github.jgstew.SharedProcessors/FileHasher
+
   - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
     # NOTE: this processor `ContentFromTemplate` requires: chevron
     # - pip install chevron

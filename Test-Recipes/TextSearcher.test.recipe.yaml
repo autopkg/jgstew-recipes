@@ -6,10 +6,12 @@ Input:
 MinimumVersion: "2.4.1"
 Process:
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   - Processor: com.github.jgstew.SharedProcessors/TextSearcher
     Arguments:
       input_string: "Version 1.2.3 Product: ExampleName"
       re_pattern: '(?i)version\s*(?P<version>\d+(\.\d+)+)\s*Product:\s*(?P<name>\w+)'
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%version%"

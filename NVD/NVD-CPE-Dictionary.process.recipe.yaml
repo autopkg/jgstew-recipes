@@ -7,6 +7,7 @@ MinimumVersion: "2.4.1"
 ParentRecipe: com.github.jgstew.download.NVD-CPE-Dictionary-XML
 Process:
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   - Processor: com.github.jgstew.SharedProcessors/FileGetExecutable
     Arguments:
       path_array: [
@@ -27,10 +28,12 @@ Process:
           "/Program Files/7-Zip/7z.exe",
           "/Program Files (x86)/7-Zip/7z.exe",
         ]
+
   - Processor: com.github.hansen-m.SharedProcessors/WinInstallerExtractor
     Arguments:
       preserve_paths: False
       extract_dir: "downloads"
+
   - Processor: com.github.jgstew.SharedProcessors/FileTextSearcher
     Arguments:
       # get the unique sorted set of vendor:product parts of CPEs, put in file

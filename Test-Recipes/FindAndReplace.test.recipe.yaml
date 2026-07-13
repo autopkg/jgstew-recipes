@@ -11,15 +11,18 @@ Process:
       input_string: 1.2.3
       find: .
       replace: _
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%output_string%"
       assert_string: "1_2_3"
+
   - Processor: com.github.homebysix.FindAndReplace/FindAndReplace
     Arguments:
       input_string: "%Input_Example%"
       find: T
       replace: W
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%output_string%"

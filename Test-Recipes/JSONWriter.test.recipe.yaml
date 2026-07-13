@@ -42,6 +42,7 @@ Process:
     Arguments:
       json_input: "%RECIPE_CACHE_DIR%/dict_output.json"
       json_path: "$.product"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%json_path_result%"
@@ -53,9 +54,11 @@ Process:
     Arguments:
       json_input: "%RECIPE_CACHE_DIR%/dict_output.json"
       json_path: "$.nested.build"
+
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: json_path_result
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%json_path_result%"

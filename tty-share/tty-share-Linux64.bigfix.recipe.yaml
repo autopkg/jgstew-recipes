@@ -18,6 +18,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/GetRecipeParentFolderName
 
   - Processor: com.github.jgstew.SharedProcessors/GetCommonPlatformEnumeration
+
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppendInput
 
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend

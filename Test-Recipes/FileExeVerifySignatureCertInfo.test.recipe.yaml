@@ -42,6 +42,7 @@ Process:
     Arguments:
       input_string: "%file_cert_valid_from%"
       assert_string: "2007-06-27"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_cert_valid_to%"

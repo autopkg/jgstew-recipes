@@ -12,7 +12,6 @@ Process:
   # parent_recipe_count) cannot be used in "%variable%" substitution -- AutoPkg
   # only substitutes string values -- so the assertions below use the string
   # outputs instead.
-
   # the joined identifier string must contain the parent's identifier
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:

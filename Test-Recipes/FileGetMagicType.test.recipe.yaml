@@ -8,10 +8,12 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/FileGetMagicType
     Arguments:
       file_pathname: "%RECIPE_DIR%/../BigFix/BigFix_logo_DevSiteToOriginal_128px.png"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_mime_type%"
       assert_string: "image/png"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_magic_type%"

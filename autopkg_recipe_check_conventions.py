@@ -44,9 +44,18 @@ to yes when files are given explicitly, but to no when auto-discovering, so a
 bare run is read-only. An auto-fixed file fails the hook so the change is
 reviewed and re-staged.
 
+A third check (W120, YAML-only, AUTO-FIXABLE) enforces the Process-step spacing
+convention: within `Process:`, consecutive `- Processor:` steps are separated by
+exactly one blank line, and that blank line goes BEFORE any comment lines that
+belong to (immediately precede) the next step -- not between those comments and
+their step. More than one blank line is collapsed to one; a missing one is
+inserted. Comment lines in the gap between two steps are treated as belonging to
+the following step.
+
 Checks:
     W110  Identifier does not appear to reference the Input NAME (flagship)
-    W111  ParentRecipe does not resolve to a known recipe Identifier
+    W111  ParentRecipe does not resolve to a known recipe Identifier (fixable)
+    W120  Process-step blank-line spacing (YAML-only, fixable)
     W100  recipe could not be parsed; skipped (advisory -- check-yaml /
           validate-plist are the authorities on file validity)
     W101  PyYAML is not available, so a YAML recipe could not be parsed; skipped
@@ -60,9 +69,10 @@ A file can opt out of all checks with a comment anywhere in it:
     # pre-commit-skip: recipe-conventions
 out of just the NAME/Identifier check with:
     # identifier-name-ok
-and out of just the ParentRecipe check (e.g. a parent defined in another repo)
-with:
+out of just the ParentRecipe check (e.g. a parent defined in another repo) with:
     # parent-recipe-ok
+and out of just the Process-step spacing check with:
+    # process-spacing-ok
 
 Exit codes:
     0  no failures (warnings alone do not fail unless --strict)
@@ -91,6 +101,9 @@ IDENTIFIER_NAME_MARKER = "identifier-name-ok"
 # parent is legitimately defined outside this repo (so it is not in the index).
 PARENT_RECIPE_MARKER = "parent-recipe-ok"
 
+# File-level opt-out for the Process-step spacing check (W120).
+PROCESS_SPACING_MARKER = "process-spacing-ok"
+
 # The extensions that make a file an AutoPkg recipe. `.recipe` is usually a
 # plist; the `.recipe.y{a,}ml` forms are YAML. Order matters for endswith().
 RECIPE_EXTENSIONS = (".recipe.yaml", ".recipe.yml", ".recipe")
@@ -109,6 +122,7 @@ KNOWN_CODES = frozenset(
         "W102",  # top-level is not a mapping
         "W110",  # Identifier does not reference the Input NAME
         "W111",  # ParentRecipe does not resolve to a known Identifier
+        "W120",  # Process-step blank-line spacing
     ]
 )
 
@@ -377,6 +391,155 @@ def maybe_fix_parent_recipe(path, recipe, index):
     ]
 
 
+# --- W120: one blank line between Process steps -----------------------------
+# Convention: within `Process:`, consecutive `- Processor:` steps are separated
+# by exactly one blank line, and that blank line goes BEFORE any comment lines
+# that belong to (immediately precede) the next step -- not between those
+# comments and their step. More than one blank line collapses to one; a missing
+# blank line is inserted. This is purely textual (it does not reparse the YAML),
+# so it is YAML-only and left untouched on plist recipes.
+
+
+def _is_comment_line(line):
+    """True if `line` is a comment-only line (first non-space char is `#`)."""
+    return line.lstrip().startswith("#")
+
+
+def _is_blank_line(line):
+    """True if `line` is empty or whitespace-only."""
+    return line.strip() == ""
+
+
+def find_process_block(lines):
+    """Return (start, end) bounding the `Process:` value, or None.
+
+    `start` is the index of the `Process:` line; `end` is the exclusive index of
+    the first line that ends the block -- a non-blank line at column 0 that is
+    not a comment (i.e. the next top-level key). Column-0 comments and blank
+    lines stay inside the block.
+    """
+    start = None
+    for i, line in enumerate(lines):
+        if re.match(r"^Process\s*:", line):
+            start = i
+            break
+    if start is None:
+        return None
+    end = len(lines)
+    for j in range(start + 1, len(lines)):
+        line = lines[j]
+        if line.strip() == "":
+            continue
+        if not line[0].isspace() and not line.lstrip().startswith("#"):
+            end = j
+            break
+    return start, end
+
+
+def process_step_indices(lines):
+    """Return (step_line_indices, item_indent) for the Process list.
+
+    A step is a list item (`- `) at the Process list's own indentation, so the
+    nested `- ` items of an array argument (which are more indented) are not
+    mistaken for steps. Returns ([], None) when there is no Process list.
+    """
+    block = find_process_block(lines)
+    if block is None:
+        return [], None
+    start, end = block
+    item_indent = None
+    for j in range(start + 1, end):
+        match = re.match(r"^(\s+)-\s", lines[j])
+        if match:
+            item_indent = match.group(1)
+            break
+    if item_indent is None:
+        return [], None
+    step_re = re.compile(r"^" + re.escape(item_indent) + r"-\s")
+    steps = [j for j in range(start + 1, end) if step_re.match(lines[j])]
+    return steps, item_indent
+
+
+def normalize_process_spacing(lines):
+    """Return (new_lines, changed_linenos) with Process-step spacing normalized.
+
+    For each step after the first, the run of blank/comment lines directly above
+    it is replaced by exactly one blank line followed by just the comment lines
+    (blanks dropped, comment order preserved). The scan stops at the previous
+    step's last non-blank/non-comment line, so a step's own body is never
+    touched. `changed_linenos` are the 1-based line numbers (in the input) of the
+    steps whose preceding gap was rewritten. Pairs are processed bottom-to-top so
+    earlier indices stay valid as lines are inserted/removed below them.
+    """
+    steps, _ = process_step_indices(lines)
+    if len(steps) < 2:
+        return lines, []
+    new = list(lines)
+    changed = []
+    for k in range(len(steps) - 1, 0, -1):
+        step = steps[k]
+        gap_start = step
+        i = step - 1
+        while i >= 0 and (_is_blank_line(new[i]) or _is_comment_line(new[i])):
+            gap_start = i
+            i -= 1
+        gap = new[gap_start:step]
+        comments = [line for line in gap if _is_comment_line(line)]
+        replacement = [""] + comments
+        if gap != replacement:
+            new[gap_start:step] = replacement
+            changed.append(step + 1)
+    changed.sort()
+    return new, changed
+
+
+def check_process_spacing(src):
+    """W120: report each Process step whose preceding blank-line spacing is off.
+
+    Purely textual and YAML-only (skipped for plist recipes). Reports at the
+    step's line; the fix (maybe_fix_process_spacing) does the rewrite.
+    """
+    if src.lstrip().startswith("<"):
+        return []
+    _, changed = normalize_process_spacing(src.split("\n"))
+    return [
+        (
+            lineno,
+            "W120",
+            "expected exactly one blank line before this Processor step (placed "
+            "before any comments that belong to it)",
+        )
+        for lineno in changed
+    ]
+
+
+def maybe_fix_process_spacing(path):
+    """Auto-fix W120: rewrite Process-step blank-line spacing in place.
+
+    YAML-only. Preserves the file's trailing-newline state and only rewrites the
+    gaps between steps. Returns the list of fixed entries (empty if unchanged).
+    """
+    with open(path, encoding="utf-8", errors="replace") as handle:
+        src = handle.read()
+    if src.lstrip().startswith("<"):
+        return []
+    trailing_nl = src.endswith("\n")
+    body = src[:-1] if trailing_nl else src
+    new_lines, changed = normalize_process_spacing(body.split("\n"))
+    if not changed:
+        return []
+    with open(path, "w", encoding="utf-8") as handle:
+        handle.write("\n".join(new_lines) + ("\n" if trailing_nl else ""))
+    return [
+        (
+            lineno,
+            "W120",
+            "normalized blank-line spacing before this Processor step",
+        )
+        for lineno in changed
+    ]
+
+
 def check_file(
     path,
     strict=False,
@@ -391,8 +554,9 @@ def check_file(
     `strict` and `exact` tune the flagship check (see module docstring).
     `disabled` is a set of check IDs to skip. `recipe_index` is the repo-wide
     RecipeIndex used by the ParentRecipe check/fix (W111); when None, W111 is
-    skipped. When `auto_fix` is set, a path-like ParentRecipe is rewritten to the
-    parent's Identifier in place and reported under `fixed` instead of `issues`.
+    skipped. When `auto_fix` is set, the fixable conventions (a path-like
+    ParentRecipe -> its Identifier, W111; and Process-step blank-line spacing,
+    W120) are rewritten in place and reported under `fixed` instead of `issues`.
     """
     if not os.path.isfile(path):
         return [(1, "W100", "file not found; skipping")], []
@@ -415,18 +579,23 @@ def check_file(
         and recipe_index is not None
         and PARENT_RECIPE_MARKER not in src
     )
+    is_yaml = not src.lstrip().startswith("<")
+    spacing_check_enabled = (
+        "W120" not in disabled and is_yaml and PROCESS_SPACING_MARKER not in src
+    )
 
-    # --- W111 auto-fix: rewrite a path-like ParentRecipe to the identifier, then
-    # re-read/re-parse so the check below sees the corrected value (and does not
-    # re-report it). ---
+    # --- auto-fixes: rewrite the file, then re-read (and re-parse) so the checks
+    # below see the corrected content and do not re-report what was just fixed. ---
     if auto_fix and parent_check_enabled:
         fixed += maybe_fix_parent_recipe(path, data, recipe_index)
-        if fixed:
-            with open(path, encoding="utf-8", errors="replace") as handle:
-                src = handle.read()
-            data, _ = parse_recipe(src)
-            if not isinstance(data, dict):
-                return [], fixed
+    if auto_fix and spacing_check_enabled:
+        fixed += maybe_fix_process_spacing(path)
+    if fixed:
+        with open(path, encoding="utf-8", errors="replace") as handle:
+            src = handle.read()
+        data, _ = parse_recipe(src)
+        if not isinstance(data, dict):
+            return [], fixed
 
     source_lines = src.splitlines()
     issues = []
@@ -438,6 +607,9 @@ def check_file(
         issues += check_parent_recipe_resolvable(
             data, source_lines, recipe_index.identifiers
         )
+
+    if spacing_check_enabled:
+        issues += check_process_spacing(src)
 
     return sorted(issues), fixed
 

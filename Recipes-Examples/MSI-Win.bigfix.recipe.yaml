@@ -36,10 +36,10 @@ Process:
       result_output_var_name: cpe_vendor
 
   - Processor: com.github.jgstew.SharedProcessors/GetCommonPlatformEnumeration
+
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppendInput
 
   # Generate Install/Update content:
-
   # `ContentFromTemplate` generates bigfix content from a mustache template file
   #   The file is filled out with variables from the Template Dictionary
   #   If variables are missing from the Template Dictionary, then that area will be blank

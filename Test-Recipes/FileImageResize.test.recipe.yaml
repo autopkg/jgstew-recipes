@@ -8,6 +8,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/FileImageResize
     Arguments:
       file_pathname: "BigFix/BigFix_logo_DevSiteToOriginal_128px.png"
+
   - Processor: com.github.jgstew.SharedProcessors/FileImageResize
     Arguments:
       file_pathname: "BigFix/BigFix_logo_DevSiteToOriginal_128px.png"

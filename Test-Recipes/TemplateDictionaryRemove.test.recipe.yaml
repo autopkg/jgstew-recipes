@@ -21,6 +21,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: dictionary_reduced
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%dictionary_reduced%"
@@ -33,6 +34,7 @@ Process:
       input_string: "%dictionary_reduced%"
       assert_string: "removevalue"
       raise_error: false
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%assert_result%"

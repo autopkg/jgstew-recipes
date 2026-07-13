@@ -10,10 +10,13 @@ Process:
     Arguments:
       url: https://support.bigfix.com/bes/release/index.html
       re_pattern: '>(?P<version>\d+\.\d+\.\d+\.\d+)<'
+
   - Processor: com.github.jgstew.SharedProcessors/VersionMaximumArray
+
   - Processor: com.github.jgstew.SharedProcessors/VersionGetMajorMinor
     Arguments:
       separator_string: ""
+
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
       url: https://software.bigfix.com/download/bes/%version_major_minor%/util/QNA%version_maximum%.zip
@@ -22,7 +25,9 @@ Process:
       download_save_file: False
       filename: "FixletDebugger.zip"
       COMPUTE_HASHES: True
+
   - Processor: com.github.jgstew.SharedProcessors/VersionGetMajorMinor
     Arguments:
       separator_string: "."
+
   - Processor: EndOfCheckPhase

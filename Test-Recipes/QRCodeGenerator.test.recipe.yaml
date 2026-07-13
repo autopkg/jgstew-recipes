@@ -34,6 +34,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: qr_output_path
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "[%qr_output_path%]"

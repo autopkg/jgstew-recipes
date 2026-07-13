@@ -8,6 +8,7 @@ MinimumVersion: "2.4.1"
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
     Arguments:
       # template_partials_path: "./ZZZ-Nonexistent-Path"
@@ -22,11 +23,13 @@ Process:
           "file_name": "BigFix-BES-Client-%version%.exe",
           "prefetch": "prefetch fake-prefetch",
         }
+
   - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
     Arguments:
       template_file_path: "%RECIPE_DIR%/../.templates/Example-Win-Install_Update.bes.mustache"
       # NOTE: this won't be valid, just a test:
       content_file_pathname: "%RECIPE_CACHE_DIR%/%NAME%-ValidXML-NotWorkingAction.bes"
+
   - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
     Arguments:
       template_file_path: "%RECIPE_DIR%/../.templates/Example-Test-Partials.mustache"
@@ -38,6 +41,7 @@ Process:
           "DisplayName": "Test Mustache Partials",
           "Description": "Test for chevron use of partials in mustache templates",
         }
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%content_string%"

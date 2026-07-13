@@ -19,6 +19,7 @@ Process:
     Arguments:
       command_path: "git"
       command_args: ["-C", "%RECIPE_CACHE_DIR%/gitrepo", "config", "user.email", "test@example.com"]
+
   - Processor: com.github.jgstew.SharedDangerousProcessors/DangerousCommandRunner
     Arguments:
       command_path: "git"

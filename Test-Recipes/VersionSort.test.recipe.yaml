@@ -32,6 +32,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: version_array_sorted
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%version_array_sorted%"
@@ -49,6 +50,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/VariableToString
     Arguments:
       input_variable: version_array_sorted
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%version_array_sorted%"
@@ -64,6 +66,7 @@ Process:
     Arguments:
       input_string: "%version_maximum%"
       assert_string: "9.9.9"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%version_minimum%"

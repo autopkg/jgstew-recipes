@@ -10,16 +10,21 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
     Arguments:
       prefetch_url: "%download_url%"
+
   - Processor: com.github.jgstew.SharedProcessors/BigFixSetupTemplateDictionary
     Arguments:
       template_version: "%version%"
+
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend
     Arguments:
       append_key: "release_version"
       append_value: "%release_version%"
+
   - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
     Arguments:
       template_file_path: "Microsoft/SQLServerManagementStudio-Win Install_Update.bes.mustache"
       content_file_pathname: "%RECIPE_CACHE_DIR%/%NAME%.bes"
+
   - Processor: com.github.jgstew.SharedProcessors/BESImport
+
   - Processor: com.github.jgstew.SharedProcessors/BigFixActioner

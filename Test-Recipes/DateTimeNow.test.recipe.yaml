@@ -10,21 +10,25 @@ Process:
 
   # ---- defaults: local time, format "%Y-%m-%d %H:%M:%S", offset 0 ----
   - Processor: com.github.jgstew.SharedProcessors/DateTimeNow
+
   # date portion present
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now%"
       assert_string: "-"
+
   # time portion present
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now%"
       assert_string: ":"
+
   # ISO output is valid (has date/time separator)
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now_iso%"
       assert_string: "T"
+
   # cross-check: parse the formatted string back out with DateTimeFromString,
   # extract just the year, then confirm the ISO output contains that same year.
   - Processor: com.github.jgstew.SharedProcessors/DateTimeFromString
@@ -33,6 +37,7 @@ Process:
       datetime_strptime: "%Y-%m-%d %H:%M:%S"
       datetime_strftime: "%Y"
       datetime_parsed_name: year_local
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now_iso%"
@@ -43,11 +48,13 @@ Process:
     Arguments:
       datetime_use_utc: true
       datetime_strftime: "%Y"
+
   # UTC ISO output must carry the +00:00 offset (timezone-aware UTC)
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now_iso%"
       assert_string: "+00:00"
+
   # same moment: the ISO string must contain the year we just formatted
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
@@ -63,10 +70,12 @@ Process:
       datetime_offset_hours: -5
       datetime_use_utc: true
       datetime_strftime: "%Y-%m-%d %H:%M:%S"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now_iso%"
       assert_string: "+00:00"
+
   # the offset result is a coherent, parseable datetime: parse it back to a date
   # and confirm that date is contained in the formatted string.
   - Processor: com.github.jgstew.SharedProcessors/DateTimeFromString
@@ -75,6 +84,7 @@ Process:
       datetime_strptime: "%Y-%m-%d %H:%M:%S"
       datetime_strftime: "%Y-%m-%d"
       datetime_parsed_name: date_negative_offset
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now%"
@@ -88,10 +98,12 @@ Process:
       datetime_offset_hours: "5"
       datetime_use_utc: false
       datetime_strftime: "%Y/%m/%d %H:%M:%S"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now%"
       assert_string: "/"
+
   # ISO output always contains the date/time "T" separator regardless of format
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
@@ -104,6 +116,7 @@ Process:
       datetime_offset_hours: 1.5
       datetime_use_utc: false
       datetime_strftime: "%Y-%m-%d %H:%M:%S"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now_iso%"
@@ -115,6 +128,7 @@ Process:
       datetime_offset_hours: 0
       datetime_use_utc: true
       datetime_strftime: "YEAR=%Y"
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%datetime_now%"

@@ -11,6 +11,7 @@ Process:
       # https://github.com/autopkg/autopkg/archive/refs/tags/v2.4.1.zip
       github_repo: autopkg/autopkg
       asset_regex: ".*.pkg"
+
   - Processor: URLDownloader
     Arguments:
       # url: "https://github.com/autopkg/autopkg/archive/refs/tags/v%version%.zip"
@@ -19,4 +20,5 @@ Process:
       # - if run locally without %GITHUB_TOKEN% this should still work unless you hit API limits locally
       # - https://github.community/t/using-github-token-in-http-call-to-api/16608/8?u=jgstew
       request_headers: {"authorization": "Bearer %GITHUB_TOKEN%"}
+
   - Processor: EndOfCheckPhase
