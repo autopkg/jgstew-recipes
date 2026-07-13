@@ -1,5 +1,5 @@
 ---
-Description: Test URLDownloaderPython Processor
+Description: Test the URLDownloaderPython processor referenced by its bare (core) name
 Identifier: com.github.jgstew.test.URLDownloaderPythonCore
 Input:
   NAME: URLDownloaderPythonCoreTest

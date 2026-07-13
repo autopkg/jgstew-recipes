@@ -1,5 +1,5 @@
 ---
-Description: Downloads the latest Microsoft Windows Defender Definitions
+Description: Downloads the latest Microsoft Windows Defender Definitions for x86
 Identifier: com.github.jgstew.download.WindowsDefenderDefinitions-Win-x86
 Input:
   NAME: WindowsDefenderDefinitions

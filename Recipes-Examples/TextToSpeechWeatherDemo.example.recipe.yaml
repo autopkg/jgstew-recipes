@@ -1,5 +1,5 @@
 ---
-Description: Example TextToSpeech Weather Recipe
+Description: Demo variant of the TextToSpeech Weather example recipe with hard coded lat/lon.
 Identifier: com.github.jgstew.example.TextToSpeechWeatherDemo
 Input:
   NAME: TextToSpeechWeather

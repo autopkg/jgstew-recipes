@@ -1,5 +1,5 @@
 ---
-Description: Test GitCommitSubprocess Processor
+Description: Example usage of the GitCommitSubprocess processor
 Identifier: com.github.jgstew.test.ExampleGitCommitSubprocess
 Input:
   NAME: GitCommitSubprocessTest

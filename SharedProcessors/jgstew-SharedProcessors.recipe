@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>Description</key>
-	<string>Dummy recipe for referencing shared processors in this directory.</string>
+	<string>Dummy recipe for referencing the SharedProcessors in this directory.</string>
 	<key>Identifier</key>
 	<string>com.github.jgstew.SharedProcessors</string>
 	<key>Input</key>

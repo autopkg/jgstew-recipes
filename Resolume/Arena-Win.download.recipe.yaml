@@ -1,5 +1,5 @@
 ---
-Description: Downloads the latest version of Arena
+Description: Downloads the latest version of Arena for Windows
 # based upon https://github.com/autopkg/moofit-recipes/blob/master/Adobe/RemoteUpdateManager.download.recipe
 Identifier: com.github.jgstew.download.Arena-Win
 Input:

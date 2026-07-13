@@ -73,6 +73,7 @@ Checks:
     W120  Process-step blank-line spacing (YAML-only, fixable)
     W121  Input NAME segment is not letter-start alphanumeric (dash-separated)
     W122  Input NAME trailing platform/arch suffix is not canonical casing
+    W123  Description is identical to another recipe's
     W100  recipe could not be parsed; skipped (advisory -- check-yaml /
           validate-plist are the authorities on file validity)
     W101  PyYAML is not available, so a YAML recipe could not be parsed; skipped
@@ -99,6 +100,7 @@ or out of one of the other single-purpose checks with, respectively:
     # processor-ref-ok          (W118)
     # recipe-name-ok            (W121)
     # recipe-name-suffix-ok     (W122)
+    # duplicate-description-ok  (W123)
 
 Exit codes:
     0  no failures (warnings alone do not fail unless --strict)
@@ -133,6 +135,10 @@ PROCESS_SPACING_MARKER = "process-spacing-ok"
 # File-level opt-out for the duplicate-Identifier check (W112), for a recipe that
 # intentionally shares an identifier with another (e.g. a "Core" test variant).
 DUPLICATE_IDENTIFIER_MARKER = "duplicate-identifier-ok"
+
+# File-level opt-out for the duplicate-Description check (W123), for a recipe that
+# intentionally shares its Description with another.
+DUPLICATE_DESCRIPTION_MARKER = "duplicate-description-ok"
 
 # File-level opt-out for the filename-type vs identifier-type check (W113).
 TYPE_MISMATCH_MARKER = "type-mismatch-ok"
@@ -214,6 +220,7 @@ KNOWN_CODES = frozenset(
         "W120",  # Process-step blank-line spacing
         "W121",  # Input NAME segment is not letter-start alphanumeric
         "W122",  # Input NAME platform suffix is not canonical casing
+        "W123",  # Description is identical to another recipe's
     ]
 )
 
@@ -380,6 +387,42 @@ def check_duplicate_identifier(recipe, path, source_lines, index):
             "W112",
             f"Identifier `{identifier}` is also declared by: {shown}; identifiers "
             f"must be unique -- add `# {DUPLICATE_IDENTIFIER_MARKER}` if intentional",
+        )
+    ]
+
+
+def normalize_description(desc):
+    """Return a Description normalized for duplicate comparison (W123).
+
+    Strips ends and collapses internal whitespace, so descriptions differing only
+    in spacing are still treated as identical.
+    """
+    return " ".join(str(desc).split())
+
+
+def check_duplicate_description(recipe, path, source_lines, index):
+    """W123: each recipe's Description should be distinct across the repo.
+
+    A Description shared verbatim by another recipe is almost always a copy-paste
+    that no longer fits (or a variant that should say how it differs). Cross-file,
+    so neither the schema nor macadmin can see it. Reports the OTHER file(s) with
+    the same Description.
+    """
+    desc = recipe.get("Description")
+    if not isinstance(desc, str) or not desc.strip() or index is None:
+        return []
+    paths = index.by_description.get(normalize_description(desc), [])
+    others = [p for p in paths if p != os.path.normpath(path)]
+    if not others:
+        return []
+    lineno = find_line(source_lines, r"^\s*Description\s*:", r"<key>Description</key>")
+    shown = ", ".join(sorted(others))
+    return [
+        (
+            lineno,
+            "W123",
+            f"Description is identical to: {shown}; make each recipe's Description "
+            f"distinct -- add `# {DUPLICATE_DESCRIPTION_MARKER}` if intentional",
         )
     ]
 
@@ -732,7 +775,14 @@ def maybe_fix_minimum_version(path, recipe):
 #                 None), the parent graph W115 walks to find cycles
 RecipeIndex = collections.namedtuple(
     "RecipeIndex",
-    ["identifiers", "by_path", "by_identifier", "parent_of", "processors"],
+    [
+        "identifiers",
+        "by_path",
+        "by_identifier",
+        "parent_of",
+        "processors",
+        "by_description",
+    ],
 )
 
 
@@ -768,6 +818,7 @@ def build_recipe_index(root="."):
     identifiers = set()
     by_path = {}
     by_identifier = collections.defaultdict(list)
+    by_description = collections.defaultdict(list)
     raw_parents = []  # (norm_path, identifier, ParentRecipe value)
     for path in discover_recipe_files(root):
         try:
@@ -776,9 +827,14 @@ def build_recipe_index(root="."):
         except OSError:
             continue
         data, _ = parse_recipe(src)
-        if isinstance(data, dict) and isinstance(data.get("Identifier"), str):
+        if not isinstance(data, dict):
+            continue
+        norm = os.path.normpath(path)
+        desc = data.get("Description")
+        if isinstance(desc, str) and desc.strip():
+            by_description[normalize_description(desc)].append(norm)
+        if isinstance(data.get("Identifier"), str):
             identifier = data["Identifier"]
-            norm = os.path.normpath(path)
             identifiers.add(identifier)
             by_path[norm] = identifier
             by_identifier[identifier].append(norm)
@@ -795,6 +851,7 @@ def build_recipe_index(root="."):
         dict(by_identifier),
         parent_of,
         discover_processor_refs(root),
+        dict(by_description),
     )
 
 
@@ -1157,6 +1214,13 @@ def check_file(
     ):
         issues += check_duplicate_identifier(data, path, source_lines, recipe_index)
 
+    if (
+        "W123" not in disabled
+        and recipe_index is not None
+        and DUPLICATE_DESCRIPTION_MARKER not in src
+    ):
+        issues += check_duplicate_description(data, path, source_lines, recipe_index)
+
     if "W113" not in disabled and TYPE_MISMATCH_MARKER not in src:
         issues += check_filename_identifier_type(data, path, source_lines)
 
@@ -1212,7 +1276,7 @@ def check_files(
     structured results. `main()` wraps it to print and exit.
     """
     recipe_index = None
-    if {"W111", "W112", "W115", "W118"} - disabled:
+    if {"W111", "W112", "W115", "W118", "W123"} - disabled:
         recipe_index = build_recipe_index(root)
 
     results = []
