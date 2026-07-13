@@ -107,7 +107,7 @@ repos:
         # args: ["--ignore-words-list=autopkg,AutoPkg,AutoPkgRecipe,AutoPkgRecipes,AutoPkgRecipeList,AutoPkgRecipeLists"]
 
   - repo: https://github.com/jgstew/pre-commit-jgstew
-    rev: v1.4.0
+    rev: v1.5.1
     hooks:
       - id: verify-files-are-ascii
         exclude: "Firefox-Win.ChocolateyTemplate.Firefox.nuspec$"
@@ -151,6 +151,18 @@ repos:
           - '--filter=jgstew/jgstew-recipes'
           - '--replace=autopkg/jgstew-recipes'
           - '--overwrite'
+      # AutoPkg convention checkers. The packaged processor hook defaults to all
+      # *.py, so limit it to this repo's processor folders. Both auto-fix the
+      # fixable issues in place and exit non-zero so the changes are re-staged.
+      - id: check-processor-conventions
+        args: ["--auto-fix=yes"]
+        files: ^Shared(Dangerous)?Processors/.*\.py$
+      # cross-field recipe checks; --strict also fails on remaining warnings,
+      # --auto-fix=yes rewrites the fixable ones (W111/W114/W120) in place.
+      # verbose so the warnings show even when the hook passes.
+      - id: check-recipe-conventions
+        verbose: true
+        args: ["--strict", "--auto-fix=yes"]
 
   # - repo: https://github.com/koalaman/shellcheck-precommit
   #   rev: v0.11.0
@@ -159,34 +171,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: check-processor-conventions
-        name: Check AutoPkg processor conventions
-        description: Picky, opinionated checks for AutoPkg processor boilerplate and conventions.
-        language: script
-        entry: ./autopkg_processor_check_conventions.py
-        # auto-fixes fixable issues (currently E001 shebang); use --auto-fix=no to only report
-        args: ["--auto-fix=yes"]
-        files: ^Shared(Dangerous)?Processors/.*\.py$
-
-      # Cross-field recipe conventions the JSON schema cannot express (chiefly:
-      # the Identifier should reference the Input NAME, and every ParentRecipe
-      # should resolve to a known Identifier). language: python so PyYAML is
-      # available to parse recipes; verbose: true so the warnings show even when
-      # the hook passes. --auto-fix=yes rewrites a path-like ParentRecipe (W111)
-      # to the parent's Identifier in place (which fails the hook so it is
-      # re-staged). --strict makes the remaining, non-fixable warnings fail too.
-      - id: check-recipe-conventions
-        name: Check AutoPkg recipe conventions
-        description: Picky, opinionated cross-field checks for AutoPkg recipes.
-        language: python
-        entry: ./autopkg_recipe_check_conventions.py
-        additional_dependencies: ["pyyaml"]
-        verbose: true
-        files: \.recipe(\.ya?ml)?$
-        args:
-          - '--strict'
-          - '--auto-fix=yes'
-
       # Run via pytests_run.sh rather than an isolated pre-commit venv: the tests
       # import autopkglib (which does `import imp`, removed in Python 3.12, so it
       # must run on the repo's Python <3.12) plus the processor dependencies from
