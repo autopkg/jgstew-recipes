@@ -83,8 +83,18 @@ jobs:
             done
           fi
           if [ -s TestRecipesAction.txt ]; then
+            # Run download recipes (*.download.recipe.yaml) first: their downloads
+            # populate the AutoPkg cache, so any later recipe that uses one as its
+            # ParentRecipe can reuse the already-cached download (URLDownloaderPython
+            # parent-cache reuse) instead of re-fetching it. `grep` exits non-zero
+            # when a group is empty, so guard each with `|| true`. Relative order
+            # within each group is preserved.
+            grep -E '\.download\.recipe\.ya?ml$' TestRecipesAction.txt > TestRecipesAction.ordered.txt || true
+            grep -vE '\.download\.recipe\.ya?ml$' TestRecipesAction.txt >> TestRecipesAction.ordered.txt || true
+            rm TestRecipesAction.txt
+            mv TestRecipesAction.ordered.txt TestRecipesAction.txt
             echo "should_run=true" >> "$GITHUB_OUTPUT"
-            echo "--- recipes to test ($(wc -l < TestRecipesAction.txt)): ---"
+            echo "--- recipes to test ($(wc -l < TestRecipesAction.txt)), download recipes first: ---"
             cat TestRecipesAction.txt
           else
             echo "No recipes to test."
