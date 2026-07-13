@@ -57,9 +57,11 @@ repo), W007 (an input_variable is declared but never read from self.env),
 W008 (a hardcoded user/machine-specific path), and W009 (this processor is not
 listed in the recipe schema's Processor enum -- auto-fixed by appending its
 `com.github.jgstew.<folder>/<Name>` reference to that enum; opt out per-file with
-`# schema-enum-ok`). W004/W006/W007/W008 each accept a per-line opt-out comment
+`# schema-enum-ok`), and W010 (an input/output variable key is not snake_case).
+W004/W006/W007/W008/W010 each accept a per-line opt-out comment
 (`# output-undeclared-ok`, `# platform-specific-ok`, `# input-unread-ok`,
-`# hardcoded-path-ok`) for reviewed, intentional exceptions.
+`# hardcoded-path-ok`, `# variable-name-ok`) for reviewed, intentional
+exceptions.
 
 A `print(...)` call that E028 cannot safely rewrite (multiple args, file=/sep=/
 end= kwargs, or a staticmethod) stays reported for a human to fix.
@@ -113,6 +115,13 @@ OUTPUT_UNDECLARED_MARKER = "output-undeclared-ok"  # W004
 PLATFORM_IMPORT_MARKER = "platform-specific-ok"  # W006
 INPUT_UNREAD_MARKER = "input-unread-ok"  # W007
 HARDCODED_PATH_MARKER = "hardcoded-path-ok"  # W008
+VARIABLE_NAME_MARKER = "variable-name-ok"  # W010
+
+# A snake_case variable-key name: a lowercase letter followed by lowercase
+# letters, digits, and underscores (W010). Keys that mirror an external field
+# (PE/MSI metadata, an HTTP header) or the AutoPkg ALL_CAPS config convention can
+# opt out with `# variable-name-ok`.
+SNAKE_CASE_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 
 # Platform-specific modules a cross-platform processor should not import
 # unconditionally (W006). A genuinely platform-specific processor can opt out
@@ -210,6 +219,7 @@ KNOWN_CODES = frozenset(
         "W007",  # input_variable declared but never read
         "W008",  # hardcoded user/machine-specific path
         "W009",  # processor missing from the recipe schema Processor enum
+        "W010",  # input/output variable key is not snake_case
     ]
 )
 
@@ -1115,6 +1125,45 @@ def check_output_variable_entries(attrs):
                     spec.lineno,
                     "E022",
                     f"output_variable `{var_name}` missing `description`",
+                )
+            )
+    return issues
+
+
+def check_variable_name_style(attrs, source_lines):
+    """W010: input_variable / output_variable keys should be snake_case.
+
+    A warning (not an error): the repo has intentional exceptions -- keys that
+    mirror external field names (PE/MSI metadata like `file_peinfo_ProductName`,
+    the `User_Agent` header) and the AutoPkg ALL_CAPS config convention
+    (`COMPUTE_HASHES`). Those opt out with a `# variable-name-ok` comment on (or
+    just above) the key's line. Reported at the key's own line.
+    """
+    issues = []
+    for attr_name, label in (
+        ("input_variables", "input_variable"),
+        ("output_variables", "output_variable"),
+    ):
+        node = attrs.get(attr_name)
+        if not isinstance(node, ast.Dict):
+            continue
+        for key_node in node.keys:
+            if not (
+                isinstance(key_node, ast.Constant) and isinstance(key_node.value, str)
+            ):
+                continue
+            key = key_node.value
+            if SNAKE_CASE_RE.match(key):
+                continue
+            lineno = getattr(key_node, "lineno", node.lineno)
+            if line_has_marker(source_lines, lineno, VARIABLE_NAME_MARKER):
+                continue
+            issues.append(
+                (
+                    lineno,
+                    "W010",
+                    f"{label} `{key}` is not snake_case; rename it or add "
+                    f"`# {VARIABLE_NAME_MARKER}`",
                 )
             )
     return issues
@@ -2170,6 +2219,7 @@ def check_file(path, auto_fix=True, disabled=frozenset()):
     issues += check_variable_attrs(proc, attrs)  # E014-E017
     issues += check_input_variable_entries(attrs)  # E020 / E021
     issues += check_output_variable_entries(attrs)  # E022
+    issues += check_variable_name_style(attrs, source_lines)  # W010
     issues += check_main_method(proc, main_func)  # E018 / E019
     issues += check_redundant_doc_assign(proc)  # E023
     issues += check_main_guard(proc, info)  # E006 / E007 / W003

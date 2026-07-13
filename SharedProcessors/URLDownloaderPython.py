@@ -57,6 +57,7 @@ class URLDownloaderPython(URLDownloader):
                 "'prefetch_filename' is useful for URLs with redirects."
             ),
         },
+        # variable-name-ok
         "CHECK_FILESIZE_ONLY": {
             "default": False,
             "required": False,
@@ -71,6 +72,7 @@ class URLDownloaderPython(URLDownloader):
                 "Defaults to False."
             ),
         },
+        # variable-name-ok
         "PKG": {
             "required": False,
             "description": (
@@ -79,6 +81,7 @@ class URLDownloaderPython(URLDownloader):
                 "this package or disk image."
             ),
         },
+        # variable-name-ok
         "COMPUTE_HASHES": {
             "required": False,
             "default": False,
@@ -86,6 +89,7 @@ class URLDownloaderPython(URLDownloader):
                 "If True, compute SHA1, SHA256, and MD5 hashes of the downloaded file"
             ),
         },
+        # variable-name-ok
         "HEADERS_TO_TEST": {
             "required": False,
             "default": ["ETag", "Last-Modified", "Content-Length"],
@@ -93,7 +97,7 @@ class URLDownloaderPython(URLDownloader):
                 "Array of HTTP response headers to compare against cached values to detect whether the download has changed"
             ),
         },
-        "User_Agent": {
+        "user_agent": {
             "required": False,
             "description": ("User Agent Header String to use for download"),
         },
@@ -372,7 +376,7 @@ class URLDownloaderPython(URLDownloader):
         # get http headers
         req = Request(url)
         # the following may be required in some cases:
-        user_agent_value = self.env.get("User_Agent", None)
+        user_agent_value = self.env.get("user_agent", self.env.get("User_Agent", None))
         if user_agent_value:
             req.add_header("User-Agent", user_agent_value)
 

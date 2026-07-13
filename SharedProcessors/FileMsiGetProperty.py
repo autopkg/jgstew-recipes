@@ -57,22 +57,27 @@ class FileMsiGetProperty(Processor):  # pylint: disable=too-few-public-methods
         },
     }
     output_variables = {
+        # variable-name-ok
         "file_msi_ProductVersion": {
             "description": "The MSI version, should match DisplayVersion in windows registry",
             "msi_property": "ProductVersion",
         },
+        # variable-name-ok
         "file_msi_Manufacturer": {
             "description": "The MSI vendor or Manufacturer",
             "msi_property": "Manufacturer",
         },
+        # variable-name-ok
         "file_msi_ProductName": {
             "description": "The MSI ProductName, should match DisplayName in windows registry",
             "msi_property": "ProductName",
         },
+        # variable-name-ok
         "file_msi_ProductCode": {
             "description": "The MSI ProductCode, should be a GUID.",
             "msi_property": "ProductCode",
         },
+        # variable-name-ok
         "file_msi_UpgradeCode": {
             "description": "The MSI UpgradeCode, should be a GUID.",
             "msi_property": "UpgradeCode",

@@ -44,6 +44,7 @@ class URLDownloaderRequests(URLDownloader):
                 "'prefetch_filename' is useful for URLs with redirects."
             ),
         },
+        # variable-name-ok
         "User_Agent": {
             "required": False,
             "description": ("User Agent Header String to use for download"),

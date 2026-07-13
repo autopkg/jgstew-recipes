@@ -44,6 +44,7 @@ class FileMsiGetInfoOLE(Processor):  # pylint: disable=too-few-public-methods
         "file_ole_last_saved_time": {
             "description": "File last saved time from MSI OLE metadata as a datetime object"
         },
+        # variable-name-ok
         "SourceReleaseDate": {"description": "max creation last_saved time yyyy-mm-dd"},
     }
 

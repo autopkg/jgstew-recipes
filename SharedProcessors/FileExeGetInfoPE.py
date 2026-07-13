@@ -72,13 +72,21 @@ class FileExeGetInfoPE(Processor):  # pylint: disable=too-few-public-methods
         },
     }
     output_variables = {
+        # variable-name-ok
         "file_peinfo_FileVersion": {"description": "FileVersion"},
+        # variable-name-ok
         "file_peinfo_ProductVersion": {"description": "ProductVersion"},
+        # variable-name-ok
         "file_peinfo_ProductName": {"description": "ProductName"},
+        # variable-name-ok
         "file_peinfo_CompanyName": {"description": "CompanyName"},
+        # variable-name-ok
         "file_peinfo_FileDescription": {"description": "FileDescription"},
+        # variable-name-ok
         "file_peinfo_InternalName": {"description": "InternalName"},
+        # variable-name-ok
         "file_peinfo_OriginalFilename": {"description": "OriginalFilename"},
+        # variable-name-ok
         "file_peinfo_LegalCopyright": {"description": "LegalCopyright"},
     }
 
