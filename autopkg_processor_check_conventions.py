@@ -48,7 +48,10 @@ output too is a deliberate way to have AutoPkg re-display it in verbose runs), a
 E032 (the class name must be strict CamelCase: one capital per word, with capital
 runs allowed only for the built-in acronyms in ALLOWED_ACRONYMS -- URL, CURL; any
 other acronym, e.g. JSON/BES/PE/OLE/QR, is a per-processor exception marked with
-`# processor-name-ok`).
+`# processor-name-ok`), and E033 (a processor's class docstring must be unique
+across the repo -- the docstring is the processor's description, so a verbatim
+duplicate is a copy-paste that no longer fits one of them; cross-file, opt out
+per-file with `# duplicate-docstring-ok`).
 E030 allows AutoPkg built-ins, ALL_CAPS external config/credential keys (e.g.
 BES_PASSWORD), keys the processor writes itself, and get() fallback defaults.
 
@@ -121,6 +124,7 @@ INPUT_UNREAD_MARKER = "input-unread-ok"  # W007
 HARDCODED_PATH_MARKER = "hardcoded-path-ok"  # W008
 VARIABLE_NAME_MARKER = "variable-name-ok"  # W010
 PROCESSOR_NAME_MARKER = "processor-name-ok"  # E032
+DUPLICATE_DOCSTRING_MARKER = "duplicate-docstring-ok"  # E033 (file-level)
 
 # A snake_case variable-key name: a lowercase letter followed by lowercase
 # letters, digits, and underscores (W010). Keys that mirror an external field
@@ -230,6 +234,7 @@ KNOWN_CODES = frozenset(
         "E030",  # reads an undeclared env key
         "E031",  # missing an autopkglib import (added when building out a stub)
         "E032",  # class name is not strict CamelCase (allowed acronyms excepted)
+        "E033",  # class docstring is identical to another processor's
         "W001",  # not an AutoPkg processor
         "W002",  # file not found
         "W003",  # __main__ guard not at end of file
@@ -1086,6 +1091,64 @@ def check_class_docstring_sufficient(proc):
             )
         ]
     return []
+
+
+_DOCSTRING_INDEX = None
+
+
+def class_docstring_index(root="."):
+    """Map each normalized processor class docstring to the files that use it.
+
+    Built once per run (memoized) by scanning every processor file under `root`,
+    so the cross-file duplicate check (W011) works even when pre-commit passes
+    only the changed files. Whitespace is collapsed so docstrings differing only
+    in wrapping still count as identical.
+    """
+    global _DOCSTRING_INDEX
+    if _DOCSTRING_INDEX is None:
+        index = collections.defaultdict(list)
+        for path in discover_processor_files(root):
+            try:
+                with open(path, encoding="utf-8", errors="replace") as handle:
+                    tree = ast.parse(handle.read())
+            except (OSError, SyntaxError):
+                continue
+            stem = os.path.splitext(os.path.basename(path))[0]
+            proc = pick_processor_class(scan_module(tree), stem)
+            doc = ast.get_docstring(proc) if proc is not None else None
+            if doc and doc.strip():
+                index[" ".join(doc.split())].append(os.path.normpath(path))
+        _DOCSTRING_INDEX = dict(index)
+    return _DOCSTRING_INDEX
+
+
+def check_duplicate_class_docstring(proc, path):
+    """E033: a processor's class docstring must be unique across the repo.
+
+    The class docstring is the processor's description (via `description =
+    __doc__`), so a docstring shared verbatim by another processor is a
+    copy-paste that no longer fits one of them. Cross-file; reports the OTHER
+    processor file(s) with the same docstring.
+    """
+    doc = ast.get_docstring(proc)
+    if not doc or not doc.strip():
+        return []
+    key = " ".join(doc.split())
+    others = [
+        p for p in class_docstring_index().get(key, []) if p != os.path.normpath(path)
+    ]
+    if not others:
+        return []
+    shown = ", ".join(sorted(others))
+    return [
+        (
+            proc.lineno,
+            "E033",
+            f"class docstring is identical to: {shown}; each processor's docstring "
+            f"is its description and should be distinct -- add "
+            f"`# {DUPLICATE_DOCSTRING_MARKER}` if intentional",
+        )
+    ]
 
 
 def check_description(proc, attrs):
@@ -2261,6 +2324,8 @@ def check_file(path, auto_fix=True, disabled=frozenset()):
     issues += check_base_class(proc, info)  # E004
     issues += check_class_docstring(proc)  # E012
     issues += check_class_docstring_sufficient(proc)  # E024
+    if "E033" not in disabled and DUPLICATE_DOCSTRING_MARKER not in src:
+        issues += check_duplicate_class_docstring(proc, path)  # E033
     issues += check_description(proc, attrs)  # E013
     issues += check_variable_attrs(proc, attrs)  # E014-E017
     issues += check_input_variable_entries(attrs)  # E020 / E021
