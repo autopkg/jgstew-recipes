@@ -98,7 +98,7 @@ jobs:
           MSBuild.exe "$wixprojPath" -p:SourceDir="$env:GITHUB_WORKSPACE/autopkg/Code" -p:OutputPath="." -p:OutputName="$name" -p:ProductVersion="$version"
 
       - name: upload built MSI
-        if: runner.os == 'Windows'
+        if: always() && runner.os == 'Windows'
         # https://github.com/actions/upload-artifact
         # TODO: get artifact path dynamically
         uses: actions/upload-artifact@v7
