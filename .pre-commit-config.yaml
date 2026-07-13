@@ -145,7 +145,7 @@ repos:
       - id: regex-search-filter-replace
         name: Fix references to jgstew/jgstew-recipes.
         files: .*
-        exclude: ^(.pre-commit-config.yaml|.github/workflows/AutoPkgReleaseBrew.yaml|GoToMeeting/GoToMeeting-Win.download.recipe.yaml)$
+        exclude: ^(.pre-commit-config.yaml|.github/workflows/AutoPkgReleaseBrew.yaml|GoToMeeting/GoToMeeting-Win.download.recipe.yaml|SharedProcessors/FileXattrClear.py)$
         args:
           - '--search=jgstew/jgstew-recipes'
           - '--filter=jgstew/jgstew-recipes'
@@ -167,6 +167,20 @@ repos:
         # auto-fixes fixable issues (currently E001 shebang); use --auto-fix=no to only report
         args: ["--auto-fix=yes"]
         files: ^Shared(Dangerous)?Processors/.*\.py$
+
+      # Cross-field recipe conventions the JSON schema cannot express (chiefly:
+      # the Identifier should reference the Input NAME). language: python so
+      # PyYAML is available to parse recipes; verbose: true so the advisory
+      # warnings show even when the hook passes. Warnings do NOT fail the commit
+      # -- add --strict (e.g. in CI) to make them failures.
+      - id: check-recipe-conventions
+        name: Check AutoPkg recipe conventions
+        description: Picky, opinionated cross-field checks for AutoPkg recipes.
+        language: python
+        entry: ./autopkg_recipe_check_conventions.py
+        additional_dependencies: ["pyyaml"]
+        verbose: true
+        files: \.recipe(\.ya?ml)?$
 
       # Run via pytests_run.sh rather than an isolated pre-commit venv: the tests
       # import autopkglib (which does `import imp`, removed in Python 3.12, so it

@@ -3,7 +3,7 @@ Description: Generates a BigFix Task for running the latest log4j2-scan to remed
 Identifier: com.github.jgstew.bigfix.log4j2-bin-Win64
 Input:
   # Name: Short Name of the Software, No spaces, Example: "DBBrowserforSQLite"
-  NAME: log4j2-scan
+  NAME: log4j2-bin-Win64
   DisplayName: log4j2-scan
   BESFileName: Log4j2 Remediation - Replace log4j-core-2.x.jar with log4j-core-2.17.0.jar - Universal
 # MinimumVersion of AutoPkg - Should always be 2.3 (or higher once a new version is released)

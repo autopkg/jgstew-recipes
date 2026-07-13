@@ -1,6 +1,6 @@
 ---
 Description: Get local msi file metadata
-Identifier: com.github.jgstew.local.msi
+Identifier: com.github.jgstew.local.LocalMSI
 Input:
   NAME: LocalMSI
 MinimumVersion: "2.4.1"

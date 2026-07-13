@@ -1,12 +1,12 @@
 ---
 Description: Generates a BigFix Task for the latest DataDog Agent. Input 64BitOnly restricts task relevance to 64-bit systems when True.
-Identifier: com.github.jgstew.bigfix.DataDog-Win
+Identifier: com.github.jgstew.bigfix.DataDogAgent-Win
 Input:
   NAME: DataDogAgent-Win
   DisplayName: Datadog Agent
   64BitOnly: TRUE
 MinimumVersion: "2.4.1"
-ParentRecipe: com.github.jgstew.download.DataDog-Agent-Win
+ParentRecipe: com.github.jgstew.download.DataDogAgent-Win
 Process:
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
 

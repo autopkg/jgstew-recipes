@@ -1,8 +1,8 @@
 ---
 Description: Downloads the latest DataDog Agent for Windows
-Identifier: com.github.jgstew.download.DataDog-Agent-Win
+Identifier: com.github.jgstew.download.DataDogAgent-Win
 Input:
-  NAME: DataDog-Agent-Win
+  NAME: DataDogAgent-Win
   DisplayName: Datadog Agent
 MinimumVersion: "2.4.1"
 Process:
