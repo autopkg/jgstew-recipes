@@ -29,7 +29,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_search_results_var%"
-      assert_string: "Audacity"
+      assert_string: "AssertInputContainsStringTest"
 
   - Processor: com.github.jgstew.SharedProcessors/FileTextSearcher
     Arguments:

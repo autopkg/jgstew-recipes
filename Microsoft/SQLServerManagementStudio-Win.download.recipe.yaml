@@ -14,9 +14,14 @@ Process:
       url: https://aka.ms/ssmsfullsetup
       prefetch_filename: True
       COMPUTE_HASHES: True
-  - Processor: EndOfCheckPhase  # how do I stop here if nothing changed?
-  # - Processor: com.github.jgstew.SharedProcessors/StopProcessingIfDownloadUnchanged
 
+  - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
+    Arguments:
+      prefetch_url: "%download_url%"
+
+  - Processor: EndOfCheckPhase
+
+  # - Processor: com.github.jgstew.SharedProcessors/StopProcessingIfDownloadUnchanged
   # Download the release-notes page ONCE, then parse the saved file for the
   # version and date below (avoids fetching the same URL multiple times).
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
