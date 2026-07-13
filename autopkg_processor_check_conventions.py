@@ -53,8 +53,11 @@ file), W004 (writes a `self.env[...]` key not declared in output_variables),
 W005 (no Test-Recipes/<Name>*.test.recipe.yaml for this processor -- auto-fixed
 when a sibling "*test*" folder exists, by writing a stub test recipe that calls
 the processor), W006 (imports a platform-specific module in a cross-platform
-repo), W007 (an input_variable is declared but never read from self.env), and
-W008 (a hardcoded user/machine-specific path). W004/W006/W007/W008 each accept a per-line opt-out comment
+repo), W007 (an input_variable is declared but never read from self.env),
+W008 (a hardcoded user/machine-specific path), and W009 (this processor is not
+listed in the recipe schema's Processor enum -- auto-fixed by appending its
+`com.github.jgstew.<folder>/<Name>` reference to that enum; opt out per-file with
+`# schema-enum-ok`). W004/W006/W007/W008 each accept a per-line opt-out comment
 (`# output-undeclared-ok`, `# platform-specific-ok`, `# input-unread-ok`,
 `# hardcoded-path-ok`) for reviewed, intentional exceptions.
 
@@ -87,6 +90,7 @@ import argparse
 import ast
 import collections
 import datetime
+import json
 import os
 import re
 import subprocess
@@ -205,8 +209,14 @@ KNOWN_CODES = frozenset(
         "W006",  # imports a platform-specific module
         "W007",  # input_variable declared but never read
         "W008",  # hardcoded user/machine-specific path
+        "W009",  # processor missing from the recipe schema Processor enum
     ]
 )
+
+# The opinionated recipe schema whose `Processor` enum should list every shared
+# processor (W009). Path is relative to the repo root (pre-commit's cwd).
+SCHEMA_PATH = ".AutoPkgRecipeOpinionated.schema.json"
+SCHEMA_ENUM_MARKER = "schema-enum-ok"  # per-file opt-out for W009
 
 # Env keys a processor may read without declaring them in input_variables:
 # AutoPkg core variables plus the ubiquitous URLDownloader download-chain keys
@@ -1870,6 +1880,108 @@ def maybe_fix_test_recipe(path, stem):
     ]
 
 
+def processor_ref_for(path, stem):
+    """Return the `com.github.jgstew.<parent folder>/<stem>` reference for a file."""
+    parent_folder = os.path.basename(os.path.dirname(os.path.abspath(path)))
+    return f"{RECIPE_IDENTIFIER_PREFIX}{parent_folder}/{stem}"
+
+
+def schema_enum_values():
+    """Return the set of Processor `enum` values in the recipe schema, or None.
+
+    Reads SCHEMA_PATH and unions every `enum` list under
+    `definitions.Process.properties.Processor.anyOf`. Returns None when the schema
+    is missing or unparsable (W009 then does not fire).
+    """
+    try:
+        with open(SCHEMA_PATH, encoding="utf-8") as handle:
+            schema = json.load(handle)
+    except (OSError, ValueError):
+        return None
+    try:
+        blocks = schema["definitions"]["Process"]["properties"]["Processor"]["anyOf"]
+    except (KeyError, TypeError):
+        return None
+    values = set()
+    for block in blocks:
+        if isinstance(block, dict) and isinstance(block.get("enum"), list):
+            values.update(v for v in block["enum"] if isinstance(v, str))
+    return values
+
+
+def check_schema_enum(path, stem, src):
+    """W009: this processor should be listed in the recipe schema Processor enum.
+
+    Keeps the schema's autocomplete/canonical processor list from drifting as
+    processors are added or renamed. Skipped when the schema is absent/unparsable
+    or the file carries the `# schema-enum-ok` marker. Not something macadmin or
+    the schema itself can check (the schema's fallback pattern accepts anything).
+    """
+    if SCHEMA_ENUM_MARKER in src:
+        return []
+    values = schema_enum_values()
+    if values is None:
+        return []
+    ref = processor_ref_for(path, stem)
+    if ref in values:
+        return []
+    return [
+        (
+            1,
+            "W009",
+            f"processor `{ref}` is not listed in {SCHEMA_PATH}'s Processor enum; "
+            f"add it (or `# {SCHEMA_ENUM_MARKER}` if intentionally excluded)",
+        )
+    ]
+
+
+def maybe_fix_schema_enum(path, stem):
+    """Auto-fix W009: append this processor's reference to the schema enum block.
+
+    Appends to the existing `com.github.jgstew.*` enum block (fixing up the
+    trailing comma), leaving every other entry untouched -- a minimal, no-reorder
+    edit. Acts only when the schema is present, the ref is absent, and the jgstew
+    enum entries form a contiguous run (as they do in this schema). Returns the
+    list of fixed entries (empty if not applicable).
+    """
+    values = schema_enum_values()
+    if values is None:
+        return []
+    ref = processor_ref_for(path, stem)
+    if ref in values:
+        return []
+
+    with open(SCHEMA_PATH, encoding="utf-8") as handle:
+        lines = handle.read().split("\n")
+
+    # find the contiguous run of `"com.github.jgstew...."` enum entry lines
+    entry_re = re.compile(
+        r'^(\s*)"(' + re.escape(RECIPE_IDENTIFIER_PREFIX) + r'[^"]+)"(,?)\s*$'
+    )
+    hits = [(i, m) for i, line in enumerate(lines) for m in [entry_re.match(line)] if m]
+    if not hits:
+        return []
+    indices = [i for i, _ in hits]
+    if indices != list(range(indices[0], indices[-1] + 1)):
+        return []  # not contiguous -> leave for a human
+
+    indent = hits[0][1].group(1)
+    last_idx = indices[-1]
+    # ensure the previously-last entry ends with a comma, then append the new one
+    lines[last_idx] = f'{indent}"{hits[-1][1].group(2)}",'
+    lines.insert(last_idx + 1, f'{indent}"{ref}"')
+
+    with open(SCHEMA_PATH, "w", encoding="utf-8") as handle:
+        handle.write("\n".join(lines))
+    return [
+        (
+            1,
+            "W009",
+            f"added `{ref}` to {SCHEMA_PATH}'s Processor enum",
+        )
+    ]
+
+
 def check_file(path, auto_fix=True, disabled=frozenset()):
     """Check one file.
 
@@ -2004,6 +2116,12 @@ def check_file(path, auto_fix=True, disabled=frozenset()):
     issues += check_test_recipe(path, stem)  # W005
     issues += check_platform_imports(tree, source_lines)  # W006
     issues += check_hardcoded_paths(tree, source_lines)  # W008
+    # W009: keep the recipe schema's Processor enum in sync. Like W005, the fix
+    # edits a separate file (the schema .json), so no .py re-parse is needed; the
+    # check right after then finds the entry and does not re-report.
+    if auto_fix and "W009" not in disabled:
+        fixed += maybe_fix_schema_enum(path, stem)
+    issues += check_schema_enum(path, stem, src)  # W009
 
     proc = pick_processor_class(info, stem)
     if proc is None:

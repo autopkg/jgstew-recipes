@@ -5,7 +5,7 @@ Input:
   NAME: NvidiaBroadcast
 MinimumVersion: "2.4.1"
 Process:
-  - Processor: com.github.jgstew.SharedProcessors/URLTextSearcher
+  - Processor: URLTextSearcher
     Arguments:
       url: https://www.nvidia.com/en-us/geforce/broadcasting/broadcast-app/
       # regexr.com/63a7i

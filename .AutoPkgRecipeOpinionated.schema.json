@@ -208,7 +208,14 @@
                 "com.github.jgstew.SharedProcessors/VersionCompare",
                 "com.github.jgstew.SharedProcessors/VersionGetMajorMinor",
                 "com.github.jgstew.SharedProcessors/VersionMaximumArray",
-                "com.github.jgstew.SharedProcessors/VersionSort"
+                "com.github.jgstew.SharedProcessors/VersionSort",
+                "com.github.jgstew.SharedProcessors/RecipeParentsInfo",
+                "com.github.jgstew.SharedProcessors/DateTimeNow",
+                "com.github.jgstew.SharedDangerousProcessors/DangerousCommandRunner",
+                "com.github.jgstew.SharedDangerousProcessors/DangerousEvaluate",
+                "com.github.jgstew.SharedDangerousProcessors/DangerousRunProcessors",
+                "com.github.jgstew.SharedProcessors/FolderListFiles",
+                "com.github.jgstew.SharedDangerousProcessors/DangerousPowerShellRunner"
               ]
             },
             {

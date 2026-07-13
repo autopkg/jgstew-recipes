@@ -69,6 +69,7 @@ Checks:
     W115  ParentRecipe chain is cyclic / self-referential
     W116  http:// URL where https:// is preferred
     W117  re_pattern / asset_regex is not a valid regex
+    W118  a com.github.jgstew.Shared*Processors/X step has no matching X.py
     W120  Process-step blank-line spacing (YAML-only, fixable)
     W100  recipe could not be parsed; skipped (advisory -- check-yaml /
           validate-plist are the authorities on file validity)
@@ -93,6 +94,7 @@ or out of one of the other single-purpose checks with, respectively:
     # minimum-version-ok        (W114)
     # http-url-ok               (W116)
     # regex-ok                  (W117)
+    # processor-ref-ok          (W118)
 
 Exit codes:
     0  no failures (warnings alone do not fail unless --strict)
@@ -142,6 +144,13 @@ HTTP_URL_MARKER = "http-url-ok"
 # only a valid regex after %variable% substitution.
 REGEX_MARKER = "regex-ok"
 
+# File-level opt-out for the processor-reference-exists check (W118).
+PROCESSOR_REF_MARKER = "processor-ref-ok"
+
+# The repo's shared-processor folders; a com.github.jgstew.<folder>/<Name>
+# reference into one of these must correspond to a real <Name>.py file (W118).
+PROCESSOR_FOLDERS = ("SharedProcessors", "SharedDangerousProcessors")
+
 # The extensions that make a file an AutoPkg recipe. `.recipe` is usually a
 # plist; the `.recipe.y{a,}ml` forms are YAML. Order matters for endswith().
 RECIPE_EXTENSIONS = (".recipe.yaml", ".recipe.yml", ".recipe")
@@ -171,6 +180,7 @@ KNOWN_CODES = frozenset(
         "W115",  # cyclic / self ParentRecipe chain
         "W116",  # http:// URL (prefer https://)
         "W117",  # invalid re_pattern / asset_regex
+        "W118",  # jgstew processor reference has no matching .py file
         "W120",  # Process-step blank-line spacing
     ]
 )
@@ -535,6 +545,43 @@ def check_regex_arguments(recipe, source_lines):
     return issues
 
 
+def check_processor_refs_exist(recipe, source_lines, index):
+    """W118: a `com.github.jgstew.<folder>/<Name>` step must map to a real file.
+
+    Only references into this repo's shared-processor folders (PROCESSOR_FOLDERS)
+    are validated -- a missing one is a typo, a stale name after a rename, or a
+    core processor mislabeled with the jgstew namespace. Cross-file, and the
+    schema's fallback `com.github.\\S+` pattern accepts anything, so neither the
+    schema nor macadmin catches it.
+    """
+    if index is None:
+        return []
+    issues = []
+    seen = set()
+    for step in recipe.get("Process") or []:
+        if not isinstance(step, dict):
+            continue
+        ref = step.get("Processor")
+        if not isinstance(ref, str) or not ref.startswith(RECIPE_IDENTIFIER_PREFIX):
+            continue
+        folder = ref[len(RECIPE_IDENTIFIER_PREFIX) :].split("/", 1)[0]
+        if folder not in PROCESSOR_FOLDERS:
+            continue  # only validate refs into this repo's shared-processor folders
+        if ref in index.processors or ref in seen:
+            continue
+        seen.add(ref)
+        issues.append(
+            (
+                find_value_line(source_lines, ref),
+                "W118",
+                f"processor `{ref}` has no matching .py in {folder}/ (typo, rename, "
+                f"or a core processor mislabeled with the jgstew namespace); add "
+                f"`# {PROCESSOR_REF_MARKER}` if intentional",
+            )
+        )
+    return issues
+
+
 def apply_minimum_version_fix(path):
     """Rewrite the file's MinimumVersion value in place to the repo floor."""
     with open(path, encoding="utf-8") as handle:
@@ -594,8 +641,28 @@ def maybe_fix_minimum_version(path, recipe):
 #   parent_of     Identifier -> its ParentRecipe resolved to an Identifier (or
 #                 None), the parent graph W115 walks to find cycles
 RecipeIndex = collections.namedtuple(
-    "RecipeIndex", ["identifiers", "by_path", "by_identifier", "parent_of"]
+    "RecipeIndex",
+    ["identifiers", "by_path", "by_identifier", "parent_of", "processors"],
 )
+
+
+def discover_processor_refs(root="."):
+    """Return the set of `com.github.jgstew.<folder>/<Name>` refs that exist.
+
+    One entry per `<Name>.py` in each PROCESSOR_FOLDERS directory (skipping
+    dunder/underscore-prefixed files). Used by W118 to tell a real shared-
+    processor reference from a typo / rename / mislabeled core processor.
+    """
+    refs = set()
+    for folder in PROCESSOR_FOLDERS:
+        try:
+            names = os.listdir(os.path.join(root, folder))
+        except OSError:
+            continue
+        for name in names:
+            if name.endswith(".py") and not name.startswith("_"):
+                refs.add(f"{RECIPE_IDENTIFIER_PREFIX}{folder}/{name[:-3]}")
+    return refs
 
 
 def build_recipe_index(root="."):
@@ -632,7 +699,13 @@ def build_recipe_index(root="."):
         parent_of[identifier] = resolve_to_identifier(
             norm, parent_value, by_path, identifiers
         )
-    return RecipeIndex(identifiers, by_path, dict(by_identifier), parent_of)
+    return RecipeIndex(
+        identifiers,
+        by_path,
+        dict(by_identifier),
+        parent_of,
+        discover_processor_refs(root),
+    )
 
 
 def resolve_to_identifier(recipe_path, parent_value, by_path, identifiers):
@@ -1013,6 +1086,13 @@ def check_file(
     if "W117" not in disabled and REGEX_MARKER not in src:
         issues += check_regex_arguments(data, source_lines)
 
+    if (
+        "W118" not in disabled
+        and recipe_index is not None
+        and PROCESSOR_REF_MARKER not in src
+    ):
+        issues += check_processor_refs_exist(data, source_lines, recipe_index)
+
     if spacing_check_enabled:
         issues += check_process_spacing(src)
 
@@ -1036,7 +1116,7 @@ def check_files(
     structured results. `main()` wraps it to print and exit.
     """
     recipe_index = None
-    if {"W111", "W112", "W115"} - disabled:
+    if {"W111", "W112", "W115", "W118"} - disabled:
         recipe_index = build_recipe_index(root)
 
     results = []
