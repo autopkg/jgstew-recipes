@@ -1,5 +1,5 @@
 ---
-Description: download zip for released AutoPkg
+Description: download macos pkg for released AutoPkg
 Identifier: com.github.jgstew.download.AutoPkgReleasePkg
 Input:
   NAME: autopkg
