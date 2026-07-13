@@ -7,7 +7,7 @@ name: Test AutoPkg Release MSI
 # - https://github.com/autopkg/jgstew-recipes/blob/main/.templates/projectname.wixproj.mustache
 # - https://github.com/autopkg/jgstew-recipes/blob/main/.templates/projectname.wxs.mustache
 # - https://github.com/autopkg/jgstew-recipes/blob/main/_Shared/ui.wxs
-# - https://github.com/autopkg/jgstew-recipes/blob/main/AutoPkgRecipe/AutoPkgRelease.msbuild.recipe.yaml
+# - https://github.com/autopkg/jgstew-recipes/blob/main/AutoPkgRecipe/AutoPkgRelease.msibuild.recipe.yaml
 
 on:
   push:
@@ -16,7 +16,7 @@ on:
     paths:
       - ".github/workflows/AutoPkgReleaseMSI.yaml"
       - "AutoPkgRecipe/AutoPkgReleaseSource.download.recipe.yaml"
-      - "AutoPkgRecipe/AutoPkgRelease.msbuild.recipe.yaml"
+      - "AutoPkgRecipe/AutoPkgRelease.msibuild.recipe.yaml"
       - "_Shared/ui.wxs"
       - ".templates/projectname.wxs.mustache"
       - ".templates/projectname.wixproj.mustache"
@@ -24,7 +24,7 @@ on:
     paths:
       - ".github/workflows/AutoPkgReleaseMSI.yaml"
       - "AutoPkgRecipe/AutoPkgReleaseSource.download.recipe.yaml"
-      - "AutoPkgRecipe/AutoPkgRelease.msbuild.recipe.yaml"
+      - "AutoPkgRecipe/AutoPkgRelease.msibuild.recipe.yaml"
       - "_Shared/ui.wxs"
       - ".templates/projectname.wxs.mustache"
       - ".templates/projectname.wixproj.mustache"
@@ -72,7 +72,7 @@ jobs:
         run: python autopkg/Code/autopkg run -v Test-Recipes/AutopkgCore.test.recipe.yaml
 
       - name: run msibuild recipe
-        run: python autopkg/Code/autopkg run -vv AutoPkgRecipe/AutoPkgRelease.msbuild.recipe.yaml
+        run: python autopkg/Code/autopkg run -vv AutoPkgRecipe/AutoPkgRelease.msibuild.recipe.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
