@@ -26,6 +26,7 @@ except Exception:
 __all__ = ["BESImport"]
 
 
+# processor-name-ok  (non-URL acronym in the name)
 class BESImport(Processor):
     """Imports BES XML content to BigFix via REST API, updating existing content when a matching title is found."""
 

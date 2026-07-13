@@ -14,6 +14,7 @@ from autopkglib import (  # pylint: disable=import-error,wrong-import-position,u
 __all__ = ["QRCodeGenerator"]
 
 
+# processor-name-ok  (non-URL acronym in the name)
 class QRCodeGenerator(Processor):  # pylint: disable=invalid-name
     """Generates a QR code from a string, printing a scannable version to the log and optionally saving a PNG."""
 

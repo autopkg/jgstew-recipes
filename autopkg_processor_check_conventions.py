@@ -42,9 +42,13 @@ Non-fixable opinionated checks include: E020 (every input_variable needs a
 non-empty `description`), E024 (the class docstring is the processor's primary
 documentation -- a trivial one-liner or generated stub is rejected so it gets
 expanded and maintained), E026 (every name in `__all__` must be defined in the
-file -- need not be a class), and E029 (every declared output_variable must be
+file -- need not be a class), E029 (every declared output_variable must be
 set via self.env, unless it is also an input_variable -- declaring an input as an
-output too is a deliberate way to have AutoPkg re-display it in verbose runs).
+output too is a deliberate way to have AutoPkg re-display it in verbose runs), and
+E032 (the class name must be strict CamelCase: one capital per word, with capital
+runs allowed only for the built-in acronyms in ALLOWED_ACRONYMS -- URL, CURL; any
+other acronym, e.g. JSON/BES/PE/OLE/QR, is a per-processor exception marked with
+`# processor-name-ok`).
 E030 allows AutoPkg built-ins, ALL_CAPS external config/credential keys (e.g.
 BES_PASSWORD), keys the processor writes itself, and get() fallback defaults.
 
@@ -116,12 +120,27 @@ PLATFORM_IMPORT_MARKER = "platform-specific-ok"  # W006
 INPUT_UNREAD_MARKER = "input-unread-ok"  # W007
 HARDCODED_PATH_MARKER = "hardcoded-path-ok"  # W008
 VARIABLE_NAME_MARKER = "variable-name-ok"  # W010
+PROCESSOR_NAME_MARKER = "processor-name-ok"  # E032
 
 # A snake_case variable-key name: a lowercase letter followed by lowercase
 # letters, digits, and underscores (W010). Keys that mirror an external field
 # (PE/MSI metadata, an HTTP header) or the AutoPkg ALL_CAPS config convention can
 # opt out with `# variable-name-ok`.
 SNAKE_CASE_RE = re.compile(r"^[a-z][a-z0-9_]*$")
+
+# A processor CLASS NAME must be strict CamelCase (E032): each word is a single
+# capital followed by lowercase/digits, with NO runs of capitals -- EXCEPT these
+# acronyms, kept to the ones AutoPkg's own built-in processors use (URLDownloader,
+# CURLDownloader, ...). Any OTHER acronym (JSON, BES, PE, OLE, QR, ...) is a
+# per-processor exception: mark that processor with `# processor-name-ok` rather
+# than widening this set. (E010 ties the class name to the filename, so this
+# effectively governs the filename too.)
+ALLOWED_ACRONYMS = frozenset(["URL", "CURL"])
+CAMEL_CASE_RE = re.compile(
+    r"^(?:"
+    + "|".join(re.escape(a) for a in sorted(ALLOWED_ACRONYMS))
+    + r"|[A-Z][a-z]+[0-9]*|[A-Z][0-9]+)+$"
+)
 
 # Platform-specific modules a cross-platform processor should not import
 # unconditionally (W006). A genuinely platform-specific processor can opt out
@@ -210,6 +229,7 @@ KNOWN_CODES = frozenset(
         "E029",  # output_variable declared but never set
         "E030",  # reads an undeclared env key
         "E031",  # missing an autopkglib import (added when building out a stub)
+        "E032",  # class name is not strict CamelCase (allowed acronyms excepted)
         "W001",  # not an AutoPkg processor
         "W002",  # file not found
         "W003",  # __main__ guard not at end of file
@@ -993,6 +1013,31 @@ def check_class_naming(proc, stem, info):
             (proc.lineno, "E011", f"`{proc.name}` should be listed in `__all__`")
         )
     return issues
+
+
+def check_class_name_camelcase(proc, source_lines):
+    """E032: the processor class name must be strict CamelCase.
+
+    Each word is a single leading capital followed by lowercase/digits; runs of
+    capitals (acronyms) are rejected UNLESS the acronym is in ALLOWED_ACRONYMS
+    (kept to AutoPkg's built-in URL/CURL). Any other acronym (JSON, BES, PE, ...)
+    is a per-processor exception: put `# processor-name-ok` on (or just above) the
+    class line to opt out.
+    """
+    if CAMEL_CASE_RE.fullmatch(proc.name):
+        return []
+    if line_has_marker(source_lines, proc.lineno, PROCESSOR_NAME_MARKER):
+        return []
+    allowed = ", ".join(sorted(ALLOWED_ACRONYMS))
+    return [
+        (
+            proc.lineno,
+            "E032",
+            f"class `{proc.name}` should be strict CamelCase (one capital per "
+            f"word; capital runs only for allowed acronyms: {allowed}); rename it, "
+            f"or add `# {PROCESSOR_NAME_MARKER}` if the name is intentional",
+        )
+    ]
 
 
 def check_base_class(proc, info):
@@ -2212,6 +2257,7 @@ def check_file(path, auto_fix=True, disabled=frozenset()):
     # --- class-level checks ---
     attrs, main_func = class_members(proc)
     issues += check_class_naming(proc, stem, info)  # E010 / E011
+    issues += check_class_name_camelcase(proc, source_lines)  # E032
     issues += check_base_class(proc, info)  # E004
     issues += check_class_docstring(proc)  # E012
     issues += check_class_docstring_sufficient(proc)  # E024

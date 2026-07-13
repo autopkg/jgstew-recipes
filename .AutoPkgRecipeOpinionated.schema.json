@@ -181,7 +181,7 @@
                 "com.github.jgstew.SharedProcessors/GitCommitSubprocess",
                 "com.github.jgstew.SharedProcessors/GoogleChromeUpdateInfoProvider",
                 "com.github.jgstew.SharedProcessors/ImageToAscii",
-                "com.github.jgstew.SharedProcessors/JSONWriter",
+                "com.github.jgstew.SharedProcessors/JsonWriter",
                 "com.github.jgstew.SharedProcessors/JsonJq",
                 "com.github.jgstew.SharedProcessors/JsonPath",
                 "com.github.jgstew.SharedProcessors/Notifier",

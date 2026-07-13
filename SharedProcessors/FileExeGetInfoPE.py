@@ -46,6 +46,7 @@ def dump_info_pefile(filepath, first_only=True, verbosity=0):
     return pe_info_dict
 
 
+# processor-name-ok  (non-URL acronym in the name)
 class FileExeGetInfoPE(Processor):  # pylint: disable=too-few-public-methods
     """Extracts version and metadata strings (FileVersion, ProductName, CompanyName, etc.) from a Windows PE file using the pefile library."""
 

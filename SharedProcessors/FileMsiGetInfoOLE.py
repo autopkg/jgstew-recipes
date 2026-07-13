@@ -14,6 +14,7 @@ from autopkglib import (  # pylint: disable=import-error,unused-import
 __all__ = ["FileMsiGetInfoOLE"]
 
 
+# processor-name-ok  (non-URL acronym in the name)
 class FileMsiGetInfoOLE(Processor):  # pylint: disable=too-few-public-methods
     """Extracts OLE metadata from an MSI file, including creation time, last saved time, and a custom property value."""
 

@@ -3,7 +3,7 @@
 """See docstring for FileYamlWrite class"""
 
 # Related:
-# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/JSONWriter.py
+# - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/JsonWriter.py
 # - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/FileYamlRead.py
 
 import io

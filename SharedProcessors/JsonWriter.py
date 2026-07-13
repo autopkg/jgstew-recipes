@@ -1,6 +1,6 @@
 #!/usr/local/autopkg/python
 # Created 2026 by JGStew
-"""See docstring for JSONWriter class"""
+"""See docstring for JsonWriter class"""
 
 # Related:
 # - https://github.com/autopkg/jgstew-recipes/blob/main/SharedProcessors/JsonPath.py
@@ -12,10 +12,10 @@ from autopkglib import (  # pylint: disable=import-error,wrong-import-position,u
     ProcessorError,
 )
 
-__all__ = ["JSONWriter"]
+__all__ = ["JsonWriter"]
 
 
-class JSONWriter(Processor):  # pylint: disable=invalid-name
+class JsonWriter(Processor):  # pylint: disable=invalid-name
     """Writes a value or dictionary from the environment to a JSON file."""
 
     description = __doc__
@@ -82,5 +82,5 @@ class JSONWriter(Processor):  # pylint: disable=invalid-name
 
 
 if __name__ == "__main__":
-    PROCESSOR = JSONWriter()
+    PROCESSOR = JsonWriter()
     PROCESSOR.execute_shell()
