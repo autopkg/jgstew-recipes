@@ -1,5 +1,5 @@
 ---
-Description: Test FileEncodingConvert
+Description: Test FileEncodingConvert Processor
 Identifier: com.github.jgstew.test.FileEncodingConvert
 Input:
   # Name: Short Name of the Software, No spaces, Example: "DBBrowserforSQLite"

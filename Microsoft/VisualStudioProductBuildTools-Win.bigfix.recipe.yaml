@@ -1,5 +1,5 @@
 ---
-Description: Downloads the latest VisualStudio Product BuildTools
+Description: Generates a BigFix Task for the latest VisualStudio Product BuildTools
 Identifier: com.github.jgstew.bigfix.VisualStudioProductBuildTools-Win
 Input:
   NAME: VisualStudioProductBuildTools-Win

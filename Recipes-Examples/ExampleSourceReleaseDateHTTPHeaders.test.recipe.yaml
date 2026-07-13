@@ -1,5 +1,5 @@
 ---
-Description: Example recipe getting SourceReleaseDate from the EXE signature
+Description: Example recipe getting SourceReleaseDate from the HTTP Last-Modified header
 Identifier: com.github.jgstew.test.ExampleSourceReleaseDateHTTPHeaders
 Input:
   NAME: ExampleSourceReleaseDateHTTPHeaders

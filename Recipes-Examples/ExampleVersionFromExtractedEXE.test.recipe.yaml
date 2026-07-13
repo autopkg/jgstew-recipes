@@ -1,5 +1,5 @@
 ---
-Description: Example recipe getting the version from the EXE file
+Description: Example recipe getting the version from an EXE extracted from the installer
 Identifier: com.github.jgstew.test.ExampleVersionFromExtractedEXE
 Input:
   NAME: ExampleVersionFromExtractedEXE
