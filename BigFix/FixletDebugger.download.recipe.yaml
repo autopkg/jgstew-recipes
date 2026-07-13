@@ -25,6 +25,7 @@ Process:
       download_save_file: False
       filename: "FixletDebugger.zip"
       COMPUTE_HASHES: True
+      # HEADERS_TO_TEST: ["Last-Modified", "Content-Length"]
 
   - Processor: com.github.jgstew.SharedProcessors/VersionGetMajorMinor
     Arguments:
