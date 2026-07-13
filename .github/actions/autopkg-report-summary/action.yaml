@@ -1,5 +1,5 @@
 name: "autopkg-report-summary"
-description: "Parse an AutoPkg --report-plist and write a pass/fail summary to the GitHub Actions job summary; fails if any recipe failed."
+description: "Parse an AutoPkg --report-plist and write a pass/fail summary to the GitHub Actions job summary; fails if any recipe failed. Optionally scans the run log for 'Use of undefined key in variable substitution' warnings."
 inputs:
   report-plist:
     description: "Path to the AutoPkg report plist."
@@ -23,6 +23,10 @@ inputs:
     description: "Numeric exit code of the autopkg run step (steps.<id>.outputs.exit-code). Reported in the summary and preferred over run-outcome for detecting failure."
     required: false
     default: ""
+  run-log:
+    description: "Path to the captured autopkg run log (stdout+stderr). Scanned for AutoPkg's non-fatal 'Use of undefined key in variable substitution' warnings, which are logged to stderr and not recorded in the report plist. Optional; the scan is skipped if unset or missing."
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -35,6 +39,7 @@ runs:
         ITEM_LABEL: ${{ inputs.item-label }}
         RUN_OUTCOME: ${{ inputs.run-outcome }}
         RUN_EXIT_CODE: ${{ inputs.run-exit-code }}
+        RUN_LOG: ${{ inputs.run-log }}
       run: |
           python3 - <<'PYEOF'
           import os
@@ -87,6 +92,23 @@ runs:
           if report_exists:
               with open(report, "rb") as handle:
                   failures = plistlib.load(handle).get("failures", []) or []
+
+          # AutoPkg logs "Use of undefined key in variable substitution: 'key'" to
+          # stderr (non-fatal) when a recipe references a %variable% that is not
+          # defined -- a typo, or a missing Input/output. It is NOT written to the
+          # report plist, so scan the captured run log for it. Counted per key.
+          UNDEF_MARKER = "Use of undefined key in variable substitution:"
+          undefined_keys = {}
+          run_log = os.environ.get("RUN_LOG", "")
+          if run_log and os.path.isfile(run_log):
+              with open(run_log, encoding="utf-8", errors="replace") as handle:
+                  for line in handle:
+                      pos = line.find(UNDEF_MARKER)
+                      if pos == -1:
+                          continue
+                      detail = line[pos + len(UNDEF_MARKER):].strip()
+                      key = detail.strip().strip("'\"") or detail
+                      undefined_keys[key] = undefined_keys.get(key, 0) + 1
 
           lines = [f"# {title}", "", f"Ran **{total}** {noun}(s).", ""]
 
@@ -153,6 +175,26 @@ runs:
               lines.append("")
               for entry in missing:
                   lines.append(f"- `{entry}`")
+
+          # undefined-variable warnings (non-fatal; surfaced, does not fail the job):
+          if undefined_keys:
+              total_undef = sum(undefined_keys.values())
+              lines.append("")
+              lines.append(
+                  f"## {ICON_WARN} {total_undef} undefined-variable warning(s)"
+              )
+              lines.append("")
+              lines.append(
+                  'AutoPkg logged "Use of undefined key in variable substitution" '
+                  "-- usually a typo'd `%variable%` or a missing Input/output. "
+                  "Non-fatal, but often a real bug."
+              )
+              lines.append("")
+              lines.append("| Undefined key | Occurrences |")
+              lines.append("| --- | --- |")
+              for key in sorted(undefined_keys):
+                  safe = key.replace("|", "\\|")
+                  lines.append(f"| `{safe}` | {undefined_keys[key]} |")
 
           summary = "\n".join(lines) + "\n"
           if summary_path:

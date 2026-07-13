@@ -104,11 +104,14 @@ jobs:
         run: |
           # capture autopkg's exit code (e.g. 70 for an unresolvable recipe) so
           # the summary step can report it, then re-exit so the job still fails.
+          # tee stdout+stderr to a log so the summary can scan it for AutoPkg's
+          # non-fatal "undefined key in variable substitution" warnings.
           set +e
           python autopkg/Code/autopkg run -vv \
             --recipe-list TestProcessorsAction.txt \
-            --report-plist "${RUNNER_TEMP}/autopkg_report.plist"
-          code=$?
+            --report-plist "${RUNNER_TEMP}/autopkg_report.plist" 2>&1 \
+            | tee "${RUNNER_TEMP}/autopkg_run.log"
+          code=${PIPESTATUS[0]}
           echo "exit-code=$code" >> "$GITHUB_OUTPUT"
           exit "$code"
 
@@ -124,3 +127,4 @@ jobs:
           item-label: "Test Recipe"
           run-outcome: ${{ steps.autopkg-run.outcome }}
           run-exit-code: ${{ steps.autopkg-run.outputs.exit-code }}
+          run-log: ${{ runner.temp }}/autopkg_run.log
