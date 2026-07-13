@@ -3,7 +3,7 @@
 # TextToSpeechWeather.example.recipe.yaml
 # It renders a URL as a scannable QR code - scan it with a phone to open the
 # link in a browser. Fully offline, no API needed.
-# Uses only existing processors: QRCodeGenerator.
+# Uses only existing processors: QrCodeGenerator.
 # A URL needs no assembly, so it can be substituted directly into qr_data.
 # https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRUrl recipe - renders a URL as a scannable QR code to open in a browser.
@@ -14,7 +14,7 @@ Input:
 MinimumVersion: "2.4.1"
 Process:
   # render a scannable QR code of the URL (printed to the log and saved as a PNG):
-  - Processor: com.github.jgstew.SharedProcessors/QRCodeGenerator
+  - Processor: com.github.jgstew.SharedProcessors/QrCodeGenerator
     Arguments:
       qr_data: "%qr_url%"
       qr_output_path: "%RECIPE_CACHE_DIR%/%NAME%.png"

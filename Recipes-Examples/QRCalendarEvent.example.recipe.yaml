@@ -3,7 +3,7 @@
 # TextToSpeechWeather.example.recipe.yaml
 # It builds an iCalendar VEVENT and renders it as a scannable QR code -
 # scan it with a phone to add the event to a calendar. Fully offline.
-# Uses only existing processors: StringFormat, QRCodeGenerator.
+# Uses only existing processors: StringFormat, QrCodeGenerator.
 # Note: DTSTART/DTEND use iCal UTC basic format: YYYYMMDDTHHMMSSZ
 # https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRCalendarEvent recipe - builds an iCalendar event and renders it as a scannable QR code to add to a calendar.
@@ -29,7 +29,7 @@ Process:
         end: "%event_end%"
 
   # render a scannable QR code (printed to the log and saved as a PNG):
-  - Processor: com.github.jgstew.SharedProcessors/QRCodeGenerator
+  - Processor: com.github.jgstew.SharedProcessors/QrCodeGenerator
     Arguments:
       qr_data: "%formatted_string%"
       qr_output_path: "%RECIPE_CACHE_DIR%/%NAME%.png"

@@ -186,7 +186,7 @@
                 "com.github.jgstew.SharedProcessors/JsonPath",
                 "com.github.jgstew.SharedProcessors/Notifier",
                 "com.github.jgstew.SharedProcessors/PlaySound",
-                "com.github.jgstew.SharedProcessors/QRCodeGenerator",
+                "com.github.jgstew.SharedProcessors/QrCodeGenerator",
                 "com.github.jgstew.SharedProcessors/SevenZip",
                 "com.github.jgstew.SharedProcessors/SharedUtilityMethods",
                 "com.github.jgstew.SharedProcessors/Sleep",

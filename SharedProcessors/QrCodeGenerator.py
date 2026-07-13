@@ -1,6 +1,6 @@
 #!/usr/local/autopkg/python
 # Created 2026 by JGStew
-"""See docstring for QRCodeGenerator class"""
+"""See docstring for QrCodeGenerator class"""
 
 import io
 
@@ -11,11 +11,10 @@ from autopkglib import (  # pylint: disable=import-error,wrong-import-position,u
     ProcessorError,
 )
 
-__all__ = ["QRCodeGenerator"]
+__all__ = ["QrCodeGenerator"]
 
 
-# processor-name-ok  (non-URL acronym in the name)
-class QRCodeGenerator(Processor):  # pylint: disable=invalid-name
+class QrCodeGenerator(Processor):  # pylint: disable=invalid-name
     """Generates a QR code from a string, printing a scannable version to the log and optionally saving a PNG."""
 
     description = __doc__
@@ -79,5 +78,5 @@ class QRCodeGenerator(Processor):  # pylint: disable=invalid-name
 
 
 if __name__ == "__main__":
-    PROCESSOR = QRCodeGenerator()
+    PROCESSOR = QrCodeGenerator()
     PROCESSOR.execute_shell()

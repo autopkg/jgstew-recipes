@@ -1,13 +1,13 @@
 ---
-# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/QRCodeGenerator.py
-Description: Test QRCodeGenerator Processor
-Identifier: com.github.jgstew.test.QRCodeGenerator
+# https://github.com/autopkg/jgstew-recipes/tree/main/SharedProcessors/QrCodeGenerator.py
+Description: Test QrCodeGenerator Processor
+Identifier: com.github.jgstew.test.QrCodeGenerator
 Input:
-  NAME: QRCodeGeneratorTest
+  NAME: QrCodeGeneratorTest
 MinimumVersion: "2.4.1"
 Process:
   # CASE 1: generate a QR code, print it to the log, and save a PNG:
-  - Processor: com.github.jgstew.SharedProcessors/QRCodeGenerator
+  - Processor: com.github.jgstew.SharedProcessors/QrCodeGenerator
     Arguments:
       qr_data: "https://github.com/autopkg/jgstew-recipes"
       qr_output_path: "%RECIPE_CACHE_DIR%/%NAME%.png"
@@ -24,7 +24,7 @@ Process:
 
   # CASE 2: ASCII-only mode (explicitly clear qr_output_path so no PNG is saved;
   # AutoPkg env persists across processors, so CASE 1's value must be overridden):
-  - Processor: com.github.jgstew.SharedProcessors/QRCodeGenerator
+  - Processor: com.github.jgstew.SharedProcessors/QrCodeGenerator
     Arguments:
       qr_data: "ascii-only test"
       qr_print_ascii: true

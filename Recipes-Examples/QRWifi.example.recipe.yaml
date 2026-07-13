@@ -3,7 +3,7 @@
 # TextToSpeechWeather.example.recipe.yaml
 # It builds a standard WIFI QR code string and renders a scannable QR code -
 # scan it with a phone to join the network. Fully offline, no API needed.
-# Uses only existing processors: StringFormat, QRCodeGenerator.
+# Uses only existing processors: StringFormat, QrCodeGenerator.
 # https://github.com/autopkg/jgstew-recipes/tree/main/Recipes-Examples
 Description: Example QRWifi recipe - builds a standard WIFI QR code from an SSID and password so a phone can scan it to join the network.
 Identifier: com.github.jgstew.example.QRWifi
@@ -25,7 +25,7 @@ Process:
         password: "%wifi_password%"
 
   # render a scannable QR code (printed to the log and saved as a PNG):
-  - Processor: com.github.jgstew.SharedProcessors/QRCodeGenerator
+  - Processor: com.github.jgstew.SharedProcessors/QrCodeGenerator
     Arguments:
       qr_data: "%formatted_string%"
       qr_output_path: "%RECIPE_CACHE_DIR%/%NAME%.png"
