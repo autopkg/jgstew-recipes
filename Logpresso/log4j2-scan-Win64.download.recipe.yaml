@@ -19,9 +19,11 @@ Process:
       asset_regex: "logpresso-log4j2-scan-%version%%OS%\\.%TYPE%$"
       include_prereleases: False
       # curl_opts: ["--raw"]
+
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
       filename: logpresso-log4j2-scan%OS%.%TYPE%
       #download_version: "%version%"
       COMPUTE_HASHES: True
+
   - Processor: EndOfCheckPhase

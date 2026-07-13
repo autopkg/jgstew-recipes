@@ -24,6 +24,7 @@ Process:
     # 'file_peinfo_ProductName': 'Apple Software Update',
     # 'file_peinfo_ProductVersion': '2.1.1.116',
     # 'version': '2.1.1.116'
+
   - Processor: com.github.jgstew.SharedProcessors/AssertInputContainsString
     Arguments:
       input_string: "%file_peinfo_ProductName%"

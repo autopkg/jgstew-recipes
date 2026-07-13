@@ -15,6 +15,7 @@ ParentRecipe: com.github.jgstew.download.Chrome-Win
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   # `BigFixPrefetchItem` takes the hashes from `URLDownloaderPython`
   #   Then it assembles them into a BigFix Prefetch Statement or Block
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
@@ -59,7 +60,6 @@ Process:
       append_value: "%file_base64%"
 
   # Generate Install/Update content:
-
   # `ContentFromTemplate` generates bigfix content from a mustache template file
   #   The file is filled out with variables from the Template Dictionary
   #   If variables are missing from the Template Dictionary, then that area will be blank
@@ -100,4 +100,5 @@ Process:
     Arguments:
       # template_file_path: "%template_file_path%"
       content_file_pathname: "%RECIPE_CACHE_DIR%/%NAME%-InstallOnly.bes"
+
   - Processor: com.github.jgstew.SharedProcessors/BESImport

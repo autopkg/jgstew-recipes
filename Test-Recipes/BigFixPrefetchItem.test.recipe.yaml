@@ -7,6 +7,7 @@ MinimumVersion: "2.4.1"
 Process:
   # `SharedUtilityMethods` must come first
   - Processor: com.github.jgstew.SharedProcessors/SharedUtilityMethods
+
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
     # test invalid prefetch:
     Arguments:
@@ -17,6 +18,7 @@ Process:
       prefetch_url: http://fake.url
       # pathname: "folder/whatever.exe"
       #prefetch_type: block
+
   - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
     # test valid prefetch:
     Arguments:

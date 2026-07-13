@@ -46,11 +46,18 @@ reviewed and re-staged.
 
 A third check (W120, YAML-only, AUTO-FIXABLE) enforces the Process-step spacing
 convention: within `Process:`, consecutive `- Processor:` steps are separated by
-exactly one blank line, and that blank line goes BEFORE any comment lines that
-belong to (immediately precede) the next step -- not between those comments and
-their step. More than one blank line is collapsed to one; a missing one is
-inserted. Comment lines in the gap between two steps are treated as belonging to
-the following step.
+exactly one blank line. More than one blank line is collapsed to one; a missing
+one is inserted. Comment placement is decided by INDENTATION relative to the
+`- ` item indent:
+
+  * a comment at the item indent (e.g. `  # note`) is a leading comment for the
+    NEXT step, so the blank line goes BEFORE it;
+  * a comment indented deeper (e.g. `    # Arguments:` or `      # curl_opts`) is
+    commented-out body of the PREVIOUS step, so it stays with that step and the
+    blank line goes AFTER it.
+
+A gap that contains a commented-out step (`# - ...`) is left untouched -- that is
+a disabled step block whose surrounding spacing is intentional/ambiguous.
 
 Checks:
     W110  Identifier does not appear to reference the Input NAME (flagship)
@@ -464,16 +471,27 @@ def normalize_process_spacing(lines):
     """Return (new_lines, changed_linenos) with Process-step spacing normalized.
 
     For each step after the first, the run of blank/comment lines directly above
-    it is replaced by exactly one blank line followed by just the comment lines
-    (blanks dropped, comment order preserved). The scan stops at the previous
-    step's last non-blank/non-comment line, so a step's own body is never
-    touched. `changed_linenos` are the 1-based line numbers (in the input) of the
-    steps whose preceding gap was rewritten. Pairs are processed bottom-to-top so
-    earlier indices stay valid as lines are inserted/removed below them.
+    it (the "gap") is rewritten to exactly one blank line, with the comment lines
+    split by indentation around it:
+
+      * comment lines indented DEEPER than the `- ` item indent are commented-out
+        body of the PREVIOUS step (e.g. `    # Arguments:` / `      # curl_opts`),
+        so they stay attached to it -- the blank line goes AFTER them;
+      * comment lines at (or shallower than) the item indent are leading comments
+        for the NEXT step, so the blank line goes BEFORE them.
+
+    A gap that contains a commented-out step (`# - ...`) is left untouched: it is
+    a disabled step block whose surrounding spacing is intentional/ambiguous. The
+    scan stops at the previous step's last non-blank/non-comment line, so a step's
+    own body is never touched. `changed_linenos` are the 1-based line numbers (in
+    the input) of the steps whose gap was rewritten. Pairs are processed
+    bottom-to-top so earlier indices stay valid as lines shift below them.
     """
-    steps, _ = process_step_indices(lines)
+    steps, item_indent = process_step_indices(lines)
     if len(steps) < 2:
         return lines, []
+    indent_width = len(item_indent)
+    commented_step_re = re.compile(r"^\s*#\s*-\s")
     new = list(lines)
     changed = []
     for k in range(len(steps) - 1, 0, -1):
@@ -484,8 +502,19 @@ def normalize_process_spacing(lines):
             gap_start = i
             i -= 1
         gap = new[gap_start:step]
-        comments = [line for line in gap if _is_comment_line(line)]
-        replacement = [""] + comments
+        if any(commented_step_re.match(line) for line in gap):
+            continue  # disabled step block -> leave its spacing alone
+        prev_comments = []  # commented-out body of the previous step
+        next_comments = []  # leading comments for the next step
+        for line in gap:
+            if not _is_comment_line(line):
+                continue  # blank lines are dropped and re-inserted as the one
+            indent = len(line) - len(line.lstrip())
+            if indent > indent_width:
+                prev_comments.append(line)
+            else:
+                next_comments.append(line)
+        replacement = prev_comments + [""] + next_comments
         if gap != replacement:
             new[gap_start:step] = replacement
             changed.append(step + 1)
