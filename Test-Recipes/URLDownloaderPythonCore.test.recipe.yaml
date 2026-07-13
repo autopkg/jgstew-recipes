@@ -1,8 +1,8 @@
 ---
 Description: Test URLDownloaderPython Processor
-Identifier: com.github.jgstew.test.URLDownloaderPython
+Identifier: com.github.jgstew.test.URLDownloaderPythonCore
 Input:
-  NAME: URLDownloaderPythonTest
+  NAME: URLDownloaderPythonCoreTest
 MinimumVersion: "2.4.1"
 Process:
   - Processor: URLDownloaderPython

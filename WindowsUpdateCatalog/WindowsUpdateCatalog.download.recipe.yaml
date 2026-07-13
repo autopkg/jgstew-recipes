@@ -7,7 +7,7 @@ MinimumVersion: "2.4.1"
 Process:
   - Processor: URLDownloader
     Arguments:
-      url: http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab
+      url: https://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab
 
   - Processor: EndOfCheckPhase
 # Related:

@@ -39,10 +39,11 @@ Usage:
 
 With no file arguments, all recipe files in the current folder and below are
 checked. --disable takes a comma-separated list of check IDs to skip entirely.
---auto-fix rewrites a fixable path-like ParentRecipe (W111) in place; it defaults
-to yes when files are given explicitly, but to no when auto-discovering, so a
-bare run is read-only. An auto-fixed file fails the hook so the change is
-reviewed and re-staged.
+--auto-fix rewrites the fixable conventions in place (a path-like ParentRecipe ->
+its Identifier, W111; a below-floor MinimumVersion -> the floor, W114; and
+Process-step spacing, W120); it defaults to yes when files are given explicitly,
+but to no when auto-discovering, so a bare run is read-only. An auto-fixed file
+fails the hook so the change is reviewed and re-staged.
 
 A third check (W120, YAML-only, AUTO-FIXABLE) enforces the Process-step spacing
 convention: within `Process:`, consecutive `- Processor:` steps are separated by
@@ -62,6 +63,12 @@ a disabled step block whose surrounding spacing is intentional/ambiguous.
 Checks:
     W110  Identifier does not appear to reference the Input NAME (flagship)
     W111  ParentRecipe does not resolve to a known recipe Identifier (fixable)
+    W112  Identifier is duplicated by another recipe in the repo
+    W113  filename type-infix does not match the identifier type-segment
+    W114  MinimumVersion is below the repo floor (YAML-only; fixable -> raised)
+    W115  ParentRecipe chain is cyclic / self-referential
+    W116  http:// URL where https:// is preferred
+    W117  re_pattern / asset_regex is not a valid regex
     W120  Process-step blank-line spacing (YAML-only, fixable)
     W100  recipe could not be parsed; skipped (advisory -- check-yaml /
           validate-plist are the authorities on file validity)
@@ -78,8 +85,14 @@ out of just the NAME/Identifier check with:
     # identifier-name-ok
 out of just the ParentRecipe check (e.g. a parent defined in another repo) with:
     # parent-recipe-ok
-and out of just the Process-step spacing check with:
+out of just the Process-step spacing check with:
     # process-spacing-ok
+or out of one of the other single-purpose checks with, respectively:
+    # duplicate-identifier-ok   (W112)
+    # type-mismatch-ok          (W113)
+    # minimum-version-ok        (W114)
+    # http-url-ok               (W116)
+    # regex-ok                  (W117)
 
 Exit codes:
     0  no failures (warnings alone do not fail unless --strict)
@@ -111,9 +124,32 @@ PARENT_RECIPE_MARKER = "parent-recipe-ok"
 # File-level opt-out for the Process-step spacing check (W120).
 PROCESS_SPACING_MARKER = "process-spacing-ok"
 
+# File-level opt-out for the duplicate-Identifier check (W112), for a recipe that
+# intentionally shares an identifier with another (e.g. a "Core" test variant).
+DUPLICATE_IDENTIFIER_MARKER = "duplicate-identifier-ok"
+
+# File-level opt-out for the filename-type vs identifier-type check (W113).
+TYPE_MISMATCH_MARKER = "type-mismatch-ok"
+
+# File-level opt-out for the MinimumVersion floor check (W114).
+MINIMUM_VERSION_MARKER = "minimum-version-ok"
+
+# File-level opt-out for the http:// URL check (W116), for a host that only
+# serves plain http.
+HTTP_URL_MARKER = "http-url-ok"
+
+# File-level opt-out for the regex-validity check (W117), for a pattern that is
+# only a valid regex after %variable% substitution.
+REGEX_MARKER = "regex-ok"
+
 # The extensions that make a file an AutoPkg recipe. `.recipe` is usually a
 # plist; the `.recipe.y{a,}ml` forms are YAML. Order matters for endswith().
 RECIPE_EXTENSIONS = (".recipe.yaml", ".recipe.yml", ".recipe")
+
+# Repo identifier prefix, and the lowest MinimumVersion a recipe should declare
+# (W114). A recipe below this floor is auto-fixed up to it.
+RECIPE_IDENTIFIER_PREFIX = "com.github.jgstew."
+MINIMUM_VERSION_FLOOR = "2.4.1"
 
 # Suffixes stripped from a normalized NAME before comparing to the identifier:
 # test/example recipes name their NAME `<Thing>Test` / `<Thing>Example` while
@@ -129,6 +165,12 @@ KNOWN_CODES = frozenset(
         "W102",  # top-level is not a mapping
         "W110",  # Identifier does not reference the Input NAME
         "W111",  # ParentRecipe does not resolve to a known Identifier
+        "W112",  # duplicate Identifier across the repo
+        "W113",  # filename type-infix does not match the identifier type-segment
+        "W114",  # MinimumVersion below the repo floor
+        "W115",  # cyclic / self ParentRecipe chain
+        "W116",  # http:// URL (prefer https://)
+        "W117",  # invalid re_pattern / asset_regex
         "W120",  # Process-step blank-line spacing
     ]
 )
@@ -274,24 +316,302 @@ def check_parent_recipe_resolvable(recipe, source_lines, identifier_index):
     ]
 
 
-# The repo-wide recipe index: `identifiers` is the set of every recipe
-# Identifier; `by_path` maps each recipe's normalized relative path to its
-# Identifier (so a ParentRecipe given as a file path can be resolved back to the
-# identifier it should have been). Both are built in one scan.
-RecipeIndex = collections.namedtuple("RecipeIndex", ["identifiers", "by_path"])
+def check_duplicate_identifier(recipe, path, source_lines, index):
+    """W112: no two recipes in the repo should share an Identifier.
+
+    AutoPkg resolves a parent by identifier, so duplicate identifiers make parent
+    resolution ambiguous. Cross-file, so the schema cannot see it. Reports the
+    OTHER file(s) that declare the same identifier.
+    """
+    identifier = recipe.get("Identifier")
+    if not isinstance(identifier, str) or index is None:
+        return []
+    paths = index.by_identifier.get(identifier, [])
+    others = [p for p in paths if p != os.path.normpath(path)]
+    if not others:
+        return []
+    lineno = find_line(source_lines, r"^\s*Identifier\s*:", r"<key>Identifier</key>")
+    shown = ", ".join(sorted(others))
+    return [
+        (
+            lineno,
+            "W112",
+            f"Identifier `{identifier}` is also declared by: {shown}; identifiers "
+            f"must be unique -- add `# {DUPLICATE_IDENTIFIER_MARKER}` if intentional",
+        )
+    ]
+
+
+def filename_type(path):
+    """Return the `<type>` infix of a recipe filename, or None.
+
+    `Foo.download.recipe.yaml` -> "download"; `QnA.pkg.recipe` -> "pkg".
+    """
+    match = re.match(
+        r"^.+?\.([A-Za-z0-9]+)\.recipe(?:\.ya?ml)?$", os.path.basename(path)
+    )
+    return match.group(1) if match else None
+
+
+def identifier_type(identifier):
+    """Return the type-segment of a `com.github.jgstew.<type>.<Name>` identifier."""
+    if not isinstance(identifier, str):
+        return None
+    if not identifier.startswith(RECIPE_IDENTIFIER_PREFIX):
+        return None
+    rest = identifier[len(RECIPE_IDENTIFIER_PREFIX) :]
+    return rest.split(".", 1)[0] if "." in rest else None
+
+
+def check_filename_identifier_type(recipe, path, source_lines):
+    """W113: the filename type-infix should match the identifier type-segment.
+
+    `Foo.download.recipe.yaml` should pair with `com.github.jgstew.download.Foo`.
+    A mismatch is usually a typo or a mis-scoped identifier. Cross-field (filename
+    vs identifier), so the schema cannot see it.
+    """
+    ftype = filename_type(path)
+    itype = identifier_type(recipe.get("Identifier"))
+    if ftype is None or itype is None or ftype.lower() == itype.lower():
+        return []
+    lineno = find_line(source_lines, r"^\s*Identifier\s*:", r"<key>Identifier</key>")
+    return [
+        (
+            lineno,
+            "W113",
+            f"filename type `{ftype}` does not match identifier type `{itype}` "
+            f"(`{recipe.get('Identifier')}`); add `# {TYPE_MISMATCH_MARKER}` if "
+            "intentional",
+        )
+    ]
+
+
+def version_tuple(value):
+    """Return a version string as a tuple of ints, or None if not all-numeric."""
+    parts = str(value).split(".")
+    try:
+        return tuple(int(part) for part in parts)
+    except ValueError:
+        return None
+
+
+def check_minimum_version(recipe, source_lines):
+    """W114: MinimumVersion should be at least the repo floor (auto-fixable).
+
+    The schema validates MinimumVersion's SHAPE but cannot enforce a floor. An
+    unparsable value is left for a human (not flagged here). Auto-fixed up to the
+    floor by maybe_fix_minimum_version.
+    """
+    value = recipe.get("MinimumVersion")
+    if value is None:
+        return []
+    current = version_tuple(value)
+    floor = version_tuple(MINIMUM_VERSION_FLOOR)
+    if current is None or current >= floor:
+        return []
+    lineno = find_line(
+        source_lines, r"^\s*MinimumVersion\s*:", r"<key>MinimumVersion</key>"
+    )
+    return [
+        (
+            lineno,
+            "W114",
+            f"MinimumVersion `{value}` is below the repo floor "
+            f"`{MINIMUM_VERSION_FLOOR}`; add `# {MINIMUM_VERSION_MARKER}` if "
+            "intentional",
+        )
+    ]
+
+
+def check_parent_cycle(recipe, path, source_lines, index):
+    """W115: the ParentRecipe chain must not be cyclic (or self-referential).
+
+    Starts from this recipe's own resolved ParentRecipe, then walks the repo-wide
+    parent graph; a revisited identifier means a cycle (a self-parent is the
+    length-1 case). Graph-level, so the schema cannot see it. An unresolvable
+    parent is W111's concern, not this one.
+    """
+    identifier = recipe.get("Identifier")
+    parent_value = recipe.get("ParentRecipe")
+    if (
+        not isinstance(identifier, str)
+        or not isinstance(parent_value, str)
+        or not parent_value
+        or index is None
+    ):
+        return []
+    first = resolve_to_identifier(path, parent_value, index.by_path, index.identifiers)
+    if first is None:
+        if parent_value != identifier:
+            return []  # parent not resolvable to a known identifier (W111 covers it)
+        first = identifier  # self-reference even when not otherwise indexed
+    seen = {identifier}
+    chain = [identifier]
+    current = first
+    while current is not None:
+        chain.append(current)
+        if current in seen:
+            lineno = find_line(
+                source_lines, r"^\s*ParentRecipe\s*:", r"<key>ParentRecipe</key>"
+            )
+            return [
+                (
+                    lineno,
+                    "W115",
+                    "ParentRecipe chain is cyclic: " + " -> ".join(chain),
+                )
+            ]
+        seen.add(current)
+        current = index.parent_of.get(current)
+    return []
+
+
+def iter_string_values(obj):
+    """Yield every string value nested anywhere within `obj` (dicts/lists)."""
+    if isinstance(obj, str):
+        yield obj
+    elif isinstance(obj, dict):
+        for value in obj.values():
+            yield from iter_string_values(value)
+    elif isinstance(obj, (list, tuple)):
+        for item in obj:
+            yield from iter_string_values(item)
+
+
+def find_value_line(source_lines, needle):
+    """Return the 1-based line that contains `needle` as a substring, else 1."""
+    for index, line in enumerate(source_lines, start=1):
+        if needle in line:
+            return index
+    return 1
+
+
+def check_http_urls(recipe, source_lines):
+    """W116: prefer https:// over http:// in recipe values.
+
+    Per-value semantic check the schema (format: uri) cannot express. Each
+    distinct http:// value is reported once.
+    """
+    issues = []
+    seen = set()
+    for value in iter_string_values(recipe):
+        if "http://" in value and value not in seen:
+            seen.add(value)
+            issues.append(
+                (
+                    find_value_line(source_lines, value),
+                    "W116",
+                    f"prefer https:// over http:// in {value!r}; add "
+                    f"`# {HTTP_URL_MARKER}` if the host only serves http",
+                )
+            )
+    return issues
+
+
+def check_regex_arguments(recipe, source_lines):
+    """W117: `re_pattern` / `asset_regex` values must be valid regexes.
+
+    The schema explicitly cannot validate regex; this compiles each one. A pattern
+    that is only valid after %variable% substitution can opt out with `# regex-ok`.
+    """
+    issues = []
+    for step in recipe.get("Process") or []:
+        if not isinstance(step, dict):
+            continue
+        for key, value in (step.get("Arguments") or {}).items():
+            if key not in ("re_pattern", "asset_regex") or not isinstance(value, str):
+                continue
+            try:
+                re.compile(value)
+            except re.error as err:
+                issues.append(
+                    (
+                        find_value_line(source_lines, value),
+                        "W117",
+                        f"{key} is not a valid regex: {err}; add `# {REGEX_MARKER}` "
+                        "if it is only valid after %variable% substitution",
+                    )
+                )
+    return issues
+
+
+def apply_minimum_version_fix(path):
+    """Rewrite the file's MinimumVersion value in place to the repo floor."""
+    with open(path, encoding="utf-8") as handle:
+        src = handle.read()
+    floor = f'"{MINIMUM_VERSION_FLOOR}"'
+    if src.lstrip().startswith("<"):
+        new_src = re.sub(
+            r"(<key>MinimumVersion</key>\s*<string>)(.*?)(</string>)",
+            lambda m: m.group(1) + MINIMUM_VERSION_FLOOR + m.group(3),
+            src,
+            count=1,
+            flags=re.DOTALL,
+        )
+    else:
+        lines = src.split("\n")
+        for i, line in enumerate(lines):
+            match = re.match(r"^(\s*MinimumVersion\s*:\s*)(\S+)(.*)$", line)
+            if match:
+                lines[i] = match.group(1) + floor + match.group(3)
+                break
+        new_src = "\n".join(lines)
+    with open(path, "w", encoding="utf-8") as handle:
+        handle.write(new_src)
+
+
+def maybe_fix_minimum_version(path, recipe):
+    """Auto-fix W114: raise a below-floor MinimumVersion to the repo floor.
+
+    Returns the list of fixed entries (empty if the value is at/above the floor or
+    unparsable).
+    """
+    value = recipe.get("MinimumVersion")
+    current = version_tuple(value) if value is not None else None
+    floor = version_tuple(MINIMUM_VERSION_FLOOR)
+    if current is None or current >= floor:
+        return []
+    with open(path, encoding="utf-8", errors="replace") as handle:
+        source_lines = handle.read().splitlines()
+    lineno = find_line(
+        source_lines, r"^\s*MinimumVersion\s*:", r"<key>MinimumVersion</key>"
+    )
+    apply_minimum_version_fix(path)
+    return [
+        (
+            lineno,
+            "W114",
+            f"raised MinimumVersion `{value}` to `{MINIMUM_VERSION_FLOOR}`",
+        )
+    ]
+
+
+# The repo-wide recipe index, built in one scan:
+#   identifiers   set of every recipe Identifier
+#   by_path       normalized relative path -> Identifier (resolves a path-like
+#                 ParentRecipe back to the identifier it should have been)
+#   by_identifier Identifier -> list of paths that declare it (for W112 dupes)
+#   parent_of     Identifier -> its ParentRecipe resolved to an Identifier (or
+#                 None), the parent graph W115 walks to find cycles
+RecipeIndex = collections.namedtuple(
+    "RecipeIndex", ["identifiers", "by_path", "by_identifier", "parent_of"]
+)
 
 
 def build_recipe_index(root="."):
     """Return a RecipeIndex of every recipe under `root`.
 
     Scans all recipe files (regardless of which files are being checked) so the
-    ParentRecipe check can resolve against the whole repo even when pre-commit
-    passes only the changed files. Files that fail to parse or lack a string
-    Identifier simply do not contribute; the skip marker does not exclude a file
-    here (it still defines an identifier a parent may legitimately point at).
+    cross-file checks resolve against the whole repo even when pre-commit passes
+    only the changed files. Files that fail to parse or lack a string Identifier
+    simply do not contribute; the skip marker does not exclude a file here (it
+    still defines an identifier a parent may legitimately point at). Done in two
+    passes so parent resolution (which needs `by_path`) sees every recipe.
     """
     identifiers = set()
     by_path = {}
+    by_identifier = collections.defaultdict(list)
+    raw_parents = []  # (norm_path, identifier, ParentRecipe value)
     for path in discover_recipe_files(root):
         try:
             with open(path, encoding="utf-8", errors="replace") as handle:
@@ -301,12 +621,35 @@ def build_recipe_index(root="."):
         data, _ = parse_recipe(src)
         if isinstance(data, dict) and isinstance(data.get("Identifier"), str):
             identifier = data["Identifier"]
+            norm = os.path.normpath(path)
             identifiers.add(identifier)
-            by_path[os.path.normpath(path)] = identifier
-    return RecipeIndex(identifiers, by_path)
+            by_path[norm] = identifier
+            by_identifier[identifier].append(norm)
+            raw_parents.append((norm, identifier, data.get("ParentRecipe")))
+
+    parent_of = {}
+    for norm, identifier, parent_value in raw_parents:
+        parent_of[identifier] = resolve_to_identifier(
+            norm, parent_value, by_path, identifiers
+        )
+    return RecipeIndex(identifiers, by_path, dict(by_identifier), parent_of)
 
 
-def resolve_parent_path_to_identifier(recipe_path, parent_value, index):
+def resolve_to_identifier(recipe_path, parent_value, by_path, identifiers):
+    """Resolve a ParentRecipe value to an Identifier, or None.
+
+    An exact Identifier match wins; otherwise the value is treated as a path (see
+    resolve_parent_path_to_identifier). Returns None for a missing/non-string
+    value or one that resolves to nothing.
+    """
+    if not isinstance(parent_value, str) or not parent_value:
+        return None
+    if parent_value in identifiers:
+        return parent_value
+    return resolve_parent_path_to_identifier(recipe_path, parent_value, by_path)
+
+
+def resolve_parent_path_to_identifier(recipe_path, parent_value, by_path):
     """Return the Identifier the path-like `parent_value` points at, or None.
 
     Tries the value as a path relative to the working directory and relative to
@@ -319,13 +662,13 @@ def resolve_parent_path_to_identifier(recipe_path, parent_value, index):
         os.path.normpath(os.path.join(os.path.dirname(recipe_path), parent_value)),
     ]
     for candidate in candidates:
-        if candidate in index.by_path:
-            return index.by_path[candidate]
+        if candidate in by_path:
+            return by_path[candidate]
 
     base = os.path.basename(parent_value)
     matches = {
         identifier
-        for path, identifier in index.by_path.items()
+        for path, identifier in by_path.items()
         if os.path.basename(path) == base
     }
     if len(matches) == 1:
@@ -379,7 +722,7 @@ def maybe_fix_parent_recipe(path, recipe, index):
         return []
     if parent in index.identifiers:
         return []  # already a valid identifier; nothing to fix
-    new_identifier = resolve_parent_path_to_identifier(path, parent, index)
+    new_identifier = resolve_parent_path_to_identifier(path, parent, index.by_path)
     if not new_identifier or new_identifier == parent:
         return []  # cannot resolve to a known identifier -> leave for a human
 
@@ -612,11 +955,18 @@ def check_file(
     spacing_check_enabled = (
         "W120" not in disabled and is_yaml and PROCESS_SPACING_MARKER not in src
     )
+    # W114 is YAML-only: plist recipes are legacy and intentionally kept at their
+    # original (below-floor) MinimumVersion, so they are not flagged or bumped.
+    minver_check_enabled = (
+        "W114" not in disabled and is_yaml and MINIMUM_VERSION_MARKER not in src
+    )
 
     # --- auto-fixes: rewrite the file, then re-read (and re-parse) so the checks
     # below see the corrected content and do not re-report what was just fixed. ---
     if auto_fix and parent_check_enabled:
         fixed += maybe_fix_parent_recipe(path, data, recipe_index)
+    if auto_fix and minver_check_enabled:
+        fixed += maybe_fix_minimum_version(path, data)
     if auto_fix and spacing_check_enabled:
         fixed += maybe_fix_process_spacing(path)
     if fixed:
@@ -637,6 +987,32 @@ def check_file(
             data, source_lines, recipe_index.identifiers
         )
 
+    if (
+        "W112" not in disabled
+        and recipe_index is not None
+        and DUPLICATE_IDENTIFIER_MARKER not in src
+    ):
+        issues += check_duplicate_identifier(data, path, source_lines, recipe_index)
+
+    if "W113" not in disabled and TYPE_MISMATCH_MARKER not in src:
+        issues += check_filename_identifier_type(data, path, source_lines)
+
+    if minver_check_enabled:
+        issues += check_minimum_version(data, source_lines)
+
+    if (
+        "W115" not in disabled
+        and recipe_index is not None
+        and PARENT_RECIPE_MARKER not in src
+    ):
+        issues += check_parent_cycle(data, path, source_lines, recipe_index)
+
+    if "W116" not in disabled and HTTP_URL_MARKER not in src:
+        issues += check_http_urls(data, source_lines)
+
+    if "W117" not in disabled and REGEX_MARKER not in src:
+        issues += check_regex_arguments(data, source_lines)
+
     if spacing_check_enabled:
         issues += check_process_spacing(src)
 
@@ -654,13 +1030,13 @@ def check_files(
     """Check several recipe files; return a list of (path, issues, fixed) tuples.
 
     Non-recipe paths are skipped. Disabled codes are filtered from the results.
-    The repo-wide RecipeIndex (for the ParentRecipe check/fix) is built once here
-    from `root`, unless W111 is disabled. This is the programmatic entry point:
-    it does no printing, so other code can consume the structured results.
-    `main()` wraps it to print and exit.
+    The repo-wide RecipeIndex (for the cross-file checks W111/W112/W115) is built
+    once here from `root`, unless all of those are disabled. This is the
+    programmatic entry point: it does no printing, so other code can consume the
+    structured results. `main()` wraps it to print and exit.
     """
     recipe_index = None
-    if "W111" not in disabled:
+    if {"W111", "W112", "W115"} - disabled:
         recipe_index = build_recipe_index(root)
 
     results = []

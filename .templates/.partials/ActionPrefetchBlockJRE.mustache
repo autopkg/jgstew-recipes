@@ -1,11 +1,11 @@
 	// trap for 'x64 of operating system' property existing only on Windows
 	if {if windows of operating system then x64 of operating system else false}
 		add prefetch item name=jre.zip sha1=359ef250b3e78716cee4669b0182f0c1c28261c3 size=39046089 url=https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jre_x64_windows_hotspot_8u312b07.zip sha256=a4623365d70e7bc969e84b7f29b6b2eecb6c0686863ed67651506e2b5adf43b0
-		add prefetch item name=unzip.exe sha1=84debf12767785cd9b43811022407de7413beb6f size=204800 url=http://software.bigfix.com/download/redist/unzip-6.0.exe sha256=2122557d350fd1c59fb0ef32125330bde673e9331eb9371b454c2ad2d82091ac
+		add prefetch item name=unzip.exe sha1=84debf12767785cd9b43811022407de7413beb6f size=204800 url=https://software.bigfix.com/download/redist/unzip-6.0.exe sha256=2122557d350fd1c59fb0ef32125330bde673e9331eb9371b454c2ad2d82091ac
 	endif
 	if {if windows of operating system then not x64 of operating system else false}
 		add prefetch item name=jre.zip sha1=bf419f8c9231c34f0ffb9564b5f7f6690f596fd9 size=37494360 url=https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jre_x86-32_windows_hotspot_8u312b07.zip sha256=789cfa21858156084020ee885ade643556dc57ddec2b44745b5489edb7945b64
-		add prefetch item name=unzip.exe sha1=84debf12767785cd9b43811022407de7413beb6f size=204800 url=http://software.bigfix.com/download/redist/unzip-6.0.exe sha256=2122557d350fd1c59fb0ef32125330bde673e9331eb9371b454c2ad2d82091ac
+		add prefetch item name=unzip.exe sha1=84debf12767785cd9b43811022407de7413beb6f size=204800 url=https://software.bigfix.com/download/redist/unzip-6.0.exe sha256=2122557d350fd1c59fb0ef32125330bde673e9331eb9371b454c2ad2d82091ac
 	endif
 
 	if {if exists property "mac" of type "operating system" then mac of operating system else name of operating system as lowercase as lowercase starts with "mac"}

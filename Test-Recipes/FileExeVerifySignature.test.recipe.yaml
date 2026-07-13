@@ -32,7 +32,7 @@ Process:
   - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
       # bad / unsigned example
-      url: http://software.bigfix.com/download/redist/unzip-5.52.exe
+      url: https://software.bigfix.com/download/redist/unzip-5.52.exe
       filename: unzip.exe
       COMPUTE_HASHES: False
 

@@ -1,7 +1,7 @@
 ---
 # Based upon: https://github.com/cli/cli/blob/c4455297198031b8701544f5fff1b2621e57c454/.github/workflows/releases.yml#L130-L157
 Description: Build Chocolatey package for released AutoPkg
-Identifier: com.github.jgstew.msibuild.AutoPkg
+Identifier: com.github.jgstew.msbuild.AutoPkg
 Input:
   NAME: autopkg
 MinimumVersion: "2.4.1"

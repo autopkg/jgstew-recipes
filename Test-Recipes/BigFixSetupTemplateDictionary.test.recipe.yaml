@@ -14,14 +14,14 @@ Process:
       file_sha1: c2751e72bd5a8593f4eb4ebd000ace791db0a9c7
       file_sha256: 68ed565438e206e805f81980374e6439e6f4f60f63a3fcb6f0840c8a8de189da
       file_size: 2926519
-      prefetch_url: http://www.pantaray.com/SuperOrcaSetup.exe
+      prefetch_url: https://www.pantaray.com/SuperOrcaSetup.exe
       template_prefetch: None
       # pathname: "folder/whatever.exe"
       # prefetch_type: block
 
   - Processor: com.github.jgstew.SharedProcessors/BigFixSetupTemplateDictionary
     Arguments:
-      download_info: {"file_sha256":"68ed565438e206e805f81980374e6439e6f4f60f63a3fcb6f0840c8a8de189da", "download_url": "http://www.pantaray.com/SuperOrcaSetup.exe"}
+      download_info: {"file_sha256":"68ed565438e206e805f81980374e6439e6f4f60f63a3fcb6f0840c8a8de189da", "download_url": "https://www.pantaray.com/SuperOrcaSetup.exe"}
 
   # read file_sha256 from the template dictionary to make sure it is there
   - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryReadKey
