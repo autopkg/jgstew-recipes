@@ -169,10 +169,12 @@ repos:
         files: ^Shared(Dangerous)?Processors/.*\.py$
 
       # Cross-field recipe conventions the JSON schema cannot express (chiefly:
-      # the Identifier should reference the Input NAME). language: python so
-      # PyYAML is available to parse recipes; verbose: true so the advisory
-      # warnings show even when the hook passes. Warnings do NOT fail the commit
-      # -- add --strict (e.g. in CI) to make them failures.
+      # the Identifier should reference the Input NAME, and every ParentRecipe
+      # should resolve to a known Identifier). language: python so PyYAML is
+      # available to parse recipes; verbose: true so the warnings show even when
+      # the hook passes. --auto-fix=yes rewrites a path-like ParentRecipe (W111)
+      # to the parent's Identifier in place (which fails the hook so it is
+      # re-staged). --strict makes the remaining, non-fixable warnings fail too.
       - id: check-recipe-conventions
         name: Check AutoPkg recipe conventions
         description: Picky, opinionated cross-field checks for AutoPkg recipes.
@@ -181,6 +183,9 @@ repos:
         additional_dependencies: ["pyyaml"]
         verbose: true
         files: \.recipe(\.ya?ml)?$
+        args:
+          - '--strict'
+          - '--auto-fix=yes'
 
       # Run via pytests_run.sh rather than an isolated pre-commit venv: the tests
       # import autopkglib (which does `import imp`, removed in Python 3.12, so it
