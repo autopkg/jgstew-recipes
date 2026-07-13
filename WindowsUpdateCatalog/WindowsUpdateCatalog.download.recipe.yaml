@@ -5,9 +5,11 @@ Input:
   NAME: WindowsUpdateCatalog
 MinimumVersion: "2.4.1"
 Process:
-  - Processor: URLDownloader
+  - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
     Arguments:
-      url: https://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab
+      # http-url-ok
+      url: http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab
+      COMPUTE_HASHES: True
 
   - Processor: EndOfCheckPhase
 # Related:
