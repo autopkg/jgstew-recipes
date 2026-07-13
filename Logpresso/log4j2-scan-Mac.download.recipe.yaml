@@ -2,7 +2,7 @@
 Description: Downloads the latest version of log4j2-scan for macOS. Input TYPE must be `zip`, `7z`, or `tar.gz`. Input OS is the platform suffix in the asset filename (e.g. `-darwin`).
 Identifier: com.github.jgstew.download.log4j2-scan-Mac
 Input:
-  NAME: log4j2-scan-mac
+  NAME: log4j2-scan-Mac
   # TYPE must be `zip` or `7z` or `tar.gz`
   TYPE: zip
   OS: -darwin

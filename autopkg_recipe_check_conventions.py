@@ -71,6 +71,8 @@ Checks:
     W117  re_pattern / asset_regex is not a valid regex
     W118  a com.github.jgstew.Shared*Processors/X step has no matching X.py
     W120  Process-step blank-line spacing (YAML-only, fixable)
+    W121  Input NAME segment is not letter-start alphanumeric (dash-separated)
+    W122  Input NAME trailing platform/arch suffix is not canonical casing
     W100  recipe could not be parsed; skipped (advisory -- check-yaml /
           validate-plist are the authorities on file validity)
     W101  PyYAML is not available, so a YAML recipe could not be parsed; skipped
@@ -95,6 +97,8 @@ or out of one of the other single-purpose checks with, respectively:
     # http-url-ok               (W116)
     # regex-ok                  (W117)
     # processor-ref-ok          (W118)
+    # recipe-name-ok            (W121)
+    # recipe-name-suffix-ok     (W122)
 
 Exit codes:
     0  no failures (warnings alone do not fail unless --strict)
@@ -151,6 +155,32 @@ PROCESSOR_REF_MARKER = "processor-ref-ok"
 # reference into one of these must correspond to a real <Name>.py file (W118).
 PROCESSOR_FOLDERS = ("SharedProcessors", "SharedDangerousProcessors")
 
+# Recipe-NAME style checks. W121: each dash-separated segment of Input NAME must
+# be alphanumeric starting with a letter (so `Firefox-Win`, `Python3-Win64`, and
+# lowercase vendor names like `log4j2-scan` are all fine; underscores, spaces,
+# leading digits, and empty segments are not). W122: if the trailing segment is a
+# recognized platform/arch token, it must use the canonical casing below (e.g.
+# `-mac` -> `-Mac`); a segment that is NOT a known platform token (e.g. the
+# `share` in `tty-share`) is left alone.
+RECIPE_NAME_MARKER = "recipe-name-ok"  # W121 opt-out
+RECIPE_NAME_SUFFIX_MARKER = "recipe-name-suffix-ok"  # W122 opt-out
+RECIPE_NAME_SEGMENT_RE = re.compile(r"^[A-Za-z][A-Za-z0-9]*$")
+PLATFORM_CANONICAL = {
+    "win": "Win",
+    "windows": "Win",
+    "win32": "Win32",
+    "win64": "Win64",
+    "mac": "Mac",
+    "macos": "Mac",
+    "osx": "Mac",
+    "linux": "Linux",
+    "linux32": "Linux32",
+    "linux64": "Linux64",
+    "universal": "Universal",
+    "arm64": "Arm64",
+    "intel": "Intel",
+}
+
 # The extensions that make a file an AutoPkg recipe. `.recipe` is usually a
 # plist; the `.recipe.y{a,}ml` forms are YAML. Order matters for endswith().
 RECIPE_EXTENSIONS = (".recipe.yaml", ".recipe.yml", ".recipe")
@@ -182,6 +212,8 @@ KNOWN_CODES = frozenset(
         "W117",  # invalid re_pattern / asset_regex
         "W118",  # jgstew processor reference has no matching .py file
         "W120",  # Process-step blank-line spacing
+        "W121",  # Input NAME segment is not letter-start alphanumeric
+        "W122",  # Input NAME platform suffix is not canonical casing
     ]
 )
 
@@ -580,6 +612,64 @@ def check_processor_refs_exist(recipe, source_lines, index):
             )
         )
     return issues
+
+
+def _recipe_name(recipe):
+    """Return the Input NAME string, or None."""
+    inp = recipe.get("Input")
+    name = inp.get("NAME") if isinstance(inp, dict) else None
+    return name if isinstance(name, str) and name else None
+
+
+def check_recipe_name_segments(recipe, source_lines):
+    """W121: each dash-separated segment of Input NAME is letter-start alphanumeric.
+
+    Allows CamelCase and lowercase vendor names (`Firefox-Win`, `log4j2-scan`);
+    rejects underscores, spaces, leading digits, and empty segments. Complements
+    the schema's "no spaces" with a stronger word-shape rule the schema can't do.
+    """
+    name = _recipe_name(recipe)
+    if name is None:
+        return []
+    bad = [s for s in name.split("-") if not RECIPE_NAME_SEGMENT_RE.match(s)]
+    if not bad:
+        return []
+    lineno = find_line(source_lines, r"^\s*NAME\s*:", r"<key>NAME</key>")
+    return [
+        (
+            lineno,
+            "W121",
+            f"Input NAME `{name}` segment `{bad[0]}` should be alphanumeric and "
+            f"start with a letter (dash-separated, e.g. Firefox-Win); add "
+            f"`# {RECIPE_NAME_MARKER}` if intentional",
+        )
+    ]
+
+
+def check_recipe_name_suffix(recipe, source_lines):
+    """W122: a recognized trailing platform/arch suffix must use canonical casing.
+
+    Only the last dash-segment is considered, and only when it is a known platform
+    token (see PLATFORM_CANONICAL): `-mac` -> `-Mac`, `-windows` -> `-Win`, etc. A
+    trailing segment that is not a known platform token (the `share` in
+    `tty-share`, `scan` in `log4j2-scan`) is left alone.
+    """
+    name = _recipe_name(recipe)
+    if name is None or "-" not in name:
+        return []
+    suffix = name.rsplit("-", 1)[1]
+    canonical = PLATFORM_CANONICAL.get(suffix.lower())
+    if not canonical or suffix == canonical:
+        return []
+    lineno = find_line(source_lines, r"^\s*NAME\s*:", r"<key>NAME</key>")
+    return [
+        (
+            lineno,
+            "W122",
+            f"Input NAME `{name}` platform suffix `{suffix}` should be canonical "
+            f"`{canonical}`; add `# {RECIPE_NAME_SUFFIX_MARKER}` if intentional",
+        )
+    ]
 
 
 def apply_minimum_version_fix(path):
@@ -1092,6 +1182,12 @@ def check_file(
         and PROCESSOR_REF_MARKER not in src
     ):
         issues += check_processor_refs_exist(data, source_lines, recipe_index)
+
+    if "W121" not in disabled and RECIPE_NAME_MARKER not in src:
+        issues += check_recipe_name_segments(data, source_lines)
+
+    if "W122" not in disabled and RECIPE_NAME_SUFFIX_MARKER not in src:
+        issues += check_recipe_name_suffix(data, source_lines)
 
     if spacing_check_enabled:
         issues += check_process_spacing(src)
