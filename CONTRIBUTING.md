@@ -25,8 +25,7 @@ Because of this cross-platform goal, **some conventions here differ from
 macOS-only AutoPkg recipe repos.** If a convention in this repo looks different
 from what you have seen elsewhere, it is usually intentional and driven by the
 need to also work on Windows and Linux - follow the conventions in this document
-and the `autopkg_processor_check_conventions.py` hook rather than the macOS-only
-norms.
+and the `check-processor-conventions` hook rather than the macOS-only norms.
 
 ## Repository layout
 
@@ -41,9 +40,6 @@ norms.
 - `<Vendor>/` (e.g. `Mozilla/`, `Microsoft/`) - real download / pkg / bigfix /
   install recipes.
 - `_Shared/` - shared parent recipes.
-- `autopkg_processor_check_conventions.py` - opinionated pre-commit hook that
-  checks (and auto-fixes) processor conventions. It is self-documenting: read its
-  module docstring for the full list of checks (E0xx / W0xx codes).
 - `.AutoPkgRecipeOpinionated.schema.json` - recipe schema used by the
   `check-jsonschema` pre-commit hook; restricts processors to a known allowlist.
 - `.AutoPkgRecipe.schema.json` - non-opinionated variant; same structure but
@@ -77,15 +73,21 @@ Useful targeted commands:
 ```sh
 # processor conventions (auto-fixes shebang, header comment, docstrings,
 # __all__, __main__ guard, print -> self.output, and more)
-python3 autopkg_processor_check_conventions.py --auto-fix=yes SharedProcessors/*.py
-#   --auto-fix=no       report only, do not modify files
-#   --disable E005,E020 skip specific checks
+pre-commit run check-processor-conventions --all-files
+
+# recipe conventions (Identifier<->NAME, ParentRecipe resolvability, duplicate
+# Identifiers/Descriptions, MinimumVersion floor, Process-step spacing, ...)
+pre-commit run check-recipe-conventions --all-files
 
 ./test_processors_load.sh         # imports every processor to confirm it loads
 ```
 
-Prefer running the convention checker over hand-editing - it auto-fixes most of
-the conventions below.
+The convention checkers now live in the
+[jgstew/pre-commit-jgstew](https://github.com/jgstew/pre-commit-jgstew) repo as
+the `check-processor-conventions` and `check-recipe-conventions` hooks (wired up
+in `.pre-commit-config.yaml`); read their module docstrings there for the full
+list of checks (E0xx / W0xx codes). Prefer running these hooks over hand-editing
+- they auto-fix most of the conventions below.
 
 ## Processor conventions
 

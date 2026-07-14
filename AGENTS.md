@@ -14,9 +14,12 @@ duplicate that content here - this file only adds agent-specific notes.
 
 - **Validate before finishing**: run `pre-commit run --all-files` and make sure it
   passes (see CONTRIBUTING.md for targeted commands).
-- **Don't hand-fix processor boilerplate**: run the convention checker
-  `python3 autopkg_processor_check_conventions.py --auto-fix=yes SharedProcessors/*.py`
-  - it auto-fixes most conventions. Read its module docstring for the check list.
+- **Don't hand-fix processor/recipe boilerplate**: run the convention checkers
+  `pre-commit run check-processor-conventions --all-files` and
+  `pre-commit run check-recipe-conventions --all-files` - they auto-fix most
+  conventions. These hooks live in the
+  [jgstew/pre-commit-jgstew](https://github.com/jgstew/pre-commit-jgstew) repo;
+  read their module docstrings there for the check list.
 - **Keep files ASCII** (`verify-files-are-ascii` hook): emit any non-ASCII as `\u`
   escapes, not literal characters. This is the most common way generated edits
   break CI here.
