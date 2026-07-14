@@ -1,0 +1,35 @@
+---
+Description: Downloads the latest version of Microsoft AutoUpdate (MAU) for macOS. Input filename is the output filename for the downloaded file.
+Identifier: com.github.jgstew.download.MicrosoftAutoUpdate-Mac
+Input:
+  NAME: "MicrosoftAutoUpdate"
+MinimumVersion: "2.4.1"
+Process:
+  - Processor: com.github.jgstew.SharedProcessors/URLDownloaderPython
+    Arguments:
+      # find the link here:
+      # https://support.microsoft.com/en-us/office/office-for-mac/troubleshoot-microsoft-autoupdate-in-microsoft-365-and-office-for-mac
+      # fwlink redirect that always points at the latest MAU installer:
+      url: https://go.microsoft.com/fwlink/?linkid=830196
+      filename: MicrosoftAutoUpdate.pkg
+      COMPUTE_HASHES: True
+
+  - Processor: EndOfCheckPhase
+    Arguments:
+      prefetch_url: "%download_url%"
+
+  # get SourceReleaseDate from HTTP `Last-Modified` header:
+  - Processor: com.github.jgstew.SharedProcessors/DateTimeFromString
+    Arguments:
+      # parse last_modified header info from URLDownloaderPython
+      datetime_string: "%last_modified%"
+      datetime_strptime: "%a, %d %b %Y %H:%M:%S %Z"
+      datetime_strftime: "%Y-%m-%d"
+      datetime_parsed_name: SourceReleaseDate
+
+  # get version from the resolved download URL:
+  - Processor: com.github.jgstew.SharedProcessors/TextSearcher
+    Arguments:
+      input_string: "%download_url%"
+      # example: https://res.public.onecdn.static.microsoft/mro1cdnstorage/C1297A47-86C4-4C1F-97FA-950631F94777/MacAutoupdate/Microsoft_AutoUpdate_4.83.26040910_Updater.pkg
+      re_pattern: 'Microsoft_AutoUpdate_(?P<version>\d+(\.\d+)+)_Updater\.pkg'
