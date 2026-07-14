@@ -1,0 +1,48 @@
+# https://support.microsoft.com/en-us/office/office-for-mac/troubleshoot-microsoft-autoupdate-in-microsoft-365-and-office-for-mac
+---
+Description: Generates a BigFix Task to install/update the latest Microsoft AutoUpdate (MAU) for macOS. Input DisplayName is the human-readable name used in the BigFix title and relevance. Input Template_BundleID is the app bundle identifier used for macOS version relevance (the `Template_` prefix is stripped when added to the template dictionary, so the template uses `{{BundleID}}`).
+Identifier: com.github.jgstew.bigfix.MicrosoftAutoUpdate-Mac
+Input:
+  NAME: "MicrosoftAutoUpdate"
+  DisplayName: "Microsoft AutoUpdate"
+  # `Template_` prefix so TemplateDictionaryAppendInput adds it to the template
+  #   dictionary as `InstallPath` (the prefix is stripped); used by `{{InstallPath}}`:
+  Template_InstallPath: /Library/Application Support/Microsoft/MAU2.0/Microsoft AutoUpdate.app
+MinimumVersion: "2.4.1"
+ParentRecipe: com.github.jgstew.download.MicrosoftAutoUpdate-Mac
+Process:
+  # `BigFixPrefetchItem` takes the hashes from `URLDownloaderPython` in the parent
+  #   download recipe and assembles them into a BigFix prefetch statement/block:
+  - Processor: com.github.jgstew.SharedProcessors/BigFixPrefetchItem
+
+  # `BigFixSetupTemplateDictionary` seeds the template dictionary (version,
+  #   DownloadSize, SourceReleaseDate, file_name, prefetch, ...). If
+  #   `SourceReleaseDate` is not provided, it will be set to today:
+  - Processor: com.github.jgstew.SharedProcessors/BigFixSetupTemplateDictionary
+
+  # add all Input keys (DisplayName, BundleID, ...) to the template dictionary:
+  - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppendInput
+
+  # `ContentFromTemplate` fills the mustache template from the template dictionary:
+  - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
+    Arguments:
+      # use UNIX style paths so this works on Windows and non-Windows:
+      template_file_path: "%RECIPE_DIR%/MicrosoftAutoUpdate-Mac-Install_Update.bes.mustache"
+      content_file_pathname: "%RECIPE_CACHE_DIR%/%NAME%-InstallUpdate.bes"
+
+  # `BESImport` imports the generated BES content into a BigFix Server
+  #   Which server and credentials are used is dictated by `~/.besapi.conf`.
+  # - Processor: com.github.jgstew.SharedProcessors/BESImport
+
+  # build update(patch) only content (relevant only where already installed):
+  - Processor: com.github.jgstew.SharedProcessors/TemplateDictionaryAppend
+    Arguments:
+      append_key: "patch"
+      append_value: true
+
+  - Processor: com.github.jgstew.SharedProcessors/ContentFromTemplate
+    Arguments:
+      # reuses template_file_path from the previous ContentFromTemplate:
+      content_file_pathname: "%RECIPE_CACHE_DIR%/%NAME%-Update.bes"
+
+  # - Processor: com.github.jgstew.SharedProcessors/BESImport
