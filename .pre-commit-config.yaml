@@ -22,6 +22,8 @@ repos:
         exclude: ".*.test.recipe.yaml"
       - id: forbid-autopkg-overrides
         stages: [manual, pre-push]
+      - id: check-plists
+        stages: [manual, pre-push]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
